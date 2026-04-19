@@ -75,9 +75,9 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
     const r = Math.random();
     if (r < 0.55) {
-      pCol[i*3] = 0.90; pCol[i*3+1] = 0.12; pCol[i*3+2] = 0.12; // red
+      pCol[i*3] = 0.10; pCol[i*3+1] = 0.42; pCol[i*3+2] = 0.91; // blue
     } else if (r < 0.80) {
-      pCol[i*3] = 1.0;  pCol[i*3+1] = 0.50; pCol[i*3+2] = 0.10; // orange
+      pCol[i*3] = 0.20; pCol[i*3+1] = 0.60; pCol[i*3+2] = 1.00; // light blue
     } else {
       pCol[i*3] = 0.82; pCol[i*3+1] = 0.90; pCol[i*3+2] = 1.00; // white-blue
     }
@@ -145,7 +145,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
   key.shadow.camera.right = key.shadow.camera.top = 5;
   scene.add(key);
 
-  const fill = new THREE.DirectionalLight(0xe02020, 1.8);
+  const fill = new THREE.DirectionalLight(0x1a6ae8, 1.8);
   fill.position.set(-6, 3, -4);
   scene.add(fill);
 
@@ -153,7 +153,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
   rim.position.set(0, 6, -10);
   scene.add(rim);
 
-  const under = new THREE.PointLight(0xe02020, 2.0, 5);
+  const under = new THREE.PointLight(0x1a6ae8, 2.0, 5);
   under.position.set(0, -0.15, 0);
   scene.add(under);
 
@@ -176,8 +176,8 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
     color: 0xdddddd, metalness: 1.0, roughness: 0.04, envMapIntensity: 2.5,
   });
   const redMat = new THREE.MeshPhysicalMaterial({
-    color: 0xe02020, metalness: 0.4, roughness: 0.25,
-    emissive: new THREE.Color(0xe02020), emissiveIntensity: 1.8,
+    color: 0x1a6ae8, metalness: 0.4, roughness: 0.25,
+    emissive: new THREE.Color(0x1a6ae8), emissiveIntensity: 1.8,
     envMapIntensity: 1.0,
   });
   const whiteLightMat = new THREE.MeshPhysicalMaterial({
@@ -228,7 +228,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
   [0.72, -0.72].forEach(z => {
     box(0.1, 0.18, 0.3, redMat, -1.98, 0.46, z);
-    const rpl = new THREE.PointLight(0xe02020, 1.2, 4);
+    const rpl = new THREE.PointLight(0x1a6ae8, 1.2, 4);
     rpl.position.set(-2.3, 0.46, z); car.add(rpl);
   });
   box(0.04, 0.04, 1.55, redMat, -2.0, 0.36, 0);
@@ -264,7 +264,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
   // Ground glow + shadow
   const groundGlow = new THREE.Mesh(
     new THREE.PlaneGeometry(5.5, 3),
-    new THREE.MeshBasicMaterial({ color: 0xe02020, transparent: true, opacity: 0.06 })
+    new THREE.MeshBasicMaterial({ color: 0x1a6ae8, transparent: true, opacity: 0.06 })
   );
   groundGlow.rotation.x = -Math.PI / 2; groundGlow.position.y = -0.2;
   car.add(groundGlow);
@@ -306,7 +306,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
   const swGeo    = new THREE.BufferGeometry();
   swGeo.setAttribute('position', new THREE.BufferAttribute(swPos, 3));
   const swMat = new THREE.PointsMaterial({
-    color: 0xe02020, size: 0.07, transparent: true, opacity: 0,
+    color: 0x1a6ae8, size: 0.07, transparent: true, opacity: 0,
     depthWrite: false, blending: THREE.AdditiveBlending,
   });
   const shockwave = new THREE.Points(swGeo, swMat);

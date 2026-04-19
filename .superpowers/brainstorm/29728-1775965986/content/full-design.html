@@ -1,0 +1,73 @@
+<h2>Full Site Design — Driver's Cockpit</h2>
+<p class="subtitle">7 sections, all scroll-snapped. Click any section to confirm or flag it.</p>
+
+<div style="display:flex; flex-direction:column; gap:16px; margin-top:8px;">
+
+  <!-- Section 1 -->
+  <div class="option" data-choice="s1" onclick="toggleSelect(this)" style="flex-direction:column; align-items:flex-start; gap:8px;">
+    <div class="letter">1</div>
+    <div class="content" style="width:100%;">
+      <h3>Hero — Full Screen Cockpit</h3>
+      <p>Dark carbon fiber top 60% of screen with a 3D car model (Three.js) floating and rotating slowly. Cursor moves anywhere on screen and the car tilts toward it with a red headlight glow following the mouse like a spotlight. Huge white headline fades in: "PARTENERUL TĂU PROFESIONAL" with a text scramble effect. Bottom 40% is white with a bold red CTA button pulsing: "SUNĂ ACUM" and the phone number massive. Scroll indicator at the bottom.</p>
+    </div>
+  </div>
+
+  <!-- Section 2 -->
+  <div class="option" data-choice="s2" onclick="toggleSelect(this)" style="flex-direction:column; align-items:flex-start; gap:8px;">
+    <div class="letter">2</div>
+    <div class="content" style="width:100%;">
+      <h3>Why Dan — 3 Animated Stat Cards</h3>
+      <p>White section with 3 large carbon fiber cards. Each card tilts in 3D with cursor. Stats count up on scroll: "500+ Șoferi Parteneri", "3 Ani Experiență", "Disponibil 7/7". Red accent borders slide in on hover. This section answers "why choose Dan" in 3 seconds.</p>
+    </div>
+  </div>
+
+  <!-- Section 3 -->
+  <div class="option" data-choice="s3" onclick="toggleSelect(this)" style="flex-direction:column; align-items:flex-start; gap:8px;">
+    <div class="letter">3</div>
+    <div class="content" style="width:100%;">
+      <h3>Fleet — Horizontal Car Showcase</h3>
+      <p>Dark section with horizontal scroll (GSAP draggable). Each car is a 3D card with carbon fiber back, car photo front, specs on hover flip. Red tag shows "DISPONIBIL" or "OCUPAT". Cars float gently with a continuous loop animation. Placeholder car images for now, real photos swap in later.</p>
+    </div>
+  </div>
+
+  <!-- Section 4 -->
+  <div class="option" data-choice="s4" onclick="toggleSelect(this)" style="flex-direction:column; align-items:flex-start; gap:8px;">
+    <div class="letter">4</div>
+    <div class="content" style="width:100%;">
+      <h3>How It Works — 3 Steps</h3>
+      <p>White section, clean and simple. Three steps with animated number reveals: "1. Sună-ne", "2. Alege Mașina", "3. Începe să Câștigi". Each step has a custom inline SVG icon that draws itself on scroll. A red connecting line animates between them. Targets Uber/Bolt drivers who want simplicity.</p>
+    </div>
+  </div>
+
+  <!-- Section 5 -->
+  <div class="option" data-choice="s5" onclick="toggleSelect(this)" style="flex-direction:column; align-items:flex-start; gap:8px;">
+    <div class="letter">5</div>
+    <div class="content" style="width:100%;">
+      <h3>For Uber and Bolt Drivers — Feature Strip</h3>
+      <p>Dark carbon fiber section, full width. Four floating icon cards: "Fără Garanție Mare", "Asigurare Inclusă", "Întreținere Asigurată", "Contract Flexibil". Icons are inline SVGs that float with staggered keyframe animations. Red glow on hover. This is the closer before the contact section.</p>
+    </div>
+  </div>
+
+  <!-- Section 6 -->
+  <div class="option" data-choice="s6" onclick="toggleSelect(this)" style="flex-direction:column; align-items:flex-start; gap:8px;">
+    <div class="letter">6</div>
+    <div class="content" style="width:100%;">
+      <h3>Contact — Call to Action</h3>
+      <p>White section split in two. Left side: massive phone number with a pulse ring FAB button, address (Strada Fabrica de Chibrituri 24-26, Sector 5), and a WhatsApp button. Right side: embedded Google Maps iframe showing the location. Red diagonal accent strip at top. No contact form — just call.</p>
+    </div>
+  </div>
+
+  <!-- Section 7 -->
+  <div class="option" data-choice="s7" onclick="toggleSelect(this)" style="flex-direction:column; align-items:flex-start; gap:8px;">
+    <div class="letter">7</div>
+    <div class="content" style="width:100%;">
+      <h3>Footer</h3>
+      <p>Dark minimal footer. Logo placeholder left. "© 2025 Dan Rent. Toate drepturile rezervate." center. Social icons right (placeholder). Carbon fiber texture, thin red top border.</p>
+    </div>
+  </div>
+
+</div>
+
+<div style="margin-top:20px; padding:16px; background:#fff8f8; border-left:4px solid #e02020; border-radius:4px;">
+  <p style="margin:0; font-family:sans-serif; font-size:13px; color:#333;"><strong>Tech stack:</strong> Vanilla HTML/CSS/JS. Three.js for the 3D hero car. GSAP for scroll animations and horizontal fleet scroll. Lenis for smooth scrolling. Barlow Condensed font. Scroll snap between all sections. 4K ready with ACESFilmic renderer and post-processing bloom.</p>
+</div>

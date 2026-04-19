@@ -193,10 +193,10 @@ document.querySelectorAll('a,button,.finput,select').forEach(el => {
 
     draw() {
       ctx.shadowBlur  = this.size * 7;
-      ctx.shadowColor = `rgba(220,30,30,${this.alpha * 0.5})`;
+      ctx.shadowColor = `rgba(30,110,220,${this.alpha * 0.5})`;
       ctx.beginPath();
       ctx.arc(this.rx, this.ry, this.size, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255,48,48,${this.alpha})`;
+      ctx.fillStyle = `rgba(60,148,255,${this.alpha})`;
       ctx.fill();
       ctx.shadowBlur = 0;
     }
@@ -260,7 +260,7 @@ document.querySelectorAll('a,button,.finput,select').forEach(el => {
     if (overlay) {
       const vig = (scrollP * 0.65).toFixed(3);
       overlay.style.background =
-        `radial-gradient(ellipse 80% 80% at 50% 48%,transparent 20%,rgba(0,0,0,${vig}) 100%)`;
+        `radial-gradient(ellipse 80% 80% at 50% 48%,transparent 20%,rgba(0,8,40,${vig}) 100%)`;
     }
   }
 
@@ -291,23 +291,17 @@ document.querySelectorAll('a,button,.finput,select').forEach(el => {
 //  3D BUTTONS — TILT + MAGNETIC
 // ══════════════════════════════════════════════════════
 function initButtons() {
+  const BTN_REST  = '0 6px 24px rgba(0,0,0,0.65),inset 0 1px 0 rgba(100,170,255,0.3)';
+  const BTN_HOVER = '0 16px 48px rgba(0,0,0,0.75),0 8px 32px rgba(26,106,232,0.55),inset 0 1px 0 rgba(150,200,255,0.4)';
+
   document.querySelectorAll('.hbtn').forEach(btn => {
 
     btn.addEventListener('mouseenter', () => {
       gsap.to(btn, {
-        y: -6, duration: 0.22, ease: 'power2.out',
-        boxShadow: [
-          '0 1px 0 #b0b0b0,0 2px 0 #a8a8a8,0 4px 0 #999,0 6px 0 #888,0 8px 0 #777',
-          '0 14px 32px rgba(0,0,0,0.55)',
-          '0 18px 55px rgba(224,32,32,0.65)',
-          '0 35px 90px rgba(224,32,32,0.38)',
-          '0 60px 130px rgba(224,32,32,0.18)',
-          '0 0 22px rgba(224,32,32,0.5)',
-          'inset 0 -3px 10px rgba(224,32,32,0.35)',
-          'inset 0 1px 0 rgba(255,255,255,0.95)',
-        ].join(','),
+        y: -5, duration: 0.22, ease: 'power2.out',
+        color: '#ffffff',
+        boxShadow: BTN_HOVER,
       });
-      gsap.to(btn, { color: '#e02020', duration: 0.2 });
     });
 
     btn.addEventListener('mousemove', e => {
@@ -315,8 +309,8 @@ function initButtons() {
       const dx = (e.clientX - r.left - r.width  / 2) / (r.width  / 2);
       const dy = (e.clientY - r.top  - r.height / 2) / (r.height / 2);
       gsap.to(btn, {
-        rotateX: -dy * 15, rotateY: dx * 15,
-        x: dx * 8, y: dy * 4 - 6,
+        rotateX: -dy * 12, rotateY: dx * 12,
+        x: dx * 6, y: dy * 3 - 5,
         duration: 0.18, ease: 'power2.out',
         transformPerspective: 600, transformOrigin: 'center center',
       });
@@ -326,16 +320,20 @@ function initButtons() {
       gsap.to(btn, {
         rotateX: 0, rotateY: 0, x: 0, y: 0,
         duration: 0.7, ease: 'elastic.out(1, 0.45)',
-        boxShadow: `0 1px 0 #b0b0b0,0 2px 0 #a8a8a8,0 3px 0 #999,0 4px 0 #888,0 5px 0 #777,0 9px 20px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.95)`,
+        color: '#ffffff',
+        boxShadow: BTN_REST,
       });
-      gsap.to(btn, { color: '#1a1a1a', duration: 0.3 });
     });
 
     btn.addEventListener('click', () => {
+      btn.blur(); // prevent Safari focus ring
       const id = btn.getAttribute('data-target');
       const el = id ? document.querySelector(id) : null;
       if (el) el.scrollIntoView({ behavior: 'smooth' });
     });
+
+    /* prevent focus ring on mouse click (keyboard focus still works) */
+    btn.addEventListener('mousedown', e => e.preventDefault());
   });
 }
 
@@ -465,7 +463,7 @@ function initButtons() {
     ctx.stroke();
     ctx.beginPath();
     ctx.arc(centX + pxOff*0.3, centY + pyOff*0.3, cRing * 0.6, 0, Math.PI*2);
-    ctx.strokeStyle = 'rgba(200,32,32,0.055)';
+    ctx.strokeStyle = 'rgba(26,90,200,0.055)';
     ctx.lineWidth = 0.7;
     ctx.stroke();
 
@@ -485,7 +483,7 @@ function initButtons() {
       ctx.moveTo(ax, ay);
       ctx.lineTo(bx, by);
       ctx.strokeStyle = t > 0
-        ? `rgba(200,32,32,${0.04 + t*0.16})`
+        ? `rgba(26,90,200,${0.04 + t*0.16})`
         : 'rgba(0,0,0,0.048)';
       ctx.lineWidth = 0.55 + t * 1.1;
       ctx.stroke();
@@ -501,8 +499,8 @@ function initButtons() {
 
       if (t > 0) {
         const grd = ctx.createRadialGradient(px, py, 0, px, py, 55*t);
-        grd.addColorStop(0, `rgba(224,32,32,${0.10*t})`);
-        grd.addColorStop(1, 'rgba(224,32,32,0)');
+        grd.addColorStop(0, `rgba(26,106,232,${0.10*t})`);
+        grd.addColorStop(1, 'rgba(26,106,232,0)');
         ctx.fillStyle = grd;
         ctx.beginPath();
         ctx.arc(px, py, 55, 0, Math.PI*2);
@@ -513,7 +511,7 @@ function initButtons() {
       ctx.beginPath();
       ctx.arc(px, py, 4 + t*3, 0, Math.PI*2);
       ctx.strokeStyle = t > 0.05
-        ? `rgba(224,32,32,${0.18*t})`
+        ? `rgba(26,106,232,${0.18*t})`
         : 'rgba(0,0,0,0.06)';
       ctx.lineWidth = 0.7;
       ctx.stroke();
@@ -522,7 +520,7 @@ function initButtons() {
       ctx.beginPath();
       ctx.arc(px, py, 1.8 + t*2.2, 0, Math.PI*2);
       ctx.fillStyle = t > 0.05
-        ? `rgba(224,32,32,${0.3 + t*0.55})`
+        ? `rgba(26,106,232,${0.3 + t*0.55})`
         : 'rgba(0,0,0,0.14)';
       ctx.fill();
     });
@@ -532,7 +530,7 @@ function initButtons() {
       [30, 65].forEach((r, i) => {
         ctx.beginPath();
         ctx.arc(mx, my, r, 0, Math.PI*2);
-        ctx.strokeStyle = `rgba(224,32,32,${0.07 - i*0.02})`;
+        ctx.strokeStyle = `rgba(26,106,232,${0.07 - i*0.02})`;
         ctx.lineWidth = 0.7;
         ctx.stroke();
       });
@@ -543,7 +541,7 @@ function initButtons() {
       const rp = ripples[i];
       ctx.beginPath();
       ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI*2);
-      ctx.strokeStyle = `rgba(224,32,32,${rp.a})`;
+      ctx.strokeStyle = `rgba(26,106,232,${rp.a})`;
       ctx.lineWidth = 1;
       ctx.stroke();
       rp.r += 2.5; rp.a *= 0.94;
@@ -740,10 +738,7 @@ document.querySelectorAll('.benefit').forEach(b => {
 // ══════════════════════════════════════════════════════
 //  FLEET CARD HOVER BORDER
 // ══════════════════════════════════════════════════════
-document.querySelectorAll('.fleet-card').forEach(card => {
-  card.addEventListener('mouseenter', () => gsap.to(card, { borderColor: 'rgba(224,32,32,0.3)', duration: 0.2 }));
-  card.addEventListener('mouseleave', () => gsap.to(card, { borderColor: 'rgba(255,255,255,0.06)', duration: 0.3 }));
-});
+/* fleet card border handled by CSS conic-gradient animation */
 
 // ══════════════════════════════════════════════════════
 //  HERO CARD — 3D TILT + HOLOGRAPHIC SHEEN
@@ -891,7 +886,7 @@ document.querySelectorAll('.fleet-card').forEach(card => {
       x: (dx / dist) * pull,
       y: (dy / dist) * pull,
       rotateX: tiltX, rotateY: tiltY,
-      textShadow: `0 0 ${glow}px rgba(224,32,32,${(strength * 0.85).toFixed(2)}),0 0 ${Math.round(glow * 2)}px rgba(224,32,32,${(strength * 0.3).toFixed(2)})`,
+      textShadow: `0 0 ${glow}px rgba(26,106,232,${(strength * 0.85).toFixed(2)}),0 0 ${Math.round(glow * 2)}px rgba(26,106,232,${(strength * 0.3).toFixed(2)})`,
       duration: 0.18, ease: 'power2.out',
       transformPerspective: 600,
     });
@@ -908,8 +903,8 @@ document.querySelectorAll('.fleet-card').forEach(card => {
 
     card.addEventListener('mousemove', e => {
       const r  = card.getBoundingClientRect();
-      s.tx = ((e.clientY - r.top)  / r.height - 0.5) * -14;
-      s.ty = ((e.clientX - r.left) / r.width  - 0.5) *  14;
+      s.tx = ((e.clientY - r.top)  / r.height - 0.5) * -7;
+      s.ty = ((e.clientX - r.left) / r.width  - 0.5) *  7;
     });
 
     card.addEventListener('mouseleave', () => {
@@ -928,5 +923,58 @@ document.querySelectorAll('.fleet-card').forEach(card => {
       const lift   = active ? 22 : 0;
       card.style.transform = `perspective(900px) rotateX(${s.lx.toFixed(3)}deg) rotateY(${s.ly.toFixed(3)}deg) translateZ(${lift}px)`;
     });
+  })();
+})();
+
+// ══════════════════════════════════════════════════════
+//  CURSOR PARTICLE TRAIL — blue comet sparks
+// ══════════════════════════════════════════════════════
+(function initCursorTrail() {
+  const cvs = document.createElement('canvas');
+  cvs.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:9999;';
+  document.body.appendChild(cvs);
+  const ctx = cvs.getContext('2d');
+
+  function resize() { cvs.width = innerWidth; cvs.height = innerHeight; }
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+
+  const COLS = [[26,106,232],[60,148,255],[100,190,255],[0,212,255]];
+  const pts  = [];
+
+  window.addEventListener('mousemove', e => {
+    for (let i = 0; i < 4; i++) {
+      const col = COLS[i % COLS.length];
+      pts.push({
+        x: e.clientX, y: e.clientY,
+        vx: (Math.random() - 0.5) * 2.8,
+        vy: (Math.random() - 0.5) * 2.8 - 1.0,
+        r:  2.5 + Math.random() * 3,
+        a:  0.85 + Math.random() * 0.15,
+        col,
+      });
+    }
+  }, { passive: true });
+
+  (function loop() {
+    requestAnimationFrame(loop);
+    ctx.clearRect(0, 0, cvs.width, cvs.height);
+    for (let i = pts.length - 1; i >= 0; i--) {
+      const p = pts[i];
+      p.x  += p.vx;
+      p.y  += p.vy;
+      p.vy += 0.08;
+      p.a  -= 0.038;
+      p.r  *= 0.96;
+      if (p.a <= 0) { pts.splice(i, 1); continue; }
+      const [r,g,b] = p.col;
+      ctx.shadowBlur  = p.r * 5;
+      ctx.shadowColor = `rgba(${r},${g},${b},0.6)`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${r},${g},${b},${p.a.toFixed(3)})`;
+      ctx.fill();
+    }
+    ctx.shadowBlur = 0;
   })();
 })();

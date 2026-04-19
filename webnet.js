@@ -14,8 +14,8 @@
     cursorForce:  0.04,       // 50% slower push
     friction:     0.985,      // 50% slower decay
     returnForce:  0.001,      // 50% slower return
-    edgeColor:    [220, 20, 20],
-    nodeColor:    [255, 60, 60],
+    edgeColor:    [26, 106, 232],
+    nodeColor:    [60, 148, 255],
     cursorPulse:  true,
     /* depth layers */
     layers:       3,
@@ -246,8 +246,8 @@
         const haloR  = glow * (near > sym ? 5 : 6);
         const haloA  = Math.max(near, sym) * 0.4;
         const grad   = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, haloR);
-        grad.addColorStop(0, `rgba(255,${sym > 0.3 ? 80 : 40},40,${haloA.toFixed(3)})`);
-        grad.addColorStop(1, 'rgba(180,0,0,0)');
+        grad.addColorStop(0, `rgba(60,${sym > 0.3 ? 180 : 148},255,${haloA.toFixed(3)})`);
+        grad.addColorStop(1, 'rgba(0,50,160,0)');
         ctx.beginPath();
         ctx.arc(n.x, n.y, haloR, 0, Math.PI * 2);
         ctx.fillStyle = grad;
@@ -260,13 +260,13 @@
       const pulse = 1 + 0.2 * Math.sin(pulseT * 3);
       ctx.beginPath();
       ctx.arc(mouse.x, mouse.y, CONFIG.cursorRadius * pulse, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(220,20,20,0.08)';
+      ctx.strokeStyle = 'rgba(26,106,232,0.08)';
       ctx.lineWidth = 1;
       ctx.stroke();
 
       ctx.beginPath();
       ctx.arc(mouse.x, mouse.y, 6 * pulse, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(255,60,60,0.5)';
+      ctx.strokeStyle = 'rgba(60,148,255,0.5)';
       ctx.lineWidth = 1.5;
       ctx.stroke();
     }
@@ -275,9 +275,9 @@
     if (card.active) {
       const pulse = 1 + 0.25 * Math.sin(pulseT * 4);
       const grad  = ctx.createRadialGradient(card.cx, card.cy, 0, card.cx, card.cy, CONFIG.tendrilRadius * 0.6 * pulse);
-      grad.addColorStop(0, 'rgba(200,0,0,0.0)');
-      grad.addColorStop(0.5, 'rgba(180,0,0,0.05)');
-      grad.addColorStop(1, 'rgba(120,0,0,0)');
+      grad.addColorStop(0, 'rgba(0,60,200,0.0)');
+      grad.addColorStop(0.5, 'rgba(0,50,180,0.05)');
+      grad.addColorStop(1, 'rgba(0,30,120,0)');
       ctx.beginPath();
       ctx.ellipse(card.cx, card.cy, (card.w * 0.5 + 80) * pulse, (card.h * 0.5 + 80) * pulse, 0, 0, Math.PI * 2);
       ctx.fillStyle = grad;

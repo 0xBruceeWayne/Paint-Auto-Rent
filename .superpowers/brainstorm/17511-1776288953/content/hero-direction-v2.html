@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hero Direction v2 — Professional White</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;800;900&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Barlow Condensed', system-ui, sans-serif;
+    background: #111;
+    color: #fff;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  .question-header {
+    text-align: center;
+    padding: 36px 24px 10px;
+  }
+  .question-header h2 {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #fff;
+  }
+  .question-header p {
+    font-size: 0.95rem;
+    color: #777;
+    margin-top: 6px;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 24px;
+    padding: 28px 24px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .design-card {
+    border: 2px solid #2a2a2a;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    background: #181818;
+    position: relative;
+  }
+  .design-card:hover { border-color: #e02020; transform: translateY(-4px); box-shadow: 0 16px 40px rgba(224,32,32,0.18); }
+  .design-card.selected { border-color: #e02020; box-shadow: 0 0 0 3px rgba(224,32,32,0.25), 0 16px 40px rgba(224,32,32,0.22); }
+  .design-card.selected .card-label { background: #e02020; }
+
+  .check {
+    display: none; position: absolute; top: 10px; right: 10px;
+    width: 26px; height: 26px; background: #e02020; border-radius: 50%;
+    align-items: center; justify-content: center; font-size: 13px; z-index: 10;
+  }
+  .design-card.selected .check { display: flex; }
+
+  /* ======== MOCKUP AREAS ======== */
+  .mockup-area {
+    height: 270px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ---- A: COMMAND CENTRE ---- */
+  .mockup-a {
+    background: #ffffff;
+  }
+
+  /* top bar */
+  .ma-topbar {
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 32px;
+    background: #fff;
+    border-bottom: 1px solid #e8e8e8;
+    display: flex; align-items: center; padding: 0 16px;
+    justify-content: space-between;
+    z-index: 5;
+  }
+  .ma-logo { font-weight: 900; font-size: 13px; letter-spacing: 0.15em; color: #0a0a0a; text-transform: uppercase; }
+  .ma-logo em { color: #e02020; font-style: normal; }
+  .ma-nav { display: flex; gap: 12px; }
+  .ma-nav span { font-size: 9px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #888; }
+
+  /* red left accent line */
+  .ma-accent-line {
+    position: absolute;
+    left: 0; top: 32px; bottom: 0;
+    width: 4px;
+    background: #e02020;
+  }
+
+  /* left text block */
+  .ma-text {
+    position: absolute;
+    left: 24px; top: 52px;
+    z-index: 3;
+  }
+  .ma-eyebrow {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.25em;
+    text-transform: uppercase; color: #e02020;
+    margin-bottom: 6px;
+  }
+  .ma-headline {
+    font-size: 38px; font-weight: 900; line-height: 0.92;
+    letter-spacing: -0.01em; text-transform: uppercase;
+    color: #0a0a0a;
+  }
+  .ma-sub {
+    font-size: 9.5px; color: #666; margin-top: 8px;
+    font-weight: 400; letter-spacing: 0.05em;
+    line-height: 1.5; max-width: 140px;
+  }
+  .ma-cta {
+    margin-top: 12px;
+    background: #e02020; color: #fff;
+    font-size: 9px; font-weight: 800;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 7px 14px; border-radius: 2px;
+    display: inline-block;
+  }
+
+  /* right — dark card with car */
+  .ma-car-panel {
+    position: absolute;
+    right: 0; top: 32px; bottom: 0;
+    width: 55%;
+    background: repeating-linear-gradient(45deg,#161616,#161616 2px,#1e1e1e 2px,#1e1e1e 8px);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+  }
+  .ma-car-emoji { font-size: 64px; filter: drop-shadow(0 6px 20px rgba(0,0,0,0.6)); }
+  .ma-car-glow {
+    width: 120px; height: 6px;
+    background: linear-gradient(90deg, transparent, #e02020 30%, #e02020 70%, transparent);
+    border-radius: 50%;
+    opacity: 0.7;
+    margin-top: -4px;
+  }
+  .ma-diag {
+    position: absolute;
+    left: -1px; top: 0; bottom: 0;
+    width: 18px;
+    background: repeating-linear-gradient(-45deg,
+      #e02020 0,#e02020 3px,#0a0a0a 3px,#0a0a0a 8px
+    );
+  }
+
+  /* bottom bar */
+  .ma-bottombar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0; height: 28px;
+    background: #fff;
+    border-top: 1px solid #eee;
+    display: flex; align-items: center;
+    padding: 0 24px; gap: 20px;
+  }
+  .ma-stat { font-size: 8.5px; font-weight: 700; color: #0a0a0a; letter-spacing: 0.05em; }
+  .ma-stat em { color: #e02020; font-style: normal; }
+
+  /* ---- B: EDITORIAL SPLIT ---- */
+  .mockup-b {
+    background: #ffffff;
+  }
+
+  .mb-nav {
+    position: absolute; top: 0; left: 0; right: 0; height: 32px;
+    background: #0a0a0a;
+    display: flex; align-items: center; padding: 0 16px;
+    justify-content: space-between; z-index: 5;
+  }
+  .mb-logo { font-weight: 900; font-size: 13px; letter-spacing: 0.15em; color: #fff; text-transform: uppercase; }
+  .mb-logo em { color: #e02020; font-style: normal; }
+  .mb-phone-nav { font-size: 10px; font-weight: 700; color: #e02020; letter-spacing: 0.05em; }
+
+  /* big number background */
+  .mb-bg-number {
+    position: absolute;
+    right: -10px; bottom: -20px;
+    font-size: 140px; font-weight: 900;
+    color: rgba(0,0,0,0.04);
+    line-height: 1;
+    letter-spacing: -0.05em;
+    user-select: none;
+    z-index: 0;
+  }
+
+  /* horizontal red stripe */
+  .mb-stripe {
+    position: absolute;
+    top: 80px; left: 0; right: 0;
+    height: 8px;
+    background: repeating-linear-gradient(-45deg,
+      #e02020 0,#e02020 4px,#0a0a0a 4px,#0a0a0a 10px
+    );
+    z-index: 2;
+  }
+
+  /* main content */
+  .mb-content {
+    position: absolute;
+    top: 96px; left: 20px; right: 20px;
+    z-index: 3;
+    display: flex; gap: 16px; align-items: flex-start;
+  }
+
+  .mb-left { flex: 1; }
+  .mb-label {
+    font-size: 8px; font-weight: 700; letter-spacing: 0.3em;
+    text-transform: uppercase; color: #e02020;
+    margin-bottom: 6px;
+  }
+  .mb-big-headline {
+    font-size: 44px; font-weight: 900; line-height: 0.88;
+    text-transform: uppercase; color: #0a0a0a;
+    letter-spacing: -0.02em;
+  }
+  .mb-big-headline .outline {
+    -webkit-text-stroke: 1.5px #0a0a0a;
+    color: transparent;
+  }
+  .mb-body {
+    font-size: 9px; color: #666; margin-top: 8px;
+    line-height: 1.5; max-width: 130px; font-weight: 400;
+  }
+  .mb-cta {
+    margin-top: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .mb-btn {
+    background: #0a0a0a; color: #fff;
+    font-size: 9px; font-weight: 800;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 6px 12px; border-radius: 2px;
+  }
+  .mb-num {
+    font-size: 11px; font-weight: 900; color: #e02020;
+    letter-spacing: 0.05em;
+  }
+
+  .mb-right {
+    width: 150px;
+    flex-shrink: 0;
+  }
+  .mb-card {
+    background: repeating-linear-gradient(45deg,#161616,#161616 2px,#222 2px,#222 8px);
+    border-radius: 6px; overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+  .mb-card-img {
+    height: 72px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 42px;
+  }
+  .mb-card-info { background: #0a0a0a; padding: 8px 10px; }
+  .mb-card-name { font-size: 9px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.08em; }
+  .mb-card-price { font-size: 14px; font-weight: 900; color: #e02020; margin-top: 2px; }
+  .mb-card-tag { font-size: 7px; color: #555; letter-spacing: 0.05em; }
+
+  /* ---- C: MINIMAL LUXURY ---- */
+  .mockup-c {
+    background: #ffffff;
+  }
+
+  .mc-nav {
+    position: absolute; top: 0; left: 0; right: 0; height: 32px;
+    background: #fff; border-bottom: 1px solid rgba(0,0,0,0.08);
+    display: flex; align-items: center; padding: 0 20px;
+    justify-content: space-between; z-index: 5;
+  }
+  .mc-logo { font-weight: 900; font-size: 13px; letter-spacing: 0.15em; color: #0a0a0a; text-transform: uppercase; }
+  .mc-logo em { color: #e02020; font-style: normal; }
+  .mc-cta-nav {
+    background: #e02020; color: #fff;
+    font-size: 9px; font-weight: 800; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 5px 10px; border-radius: 2px;
+  }
+
+  /* full-width red rule */
+  .mc-redline {
+    position: absolute;
+    top: 32px; left: 0; right: 0;
+    height: 3px; background: #e02020;
+  }
+
+  /* centered content */
+  .mc-center {
+    position: absolute;
+    top: 50px; left: 0; right: 0; bottom: 40px;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+  }
+
+  .mc-kicker {
+    font-size: 8.5px; font-weight: 700; letter-spacing: 0.35em;
+    text-transform: uppercase; color: #e02020;
+    margin-bottom: 8px;
+  }
+
+  .mc-headline {
+    font-size: 52px; font-weight: 900; line-height: 0.85;
+    text-transform: uppercase; color: #0a0a0a;
+    text-align: center; letter-spacing: -0.02em;
+  }
+
+  .mc-headline .ghost {
+    -webkit-text-stroke: 1.5px #ccc;
+    color: transparent;
+    display: block;
+  }
+
+  .mc-divider {
+    width: 48px; height: 2px; background: #e02020;
+    margin: 10px auto;
+  }
+
+  .mc-sub {
+    font-size: 9px; color: #888; text-align: center;
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+
+  /* floating stats */
+  .mc-stats {
+    position: absolute;
+    bottom: 40px; left: 0; right: 0;
+    display: flex; justify-content: center; gap: 32px;
+  }
+  .mc-stat { text-align: center; }
+  .mc-stat .num { font-size: 18px; font-weight: 900; color: #0a0a0a; line-height: 1; }
+  .mc-stat .num em { color: #e02020; font-style: normal; }
+  .mc-stat .lbl { font-size: 7px; color: #aaa; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 2px; }
+
+  /* decorative corner stripes */
+  .mc-corner-tl {
+    position: absolute; top: 35px; left: 0;
+    width: 60px; height: 40px;
+    background: repeating-linear-gradient(-45deg,
+      transparent 0, transparent 3px,
+      rgba(224,32,32,0.12) 3px, rgba(224,32,32,0.12) 6px
+    );
+  }
+  .mc-corner-br {
+    position: absolute; bottom: 0; right: 0;
+    width: 60px; height: 40px;
+    background: repeating-linear-gradient(-45deg,
+      transparent 0, transparent 3px,
+      rgba(224,32,32,0.12) 3px, rgba(224,32,32,0.12) 6px
+    );
+  }
+
+  /* bottom phone bar */
+  .mc-phonebar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0; height: 32px;
+    background: #0a0a0a;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+  }
+  .mc-pb-label { font-size: 8px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: #666; }
+  .mc-pb-num { font-size: 14px; font-weight: 900; color: #e02020; letter-spacing: 0.05em; }
+
+  /* -------- CARD LABEL + INFO -------- */
+  .card-label {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #242424; color: #fff;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; padding: 6px 14px;
+    border-radius: 4px; margin: 14px 16px 0;
+    transition: background 0.2s;
+  }
+  .card-label .letter {
+    background: rgba(255,255,255,0.12); border-radius: 3px;
+    width: 20px; height: 20px; display: flex; align-items: center;
+    justify-content: center; font-size: 12px;
+  }
+  .card-info { padding: 10px 16px 18px; }
+  .card-title { font-size: 1.15rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #fff; margin-bottom: 5px; }
+  .card-desc { font-size: 0.88rem; color: #888; line-height: 1.5; font-weight: 400; }
+  .card-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
+  .tag { background: #1e1e1e; border: 1px solid #333; color: #aaa; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px; }
+  .tag.red { border-color: rgba(224,32,32,0.4); color: #e02020; background: rgba(224,32,32,0.08); }
+</style>
+</head>
+<body>
+
+<div class="question-header">
+  <h2>Professional White Hero — Round 2</h2>
+  <p>Three cleaner, more premium directions. Click your pick.</p>
+</div>
+
+<div class="cards-grid">
+
+  <!-- A: COMMAND CENTRE -->
+  <div class="design-card" onclick="sel(this,'A')" data-choice="A">
+    <div class="check">✓</div>
+    <div class="mockup-area mockup-a">
+      <div class="ma-topbar">
+        <div class="ma-logo">Dan <em>RENT</em></div>
+        <div class="ma-nav">
+          <span>Flotă</span><span>Preturi</span><span>Contact</span>
+        </div>
+      </div>
+      <div class="ma-accent-line"></div>
+      <div class="ma-text">
+        <div class="ma-eyebrow">București · Uber &amp; Bolt</div>
+        <div class="ma-headline">CÂȘTIGĂ<br>MAI<br>MULT</div>
+        <div class="ma-sub">Mașini pentru șoferi profesioniști. Fără garanție mare.</div>
+        <div class="ma-cta">☎ Sună acum</div>
+      </div>
+      <div class="ma-car-panel">
+        <div class="ma-diag"></div>
+        <div class="ma-car-emoji">🚗</div>
+        <div class="ma-car-glow"></div>
+      </div>
+      <div class="ma-bottombar">
+        <div class="ma-stat"><em>500+</em> Șoferi</div>
+        <div class="ma-stat"><em>3</em> Ani</div>
+        <div class="ma-stat">Disponibil <em>7/7</em></div>
+      </div>
+    </div>
+    <span class="card-label"><span class="letter">A</span> Command Centre</span>
+    <div class="card-info">
+      <div class="card-title">White + Dark Panel Split</div>
+      <div class="card-desc">White left with bold headline and red accent line. Dark carbon car panel on right, separated by diagonal red-black stripe. Clean, structured, premium.</div>
+      <div class="card-tags">
+        <span class="tag red">Split layout</span>
+        <span class="tag">Stats bar</span>
+        <span class="tag">Carbon panel</span>
+        <span class="tag">Red accent</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- B: EDITORIAL SPLIT -->
+  <div class="design-card" onclick="sel(this,'B')" data-choice="B">
+    <div class="check">✓</div>
+    <div class="mockup-area mockup-b">
+      <div class="mb-nav">
+        <div class="mb-logo">Dan <em>RENT</em></div>
+        <div class="mb-phone-nav">☎ +40 770 000 000</div>
+      </div>
+      <div class="mb-stripe"></div>
+      <div class="mb-bg-number">1</div>
+      <div class="mb-content">
+        <div class="mb-left">
+          <div class="mb-label">Partenerul tău de încredere</div>
+          <div class="mb-big-headline">
+            RENT<br>
+            <span class="outline">YOUR</span><br>
+            CAR
+          </div>
+          <div class="mb-body">Mașini practice pentru șoferi Uber și Bolt. Contract flexibil, asigurare inclusă.</div>
+          <div class="mb-cta">
+            <div class="mb-btn">Sună acum</div>
+            <div class="mb-num">+40 770 000 000</div>
+          </div>
+        </div>
+        <div class="mb-right">
+          <div class="mb-card">
+            <div class="mb-card-img">🚗</div>
+            <div class="mb-card-info">
+              <div class="mb-card-name">Dacia Logan</div>
+              <div class="mb-card-price">49€/zi</div>
+              <div class="mb-card-tag">DISPONIBIL</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="card-label"><span class="letter">B</span> Editorial Grid</span>
+    <div class="card-info">
+      <div class="card-title">Bold Type + Stripe + Card</div>
+      <div class="card-desc">Thick red-black stripe banner below dark nav. Outline text mixed with solid for depth. Carbon card floats right. Phone number always visible in nav.</div>
+      <div class="card-tags">
+        <span class="tag red">Outline type</span>
+        <span class="tag">Stripe banner</span>
+        <span class="tag">Car card right</span>
+        <span class="tag">Phone in nav</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- C: MINIMAL LUXURY -->
+  <div class="design-card" onclick="sel(this,'C')" data-choice="C">
+    <div class="check">✓</div>
+    <div class="mockup-area mockup-c">
+      <div class="mc-nav">
+        <div class="mc-logo">Dan <em>RENT</em></div>
+        <div class="mc-cta-nav">☎ Sună acum</div>
+      </div>
+      <div class="mc-redline"></div>
+      <div class="mc-corner-tl"></div>
+      <div class="mc-corner-br"></div>
+      <div class="mc-center">
+        <div class="mc-kicker">Bucharest · Uber &amp; Bolt · 2024</div>
+        <div class="mc-headline">
+          PROFESSIONAL
+          <span class="ghost">DRIVE</span>
+        </div>
+        <div class="mc-divider"></div>
+        <div class="mc-sub">Închiriează · Câștigă · Crești</div>
+      </div>
+      <div class="mc-stats">
+        <div class="mc-stat"><div class="num">500<em>+</em></div><div class="lbl">Șoferi activi</div></div>
+        <div class="mc-stat"><div class="num">3<em>ani</em></div><div class="lbl">Experiență</div></div>
+        <div class="mc-stat"><div class="num">7<em>/7</em></div><div class="lbl">Disponibil</div></div>
+      </div>
+      <div class="mc-phonebar">
+        <div class="mc-pb-label">Sună direct</div>
+        <div class="mc-pb-num">+40 770 000 000</div>
+      </div>
+    </div>
+    <span class="card-label"><span class="letter">C</span> Minimal Luxury</span>
+    <div class="card-info">
+      <div class="card-title">Centred + Ghost Type + Stats</div>
+      <div class="card-desc">Full white, centred composition. Solid + outline headline creates 3D layering. Red rule at top, subtle stripe corners. Stats row above phone bar. Timeless, premium feel.</div>
+      <div class="card-tags">
+        <span class="tag red">Ghost outline text</span>
+        <span class="tag">Centred layout</span>
+        <span class="tag">Stats + phone bar</span>
+        <span class="tag">Minimal red</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function sel(el, choice) {
+    document.querySelectorAll('.design-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    try {
+      fetch('/event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'click', choice, text: el.querySelector('.card-title')?.textContent })
+      });
+    } catch(e) {}
+  }
+</script>
+
+</body>
+</html>

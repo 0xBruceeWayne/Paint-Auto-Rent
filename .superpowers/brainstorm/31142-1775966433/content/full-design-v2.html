@@ -1,0 +1,87 @@
+<h2>Full Site Design — Driver's Cockpit</h2>
+<p class="subtitle">7 sections, all scroll-snapped. Click any section to select it — works on mobile and desktop now.</p>
+
+<script>
+// HTTP fallback for Safari mobile — bypasses WebSocket restriction on local IPs
+(function() {
+  var RELAY = 'http://192.168.1.132:49772/event';
+  var orig = window.toggleSelect;
+  window.toggleSelect = function(el) {
+    if (orig) orig(el);
+    var event = {
+      type: 'click',
+      choice: el.dataset.choice,
+      text: el.querySelector('h3') ? el.querySelector('h3').textContent.trim() : el.dataset.choice
+    };
+    fetch(RELAY, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(event)
+    }).catch(function() {});
+  };
+})();
+</script>
+
+<div style="display:flex; flex-direction:column; gap:16px; margin-top:8px;">
+
+  <div class="option" data-choice="s1" onclick="toggleSelect(this)" style="flex-direction:column; align-items:flex-start; gap:8px;">
+    <div class="letter">1</div>
+    <div class="content" style="width:100%;">
+      <h3>Hero — Full Screen Cockpit</h3>
+      <p>Dark carbon fiber top 60% with a Three.js 3D car floating and rotating slowly. Cursor moves anywhere and the car tilts toward it with a red headlight glow following like a spotlight. Huge white headline: "PARTENERUL TĂU PROFESIONAL" with text scramble entry. Bottom 40% white with a bold red pulsing CTA "SUNĂ ACUM" and the phone number massive. Scroll indicator at bottom.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="s2" onclick="toggleSelect(this)" style="flex-direction:column; align-items:flex-start; gap:8px;">
+    <div class="letter">2</div>
+    <div class="content" style="width:100%;">
+      <h3>Why Dan — 3 Animated Stat Cards</h3>
+      <p>White section, 3 large carbon fiber cards that tilt in 3D with cursor. Stats count up on scroll: "500+ Șoferi Parteneri", "3 Ani Experiență", "Disponibil 7/7". Red accent borders slide in on hover.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="s3" onclick="toggleSelect(this)" style="flex-direction:column; align-items:flex-start; gap:8px;">
+    <div class="letter">3</div>
+    <div class="content" style="width:100%;">
+      <h3>Fleet — Horizontal Car Showcase</h3>
+      <p>Dark section with GSAP horizontal scroll. Each car is a 3D flip card showing specs on hover. Red tag shows availability. Cars float with continuous loop animation. Real photos swap in later.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="s4" onclick="toggleSelect(this)" style="flex-direction:column; align-items:flex-start; gap:8px;">
+    <div class="letter">4</div>
+    <div class="content" style="width:100%;">
+      <h3>How It Works — 3 Steps</h3>
+      <p>White section, 3 steps with animated number reveals: "1. Sună-ne", "2. Alege Mașina", "3. Începe să Câștigi". Custom inline SVG icons that draw themselves on scroll. Red connecting line animates between steps.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="s5" onclick="toggleSelect(this)" style="flex-direction:column; align-items:flex-start; gap:8px;">
+    <div class="letter">5</div>
+    <div class="content" style="width:100%;">
+      <h3>Benefits — Feature Strip</h3>
+      <p>Dark carbon fiber section. Four floating icon cards: "Fără Garanție Mare", "Asigurare Inclusă", "Întreținere Asigurată", "Contract Flexibil". Inline SVG icons with staggered float animations. Red glow on hover.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="s6" onclick="toggleSelect(this)" style="flex-direction:column; align-items:flex-start; gap:8px;">
+    <div class="letter">6</div>
+    <div class="content" style="width:100%;">
+      <h3>Contact — Call to Action</h3>
+      <p>White section split in two. Left: massive phone number with pulse ring FAB, address at Strada Fabrica de Chibrituri 24-26 Sector 5, WhatsApp button. Right: embedded Google Maps. No form, just call.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="s7" onclick="toggleSelect(this)" style="flex-direction:column; align-items:flex-start; gap:8px;">
+    <div class="letter">7</div>
+    <div class="content" style="width:100%;">
+      <h3>Footer</h3>
+      <p>Dark minimal footer. Logo placeholder left, copyright center, social icons right. Carbon fiber texture, thin red top border.</p>
+    </div>
+  </div>
+
+</div>
+
+<div style="margin-top:20px; padding:16px; background:#fff8f8; border-left:4px solid #e02020; border-radius:4px;">
+  <p style="margin:0; font-family:sans-serif; font-size:13px; color:#333;"><strong>Stack:</strong> Vanilla HTML/CSS/JS. Three.js for 3D hero. GSAP for animations and horizontal fleet scroll. Lenis for smooth scroll. Barlow Condensed. Full scroll snap. 4K ACESFilmic renderer with bloom post-processing.</p>
+</div>

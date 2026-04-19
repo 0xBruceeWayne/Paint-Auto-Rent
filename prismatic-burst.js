@@ -7,8 +7,8 @@
 
   /* ── Config ── */
   const CFG = {
-    colors:    ['#ff0000', '#d5d5d5', '#ec0000'],
-    intensity:  2.4,
+    colors:    ['#1a6ae8', '#4db8ff', '#0a4fd4'],
+    intensity:  3.4,
     speed:      0.18,    // very slow ray animation
     animType:   2,       // 0=rotate  1=rotate3d  2=hover
     distort:    6,
@@ -121,7 +121,7 @@ void main(){
   float jitterAmp = 0.1 * clamp(uNoiseAmount,0.0,1.0);
   vec3 dir = rayDir(frag, uResolution, uOffset, 1.0);
   float marchT = 0.0;
-  vec3 col = vec3(0.0);
+  vec3 col = vec3(0.03, 0.07, 0.30);
   float n = layeredNoise(frag);
   vec4 c4 = cos(t*0.2 + vec4(0.0,33.0,11.0,0.0));
   mat2 M2 = mat2(c4.x,c4.y,c4.z,c4.w);

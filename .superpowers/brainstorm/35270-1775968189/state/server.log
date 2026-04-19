@@ -1,0 +1,4 @@
+{"type":"server-started","port":61986,"host":"0.0.0.0","url_host":"192.168.1.132","url":"http://192.168.1.132:61986","screen_dir":"/Users/brucewayne/Desktop/VOSSWeb3D Design/Website Car Rent Dan/.superpowers/brainstorm/35270-1775968189/content","state_dir":"/Users/brucewayne/Desktop/VOSSWeb3D Design/Website Car Rent Dan/.superpowers/brainstorm/35270-1775968189/state"}
+{"type":"screen-added","file":"/Users/brucewayne/Desktop/VOSSWeb3D Design/Website Car Rent Dan/.superpowers/brainstorm/35270-1775968189/content/hero-variants.html"}
+{"type":"screen-added","file":"/Users/brucewayne/Desktop/VOSSWeb3D Design/Website Car Rent Dan/.superpowers/brainstorm/35270-1775968189/content/hero-pick.html"}
+{"type":"server-stopped","reason":"idle timeout"}

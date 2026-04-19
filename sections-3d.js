@@ -1,6 +1,9 @@
 /* sections-3d.js
    Effect 2 — Rotating 3D wireframe shape per section
    Effect 3 — Cinematic chrome slash dividers
+   Upgrade 1 — Mouse parallax per shape
+   Upgrade 2 — IntersectionObserver fade-in
+   Upgrade 3 — Depth-sorted edges (back→front)
 */
 (function () {
 
@@ -108,17 +111,42 @@
     SHAPES.rings = { v, e };
   })();
 
-  /* ─── Per-section config ─── */
+  /* ─── Per-section config — multiple shapes per section ─── */
   const CFGS = [
-    { id:'de-ce',            shape:'octahedron',  size:680, sx:0.00080, sy:0.00130, ox:0.82, oy:0.50 },
-    { id:'flota',            shape:'torus',       size:720, sx:0.00050, sy:0.00090, ox:0.14, oy:0.55 },
-    { id:'cum-functioneaza', shape:'cube',        size:660, sx:0.00100, sy:0.00070, ox:0.82, oy:0.50 },
-    { id:'parteneri',        shape:'diamond',     size:560, sx:0.00090, sy:0.00120, ox:0.18, oy:0.50 },
-    { id:'testimoniale',     shape:'icosahedron', size:740, sx:0.00065, sy:0.00085, ox:0.82, oy:0.48 },
-    { id:'contact',          shape:'rings',       size:660, sx:0.00000, sy:0.00095, ox:0.80, oy:0.52 },
+    { id:'de-ce', dark:false, shapes:[
+      { shape:'octahedron', size:520, sx:0.00080, sy:0.00130, ox:0.88, oy:0.25 },
+      { shape:'cube',       size:300, sx:0.00130, sy:0.00060, ox:0.08, oy:0.72 },
+      { shape:'diamond',    size:220, sx:0.00060, sy:0.00150, ox:0.48, oy:0.90 },
+    ]},
+    { id:'flota', dark:true, shapes:[
+      { shape:'torus',       size:560, sx:0.00050, sy:0.00090, ox:0.10, oy:0.50 },
+      { shape:'icosahedron', size:340, sx:0.00110, sy:0.00070, ox:0.88, oy:0.25 },
+      { shape:'rings',       size:260, sx:0.00000, sy:0.00120, ox:0.82, oy:0.80 },
+    ]},
+    { id:'cum-functioneaza', dark:false, shapes:[] },
+    { id:'parteneri', dark:false, shapes:[
+      { shape:'diamond',    size:480, sx:0.00090, sy:0.00120, ox:0.12, oy:0.50 },
+      { shape:'cube',       size:280, sx:0.00060, sy:0.00090, ox:0.86, oy:0.25 },
+      { shape:'octahedron', size:200, sx:0.00120, sy:0.00080, ox:0.80, oy:0.82 },
+    ]},
+    { id:'testimoniale', dark:true, shapes:[
+      { shape:'icosahedron', size:580, sx:0.00065, sy:0.00085, ox:0.86, oy:0.45 },
+      { shape:'torus',       size:340, sx:0.00090, sy:0.00060, ox:0.10, oy:0.22 },
+      { shape:'diamond',     size:240, sx:0.00050, sy:0.00130, ox:0.14, oy:0.80 },
+    ]},
+    { id:'contact', dark:false, shapes:[
+      { shape:'rings',       size:520, sx:0.00000, sy:0.00095, ox:0.84, oy:0.50 },
+      { shape:'icosahedron', size:300, sx:0.00080, sy:0.00070, ox:0.10, oy:0.25 },
+      { shape:'cube',        size:220, sx:0.00110, sy:0.00110, ox:0.12, oy:0.80 },
+    ]},
   ];
 
-  const DARK_IDS = new Set(['flota', 'testimoniale']);
+  /* ─── Global mouse position (normalised -1..1) ─── */
+  let gMouseX = 0, gMouseY = 0;
+  window.addEventListener('mousemove', e => {
+    gMouseX = (e.clientX / window.innerWidth  - 0.5) * 2;
+    gMouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+  }, { passive: true });
 
   /* ─── Build canvas overlays ─── */
   const instances = [];
@@ -133,44 +161,53 @@
     cvs.style.cssText = [
       'position:absolute', 'inset:0', 'width:100%', 'height:100%',
       'pointer-events:none', 'z-index:0',
+      /* Upgrade 2 — start invisible, fade in via JS */
+      'opacity:0', 'transition:opacity 0.9s ease',
     ].join(';');
     sec.insertBefore(cvs, sec.firstChild);
 
     const ctx  = cvs.getContext('2d');
-    const sh   = SHAPES[cfg.shape];
-    const dark = DARK_IDS.has(cfg.id);
-    const state = { ax: 0, ay: 0, W: 0, H: 0 };
+    const dark = cfg.dark;
+
+    /* each shape gets its own rotation state */
+    const states = cfg.shapes.map(() => ({ ax: 0, ay: 0 }));
+    const secState = { W: 0, H: 0 };
 
     function resize() {
-      state.W = cvs.width  = sec.offsetWidth  || window.innerWidth;
-      state.H = cvs.height = sec.offsetHeight || window.innerHeight;
+      secState.W = cvs.width  = sec.offsetWidth  || window.innerWidth;
+      secState.H = cvs.height = sec.offsetHeight || window.innerHeight;
     }
     resize();
 
-    function tick() {
-      const { W, H, ax, ay } = state;
-      ctx.clearRect(0, 0, W, H);
+    /* Upgrade 3 — depth-sorted drawShape */
+    function drawShape(sh, sc, fov, cx, cy, ax, ay, parallaxX, parallaxY) {
+      const col = dark ? '255,210,0' : '10,10,10';
+      const lwBase = dark ? 1.6 : 1.7;
 
-      const cx = W * cfg.ox;
-      const cy = H * cfg.oy;
-      const sc = cfg.size * 0.5;
-      const fov = cfg.size * 1.6;
+      /* apply parallax offset to centre */
+      const pcx = cx + parallaxX;
+      const pcy = cy + parallaxY;
 
       let pts = sh.v.map(([x, y, z]) => [x * sc, y * sc, z * sc]);
       pts = rotX(pts, ax);
       pts = rotY(pts, ay);
-      const proj = project(pts, fov, cx, cy);
+      const proj = project(pts, fov, pcx, pcy);
 
-      const col = dark ? '255,65,65' : '200,10,10';
-      const lw  = dark ? 1.0 : 0.85;
+      /* sort edges back-to-front by average projected Z */
+      const sorted = sh.e.map(([i, j]) => {
+        const mz = (proj[i][2] + proj[j][2]) * 0.5;
+        return { i, j, mz };
+      }).sort((a, b) => a.mz - b.mz);
 
-      sh.e.forEach(([i, j]) => {
+      sorted.forEach(({ i, j }) => {
         const [px, py, pz] = proj[i];
         const [qx, qy, qz] = proj[j];
         const depth = ((pz + qz) * 0.5 + sc) / (sc * 2);
         const alpha = dark
-          ? (0.032 + depth * 0.062).toFixed(3)
-          : (0.028 + depth * 0.052).toFixed(3);
+          ? (0.06 + depth * 0.22).toFixed(3)
+          : (0.04 + depth * 0.18).toFixed(3);
+        /* front edges are thicker */
+        const lw = lwBase * (0.6 + depth * 0.8);
         ctx.beginPath();
         ctx.moveTo(px, py);
         ctx.lineTo(qx, qy);
@@ -180,8 +217,37 @@
       });
     }
 
-    instances.push({ cfg, state, tick, resize });
+    function tick() {
+      const { W, H } = secState;
+      ctx.clearRect(0, 0, W, H);
+
+      cfg.shapes.forEach((scfg, idx) => {
+        const sh  = SHAPES[scfg.shape];
+        const sc  = scfg.size * 0.5;
+        const fov = scfg.size * 1.6;
+        const cx  = W * scfg.ox;
+        const cy  = H * scfg.oy;
+        /* Upgrade 1 — parallax: shapes drift gently with mouse */
+        const pStrength = sc * 0.06;
+        const parallaxX = gMouseX * pStrength * (idx % 2 === 0 ? 1 : -0.7);
+        const parallaxY = gMouseY * pStrength * (idx % 2 === 0 ? 0.7 : -1);
+        drawShape(sh, sc, fov, cx, cy, states[idx].ax, states[idx].ay, parallaxX, parallaxY);
+      });
+    }
+
+    instances.push({ cfg, states, secState, tick, resize, cvs });
   });
+
+  /* ─── Upgrade 2 — IntersectionObserver fade-in ─── */
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      const inst = instances.find(i => i.cvs === entry.target);
+      if (!inst) return;
+      inst.cvs.style.opacity = entry.isIntersecting ? '1' : '0';
+    });
+  }, { threshold: 0.05 });
+
+  instances.forEach(inst => observer.observe(inst.cvs));
 
   /* ─── Inject chrome slash dividers ─── */
   CFGS.forEach((cfg, idx) => {
@@ -198,8 +264,10 @@
   /* ─── Loop ─── */
   function loop() {
     instances.forEach(inst => {
-      inst.state.ax += inst.cfg.sx;
-      inst.state.ay += inst.cfg.sy;
+      inst.cfg.shapes.forEach((scfg, idx) => {
+        inst.states[idx].ax += scfg.sx;
+        inst.states[idx].ay += scfg.sy;
+      });
       inst.tick();
     });
     requestAnimationFrame(loop);
@@ -209,4 +277,61 @@
 
   /* slight init delay so layout is settled */
   setTimeout(loop, 80);
+
+  /* ─── 3D Rotating Numbers for cum-functioneaza ─── */
+  (function initNumbers() {
+    const sec = document.getElementById('cum-functioneaza');
+    if (!sec) return;
+
+    const cvs = document.createElement('canvas');
+    cvs.style.cssText = [
+      'position:absolute','inset:0','width:100%','height:100%',
+      'pointer-events:none','z-index:0',
+      'opacity:0','transition:opacity 0.9s ease',
+    ].join(';');
+    sec.insertBefore(cvs, sec.firstChild);
+
+    const ctx = cvs.getContext('2d');
+    let W = 0, H = 0, t = 0;
+
+    function resize() {
+      W = cvs.width  = sec.offsetWidth  || window.innerWidth;
+      H = cvs.height = sec.offsetHeight || window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { cvs.style.opacity = e.isIntersecting ? '1' : '0'; });
+    }, { threshold: 0.05 });
+    obs.observe(cvs);
+
+    function draw() {
+      requestAnimationFrame(draw);
+      ctx.clearRect(0, 0, W, H);
+      t += 0.004;
+
+      const fontSize = Math.min(W * 0.20, H * 0.55);
+      ctx.font = `900 ${fontSize}px 'Barlow Condensed', sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      [['1', 0.18, 0.50], ['2', 0.50, 0.50], ['3', 0.82, 0.50]].forEach(([label, ox, oy], i) => {
+        const angle = t + i * (Math.PI * 2 / 3);
+        const cosA  = Math.cos(angle);
+        const depth = (Math.sin(angle) + 1) * 0.5;
+        const alpha = (0.05 + depth * 0.20).toFixed(3);
+
+        ctx.save();
+        ctx.translate(W * ox, H * oy);
+        ctx.transform(cosA, 0, 0, 1, 0, 0);
+        ctx.strokeStyle = `rgba(10,10,10,${alpha})`;
+        ctx.lineWidth   = Math.max(1, fontSize * 0.015);
+        ctx.strokeText(label, 0, 0);
+        ctx.restore();
+      });
+    }
+
+    draw();
+  })();
 })();

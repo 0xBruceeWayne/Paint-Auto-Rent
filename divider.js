@@ -5,7 +5,7 @@
 
   const ctx = canvas.getContext('2d');
   const STRIPE_W = 80;
-  const COLORS   = ['#cc0000', '#ffffff', '#0a0a0a'];
+  const COLORS   = ['#1a6ae8', '#ffffff', '#0a0a0a'];
   const SPEED     = 0.4;
 
   let W, H, offset = 0;
@@ -41,10 +41,10 @@
         grad.addColorStop(0, 'rgba(255,255,255,0)');
         grad.addColorStop(0.4, 'rgba(255,255,255,0.18)');
         grad.addColorStop(1, 'rgba(255,255,255,0.96)');
-      } else if (color === '#cc0000') {
-        grad.addColorStop(0, 'rgba(180,0,0,0)');
-        grad.addColorStop(0.4, 'rgba(200,0,0,0.22)');
-        grad.addColorStop(1, 'rgba(220,0,0,0.98)');
+      } else if (color === '#1a6ae8') {
+        grad.addColorStop(0, 'rgba(0,50,180,0)');
+        grad.addColorStop(0.4, 'rgba(10,70,200,0.22)');
+        grad.addColorStop(1, 'rgba(26,106,232,0.98)');
       } else {
         grad.addColorStop(0, 'rgba(10,10,10,0)');
         grad.addColorStop(0.4, 'rgba(10,10,10,0.5)');

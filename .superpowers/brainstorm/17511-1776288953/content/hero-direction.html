@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hero Direction — Car Rent Dan</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;800;900&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Barlow Condensed', system-ui, sans-serif;
+    background: #0f0f0f;
+    color: #fff;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  .page-header {
+    text-align: center;
+    padding: 32px 24px 16px;
+    border-bottom: 1px solid #2a2a2a;
+  }
+
+  .page-header h1 {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #fff;
+  }
+
+  .page-header p {
+    font-size: 1rem;
+    color: #888;
+    margin-top: 6px;
+    font-weight: 400;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 24px;
+    padding: 32px 24px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .design-card {
+    border: 2px solid #2a2a2a;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    background: #161616;
+  }
+
+  .design-card:hover {
+    border-color: #e02020;
+    transform: translateY(-4px);
+    box-shadow: 0 16px 48px rgba(224, 32, 32, 0.2);
+  }
+
+  .design-card.selected {
+    border-color: #e02020;
+    box-shadow: 0 0 0 3px rgba(224, 32, 32, 0.3), 0 16px 48px rgba(224, 32, 32, 0.25);
+  }
+
+  .design-card.selected .card-label {
+    background: #e02020;
+  }
+
+  /* -------- MOCKUP AREA -------- */
+  .mockup-area {
+    height: 260px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ===== OPTION A: CAR CENTERSTAGE ===== */
+  .mockup-a {
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mockup-a::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 50%, rgba(224,32,32,0.08) 0%, transparent 70%);
+  }
+
+  .mockup-a .nav-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 36px;
+    background: rgba(255,255,255,0.95);
+    border-bottom: 2px solid #e02020;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    justify-content: space-between;
+    z-index: 2;
+  }
+
+  .mockup-a .nav-brand {
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    color: #0a0a0a;
+    text-transform: uppercase;
+  }
+
+  .mockup-a .nav-brand span { color: #e02020; }
+
+  .mockup-a .stripe-left, .mockup-a .stripe-right {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 40px;
+    background: repeating-linear-gradient(
+      -45deg,
+      #e02020 0, #e02020 4px,
+      #0a0a0a 4px, #0a0a0a 10px
+    );
+    opacity: 0.9;
+  }
+
+  .mockup-a .stripe-left { left: 0; }
+  .mockup-a .stripe-right { right: 0; }
+
+  .mockup-a .car-silhouette {
+    width: 200px;
+    height: 80px;
+    position: relative;
+    margin-top: 16px;
+  }
+
+  .mockup-a .car-silhouette::before {
+    content: '🚗';
+    font-size: 72px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    filter: drop-shadow(0 8px 24px rgba(0,0,0,0.2));
+  }
+
+  .mockup-a .car-platform {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 180px;
+    height: 6px;
+    background: linear-gradient(90deg, transparent, #e02020, transparent);
+    border-radius: 50%;
+    opacity: 0.6;
+  }
+
+  .mockup-a .headline-text {
+    position: absolute;
+    bottom: 18px;
+    left: 0; right: 0;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #0a0a0a;
+  }
+
+  .mockup-a .cta-btn {
+    position: absolute;
+    top: 52px;
+    right: 16px;
+    background: #e02020;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 3px;
+  }
+
+  /* ===== OPTION B: SPEED PORTAL ===== */
+  .mockup-b {
+    background: #0a0a0a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .mockup-b::before {
+    content: '';
+    position: absolute;
+    inset: -20px;
+    background: repeating-conic-gradient(#1a1a1a 0%, #1a1a1a 25%, #111 25%, #111 50%) 0 0 / 20px 20px;
+    opacity: 0.3;
+  }
+
+  .mockup-b .tunnel-rings {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mockup-b .ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid;
+  }
+
+  .mockup-b .ring:nth-child(1) { width: 80px; height: 80px; border-color: rgba(224,32,32,0.9); }
+  .mockup-b .ring:nth-child(2) { width: 140px; height: 140px; border-color: rgba(224,32,32,0.6); }
+  .mockup-b .ring:nth-child(3) { width: 210px; height: 210px; border-color: rgba(224,32,32,0.35); }
+  .mockup-b .ring:nth-child(4) { width: 290px; height: 290px; border-color: rgba(224,32,32,0.2); }
+  .mockup-b .ring:nth-child(5) { width: 380px; height: 380px; border-color: rgba(224,32,32,0.1); }
+
+  .mockup-b .light-streaks {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .mockup-b .streak {
+    position: absolute;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+    top: 50%;
+  }
+
+  .mockup-b .streak:nth-child(1) { width: 60%; left: 0; transform: translateY(-30px) rotate(-8deg); }
+  .mockup-b .streak:nth-child(2) { width: 50%; right: 0; transform: translateY(20px) rotate(5deg); }
+  .mockup-b .streak:nth-child(3) { width: 40%; left: 10%; transform: translateY(45px) rotate(-3deg); }
+
+  .mockup-b .center-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+  }
+
+  .mockup-b .big-text {
+    font-size: 36px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: #ffffff;
+    text-transform: uppercase;
+    text-shadow: 0 0 40px rgba(224,32,32,0.8);
+  }
+
+  .mockup-b .big-text span { color: #e02020; }
+
+  .mockup-b .sub-text {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: #888;
+    margin-top: 6px;
+    text-transform: uppercase;
+  }
+
+  .mockup-b .cta-strip {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: #e02020;
+    padding: 8px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* ===== OPTION C: KINETIC CARDS ===== */
+  .mockup-c {
+    background: #ffffff;
+    position: relative;
+  }
+
+  .mockup-c .stripe-banner {
+    position: absolute;
+    top: 36px; left: 0; right: 0;
+    height: 18px;
+    background: repeating-linear-gradient(
+      -45deg,
+      #e02020 0, #e02020 5px,
+      #0a0a0a 5px, #0a0a0a 12px
+    );
+  }
+
+  .mockup-c .nav-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 36px;
+    background: #0a0a0a;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    justify-content: space-between;
+  }
+
+  .mockup-c .nav-brand {
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    color: #fff;
+    text-transform: uppercase;
+  }
+
+  .mockup-c .nav-brand span { color: #e02020; }
+
+  .mockup-c .main-headline {
+    position: absolute;
+    top: 66px; left: 20px;
+    z-index: 3;
+  }
+
+  .mockup-c .main-headline .big {
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 0.9;
+    color: #0a0a0a;
+    text-transform: uppercase;
+  }
+
+  .mockup-c .main-headline .red { color: #e02020; }
+
+  .mockup-c .main-headline .small {
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: #888;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .mockup-c .floating-cards {
+    position: absolute;
+    right: 16px;
+    top: 56px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .mockup-c .f-card {
+    width: 72px;
+    border-radius: 6px;
+    overflow: hidden;
+    transform-origin: top center;
+  }
+
+  .mockup-c .f-card:nth-child(1) { transform: rotate(-6deg) translateY(8px); }
+  .mockup-c .f-card:nth-child(2) { transform: rotate(0deg); }
+  .mockup-c .f-card:nth-child(3) { transform: rotate(5deg) translateY(4px); }
+
+  .mockup-c .f-card-header {
+    height: 50px;
+    background: repeating-linear-gradient(45deg,#1a1a1a,#1a1a1a 2px,#222 2px,#222 8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+
+  .mockup-c .f-card-body {
+    background: #0a0a0a;
+    padding: 6px 6px 4px;
+  }
+
+  .mockup-c .f-card-title {
+    font-size: 7px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #fff;
+  }
+
+  .mockup-c .f-card-price {
+    font-size: 9px;
+    font-weight: 800;
+    color: #e02020;
+    margin-top: 2px;
+  }
+
+  .mockup-c .cta-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: #e02020;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border-radius: 3px;
+  }
+
+  .mockup-c .phone-num {
+    position: absolute;
+    bottom: 22px;
+    left: 130px;
+    font-size: 14px;
+    font-weight: 900;
+    color: #0a0a0a;
+    letter-spacing: 0.05em;
+  }
+
+  /* -------- CARD LABEL & INFO -------- */
+  .card-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #2a2a2a;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 4px;
+    margin: 16px 16px 0;
+    transition: background 0.2s;
+  }
+
+  .card-label .letter {
+    background: rgba(255,255,255,0.15);
+    border-radius: 3px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+
+  .card-info {
+    padding: 12px 16px 20px;
+  }
+
+  .card-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+
+  .card-desc {
+    font-size: 0.9rem;
+    color: #888;
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .tag {
+    background: #1e1e1e;
+    border: 1px solid #333;
+    color: #aaa;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+  }
+
+  .tag.red { border-color: rgba(224,32,32,0.4); color: #e02020; background: rgba(224,32,32,0.08); }
+
+  .question-header {
+    text-align: center;
+    padding: 40px 24px 8px;
+  }
+
+  .question-header h2 {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #fff;
+  }
+
+  .question-header p {
+    font-size: 1rem;
+    color: #888;
+    margin-top: 8px;
+  }
+
+  .checkmark {
+    display: none;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    background: #e02020;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+
+  .design-card.selected .checkmark { display: flex; }
+</style>
+</head>
+<body>
+
+<div class="question-header">
+  <h2>Hero Visual Direction</h2>
+  <p>Which 3D hero concept fits Car Rent Dan? Click to select.</p>
+</div>
+
+<div class="cards-grid">
+
+  <!-- OPTION A -->
+  <div class="design-card" onclick="selectCard(this, 'A')" data-choice="A">
+    <div class="checkmark">✓</div>
+    <div class="mockup-area mockup-a">
+      <div class="nav-bar">
+        <div class="nav-brand">Dan <span>RENT</span></div>
+        <div class="cta-btn">☎ Sună acum</div>
+      </div>
+      <div class="stripe-left"></div>
+      <div class="stripe-right"></div>
+      <div class="car-silhouette"></div>
+      <div class="car-platform"></div>
+      <div class="headline-text">Închiriază azi. Câștigă mâine.</div>
+    </div>
+    <span class="card-label"><span class="letter">A</span> Car on Stage</span>
+    <div class="card-info">
+      <div class="card-title">3D Car Centerstage</div>
+      <div class="card-desc">White background. A Three.js car rotates on a glowing red platform. Diagonal stripes frame the sides. The car IS the hero — crisp, premium, desirable.</div>
+      <div class="card-tags">
+        <span class="tag red">Three.js model</span>
+        <span class="tag">360° rotation</span>
+        <span class="tag">Red glow</span>
+        <span class="tag">White + carbon</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION B -->
+  <div class="design-card" onclick="selectCard(this, 'B')" data-choice="B">
+    <div class="checkmark">✓</div>
+    <div class="mockup-area mockup-b">
+      <div class="tunnel-rings">
+        <div class="ring"></div>
+        <div class="ring"></div>
+        <div class="ring"></div>
+        <div class="ring"></div>
+        <div class="ring"></div>
+      </div>
+      <div class="light-streaks">
+        <div class="streak"></div>
+        <div class="streak"></div>
+        <div class="streak"></div>
+      </div>
+      <div class="center-content">
+        <div class="big-text">SUNĂ<br><span>ACUM</span></div>
+        <div class="sub-text">Bucharest · Ready in 1h</div>
+      </div>
+      <div class="cta-strip">☎ +40 770 000 000</div>
+    </div>
+    <span class="card-label"><span class="letter">B</span> Speed Portal</span>
+    <div class="card-info">
+      <div class="card-title">Red Speed Tunnel</div>
+      <div class="card-desc">Dark background. First-person perspective rushing through a red light-speed tunnel — rings, streaks, particle burst. Phone number is the CTA, impossible to miss.</div>
+      <div class="card-tags">
+        <span class="tag red">Tunnel geometry</span>
+        <span class="tag">Light particles</span>
+        <span class="tag">Speed streaks</span>
+        <span class="tag">Dark + red</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION C -->
+  <div class="design-card" onclick="selectCard(this, 'C')" data-choice="C">
+    <div class="checkmark">✓</div>
+    <div class="mockup-area mockup-c">
+      <div class="nav-bar">
+        <div class="nav-brand">Dan <span>RENT</span></div>
+      </div>
+      <div class="stripe-banner"></div>
+      <div class="main-headline">
+        <div class="big">RENT<br><span class="red">&</span><br>EARN</div>
+        <div class="small">Pentru șoferi Uber &amp; Bolt</div>
+      </div>
+      <div class="floating-cards">
+        <div class="f-card">
+          <div class="f-card-header">🚗</div>
+          <div class="f-card-body">
+            <div class="f-card-title">Dacia Spring</div>
+            <div class="f-card-price">49€/zi</div>
+          </div>
+        </div>
+        <div class="f-card">
+          <div class="f-card-header">⚡</div>
+          <div class="f-card-body">
+            <div class="f-card-title">Tesla Model 3</div>
+            <div class="f-card-price">89€/zi</div>
+          </div>
+        </div>
+        <div class="f-card">
+          <div class="f-card-header">🔥</div>
+          <div class="f-card-body">
+            <div class="f-card-title">Skoda Octavia</div>
+            <div class="f-card-price">65€/zi</div>
+          </div>
+        </div>
+      </div>
+      <div class="cta-btn">☎ Sună acum</div>
+      <div class="phone-num">+40 770 000 000</div>
+    </div>
+    <span class="card-label"><span class="letter">C</span> Bold Type + Cards</span>
+    <div class="card-info">
+      <div class="card-title">Kinetic Typography + 3D Cards</div>
+      <div class="card-desc">White base with bold Barlow Condensed headline. Carbon fiber cards tilt in 3D with GSAP. Stripe banner accent. Drivers see cars + prices immediately.</div>
+      <div class="card-tags">
+        <span class="tag red">Car cards 3D tilt</span>
+        <span class="tag">Price visible</span>
+        <span class="tag">Stripes accent</span>
+        <span class="tag">White + carbon</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let selected = null;
+
+  function selectCard(el, choice) {
+    document.querySelectorAll('.design-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selected = choice;
+
+    // Record to events file via beacon
+    try {
+      const text = el.querySelector('.card-title')?.textContent || choice;
+      fetch('/event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'click', choice, text })
+      });
+    } catch(e) {}
+  }
+</script>
+
+</body>
+</html>
