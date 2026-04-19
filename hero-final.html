@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paint Auto Rent — Mașini pentru Șoferi Uber &amp; Bolt</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<script type="importmap">
+{
+  "imports": {
+    "three":          "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js",
+    "three/addons/":  "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"
+  }
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<link rel="stylesheet" href="hero.css">
+</head>
+<body>
+
+<div id="map-global"></div>
+<div id="map-overlay"></div>
+<div id="section-flash"></div>
+<div id="cur"></div>
+<div id="cring"></div>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 1 — HERO
+══════════════════════════════════════════════════════ -->
+<section id="hero">
+  <div id="map-bg"></div>
+  <div class="map-vignette"></div>
+  <canvas id="spc"></canvas>
+
+  <!-- LEFT SIDE PANEL -->
+  <div class="hero-side hero-side--left" aria-hidden="true">
+    <div class="hside-top">
+      <div class="hside-dot"></div>
+      <div class="hside-line">
+        <div class="hside-scanner"></div>
+      </div>
+    </div>
+    <div class="hside-brand">PAINT AUTO RENT</div>
+    <div class="hside-city">BUCUREȘTI · RO</div>
+  </div>
+
+  <!-- RIGHT SIDE PANEL -->
+  <div class="hero-side hero-side--right" aria-hidden="true">
+    <div class="hside-stat">
+      <div class="hside-sep"></div>
+      <div class="hside-num">20<span>+</span></div>
+      <div class="hside-tag">ȘOFERI</div>
+    </div>
+    <div class="hside-stat">
+      <div class="hside-sep"></div>
+      <div class="hside-num">48<span>H</span></div>
+      <div class="hside-tag">ACTIVARE</div>
+    </div>
+    <div class="hside-stat">
+      <div class="hside-sep"></div>
+      <div class="hside-num">24<span>/7</span></div>
+      <div class="hside-tag">SUPORT</div>
+    </div>
+  </div>
+
+  <div class="shell">
+
+    <!-- TOP CTA BUTTONS -->
+    <div class="top-btns" id="hbtns">
+      <button class="hbtn" data-target="#rezerva">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3-8.59A2 2 0 0 1 3.61 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17z"/></svg>
+        Rezervă Acum
+      </button>
+      <button class="hbtn" data-target="#flota">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        Vezi Flota
+      </button>
+      <button class="hbtn" data-target="#cum-functioneaza">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Cum Funcționează
+      </button>
+    </div>
+
+    <!-- CENTER WHITE CARD -->
+    <div class="mid">
+      <div class="hero-card" id="card">
+        <span class="c tl"></span><span class="c tr"></span>
+        <span class="c bl"></span><span class="c br"></span>
+
+        <div class="card-eyebrow" id="ey">Partener Uber &amp; Bolt — București</div>
+        <h1 class="card-hl" id="hl">PAINT<br><span class="red">AUTO</span><br><span class="ghost">RENT</span></h1>
+        <div class="card-sub" id="sub">Mașini pentru șoferi profesioniști &middot; Disponibil 7/7</div>
+
+        <form class="rent-form" id="rform" onsubmit="return false">
+          <button class="form-btn" type="button" id="contact-popup-btn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3-8.59A2 2 0 0 1 3.61 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17z"/></svg>
+            Contactează-ne Aici
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- BOTTOM STATS BAR -->
+    <div class="bottom-bar" id="bbar">
+      <div class="bbar-inner">
+        <div class="bstat">
+          <div class="bstat-n">500<em>+</em></div>
+          <div class="bstat-l">Șoferi Activi</div>
+        </div>
+        <div class="bbar-sep"></div>
+        <div class="bstat">
+          <div class="bstat-n">3</div>
+          <div class="bstat-l">Ani Experiență</div>
+        </div>
+        <div class="bbar-sep"></div>
+        <div class="bstat">
+          <div class="bstat-n">7<em>/7</em></div>
+          <div class="bstat-l">Disponibil</div>
+        </div>
+        <div class="bbar-sep"></div>
+        <div class="bstat bstat-phone">
+          <div class="bstat-tag">Sună Acum</div>
+          <a href="tel:+40000000000" class="bstat-num">+40 700 000 000</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 2 — DE CE PAINT AUTO RENT
+══════════════════════════════════════════════════════ -->
+<section id="de-ce" class="sec sec-white">
+  <div class="sec-inner">
+    <div class="sec-head reveal-up">
+      <div class="sec-eyebrow">Motivele noastre</div>
+      <h2 class="sec-title">DE CE PAINT AUTO RENT?</h2>
+      <p class="sec-desc">Singurul lucru de care ai nevoie ca să câștigi cu Uber sau Bolt — o mașină de încredere, la un preț corect.</p>
+    </div>
+
+    <div class="stat-cards">
+      <div class="stat-card reveal-up" data-delay="0">
+        <div class="stat-num" data-count="500">0<em>+</em></div>
+        <div class="stat-label">Șoferi Activi</div>
+        <p class="stat-desc">Sute de șoferi au ales Paint Auto Rent pentru a-și construi o sursă de venit stabilă.</p>
+      </div>
+      <div class="stat-card reveal-up" data-delay="0.12">
+        <div class="stat-num" data-count="3">0</div>
+        <div class="stat-label">Ani pe Piață</div>
+        <p class="stat-desc">Experiență dovedită. Știm ce îți trebuie ca să pornești repede și legal.</p>
+      </div>
+      <div class="stat-card reveal-up" data-delay="0.24">
+        <div class="stat-num">7<em>/7</em></div>
+        <div class="stat-label">Disponibil Non-Stop</div>
+        <p class="stat-desc">Suntem la telefon în orice zi. Problemă cu mașina? Te ajutăm imediat.</p>
+      </div>
+    </div>
+
+    <div class="benefit-strip">
+      <div class="benefit reveal-up" data-delay="0">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="benefit-text">
+          <div class="benefit-title">Fără Garanție Mare</div>
+          <div class="benefit-sub">Depozit minim, accesibil oricui</div>
+        </div>
+      </div>
+      <div class="benefit reveal-up" data-delay="0.08">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div class="benefit-text">
+          <div class="benefit-title">Asigurare RCA Inclusă</div>
+          <div class="benefit-sub">Tot ce îți trebuie pentru activitate legală</div>
+        </div>
+      </div>
+      <div class="benefit reveal-up" data-delay="0.16">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.34 19.66l1.41-1.41M2 12h2M20 12h2M4.34 4.34l1.41 1.41M19.66 19.66l-1.41-1.41M12 2v2M12 20v2"/></svg>
+        </div>
+        <div class="benefit-text">
+          <div class="benefit-title">Întreținere Asigurată</div>
+          <div class="benefit-sub">Service și revizie acoperite de noi</div>
+        </div>
+      </div>
+      <div class="benefit reveal-up" data-delay="0.24">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div class="benefit-text">
+          <div class="benefit-title">Contract Flexibil</div>
+          <div class="benefit-sub">Renunți oricând, fără penalități</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 3 — FLOTA
+══════════════════════════════════════════════════════ -->
+<section id="flota" class="sec sec-dark">
+  <div class="sec-inner">
+    <div class="sec-head reveal-up">
+      <div class="sec-eyebrow sec-eyebrow--light">Mașinile noastre</div>
+      <h2 class="sec-title sec-title--light">FLOTA NOASTRĂ</h2>
+      <p class="sec-desc sec-desc--light">Mașini verificate, pregătite pentru Uber și Bolt. Toate cu ITP, RCA și revizie la zi.</p>
+    </div>
+
+    <div class="fleet-grid">
+      <div class="fleet-card reveal-up" data-delay="0">
+        <div class="fleet-img fleet-img--1">
+          <div class="fleet-badge fleet-badge--ok">DISPONIBIL</div>
+          <div class="fleet-price">350 <span>lei/săpt</span></div>
+        </div>
+        <div class="fleet-info">
+          <div class="fleet-name">Dacia Logan</div>
+          <div class="fleet-year">2022 · Euro 6</div>
+          <ul class="fleet-specs">
+            <li>5 locuri</li>
+            <li>Benzină / GPL</li>
+            <li>Cutie manuală</li>
+            <li>A/C · Bluetooth</li>
+          </ul>
+          <a href="tel:+40000000000" class="fleet-btn">Rezervă Acum</a>
+        </div>
+      </div>
+
+      <div class="fleet-card reveal-up" data-delay="0.1">
+        <div class="fleet-img fleet-img--2">
+          <div class="fleet-badge fleet-badge--ok">DISPONIBIL</div>
+          <div class="fleet-price">370 <span>lei/săpt</span></div>
+        </div>
+        <div class="fleet-info">
+          <div class="fleet-name">Dacia Sandero</div>
+          <div class="fleet-year">2023 · Euro 6</div>
+          <ul class="fleet-specs">
+            <li>5 locuri</li>
+            <li>Benzină</li>
+            <li>Cutie manuală</li>
+            <li>A/C · GPS · USB</li>
+          </ul>
+          <a href="tel:+40000000000" class="fleet-btn">Rezervă Acum</a>
+        </div>
+      </div>
+
+      <div class="fleet-card reveal-up" data-delay="0.2">
+        <div class="fleet-img fleet-img--3">
+          <div class="fleet-badge fleet-badge--busy">OCUPAT</div>
+          <div class="fleet-price">450 <span>lei/săpt</span></div>
+        </div>
+        <div class="fleet-info">
+          <div class="fleet-name">Skoda Octavia</div>
+          <div class="fleet-year">2021 · Euro 6</div>
+          <ul class="fleet-specs">
+            <li>5 locuri</li>
+            <li>Diesel</li>
+            <li>Cutie automată</li>
+            <li>A/C · GPS · Piele</li>
+          </ul>
+          <a href="tel:+40000000000" class="fleet-btn fleet-btn--busy">Indisponibil</a>
+        </div>
+      </div>
+
+      <div class="fleet-card reveal-up" data-delay="0.3">
+        <div class="fleet-img fleet-img--4">
+          <div class="fleet-badge fleet-badge--ok">DISPONIBIL</div>
+          <div class="fleet-price">480 <span>lei/săpt</span></div>
+        </div>
+        <div class="fleet-info">
+          <div class="fleet-name">Volkswagen Golf</div>
+          <div class="fleet-year">2022 · Euro 6</div>
+          <ul class="fleet-specs">
+            <li>5 locuri</li>
+            <li>Benzină</li>
+            <li>Cutie automată</li>
+            <li>A/C · Navi · Lane Assist</li>
+          </ul>
+          <a href="tel:+40000000000" class="fleet-btn">Rezervă Acum</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 4 — CUM FUNCȚIONEAZĂ
+══════════════════════════════════════════════════════ -->
+<section id="cum-functioneaza" class="sec sec-white">
+  <div class="sec-inner">
+    <div class="sec-head reveal-up">
+      <div class="sec-eyebrow">Procesul simplu</div>
+      <h2 class="sec-title">CUM FUNCȚIONEAZĂ?</h2>
+      <p class="sec-desc">De la primul telefon la prima cursă — totul în mai puțin de 24 de ore.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step reveal-up" data-delay="0">
+        <div class="step-num">01</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3-8.59A2 2 0 0 1 3.61 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17z"/></svg>
+        </div>
+        <div class="step-title">Sună-ne</div>
+        <div class="step-desc">Contactează-ne telefonic și spune-ne ce mașină ai nevoie și pentru cât timp. Discutăm detaliile rapid.</div>
+      </div>
+      <div class="step-arrow reveal-up" data-delay="0.1">→</div>
+      <div class="step reveal-up" data-delay="0.15">
+        <div class="step-num">02</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        </div>
+        <div class="step-title">Alege Mașina</div>
+        <div class="step-desc">Vino la sediul nostru și alege mașina potrivită din flota disponibilă. Semnăm contractul pe loc.</div>
+      </div>
+      <div class="step-arrow reveal-up" data-delay="0.25">→</div>
+      <div class="step reveal-up" data-delay="0.3">
+        <div class="step-num">03</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        </div>
+        <div class="step-title">Începe să Câștigi</div>
+        <div class="step-desc">Pornești activitatea cu Uber sau Bolt în aceeași zi. Câștigurile sunt ale tale 100%.</div>
+      </div>
+    </div>
+
+    <div class="steps-cta reveal-up">
+      <a href="tel:+40000000000" class="cta-big-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3-8.59A2 2 0 0 1 3.61 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17z"/></svg>
+        Sună Acum — +40 700 000 000
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 6 — PARTENERI
+══════════════════════════════════════════════════════ -->
+<section id="parteneri" class="sec sec-white sec--compact">
+  <div class="sec-inner">
+    <div class="sec-head reveal-up">
+      <div class="sec-eyebrow">Colaborăm cu</div>
+      <h2 class="sec-title">PLATFORMELE NOASTRE PARTENERE</h2>
+      <p class="sec-desc">Mașinile din flota noastră sunt înregistrate și pregătite legal pentru toate platformele de transport alternativ.</p>
+    </div>
+    <div class="partners-row reveal-up">
+      <div class="partner-logo">
+        <svg viewBox="0 0 120 40" fill="none"><text x="10" y="30" font-family="Arial Black" font-size="28" font-weight="900" fill="#000">Uber</text></svg>
+      </div>
+      <div class="partner-sep"></div>
+      <div class="partner-logo">
+        <svg viewBox="0 0 120 40" fill="none"><text x="6" y="30" font-family="Arial Black" font-size="28" font-weight="900" fill="#34D186">Bolt</text></svg>
+      </div>
+      <div class="partner-sep"></div>
+      <div class="partner-logo partner-logo--text">
+        <span>ARR</span>
+        <small>Autoritate Rutieră Română</small>
+      </div>
+    </div>
+    <div class="partner-tagline reveal-up">
+      Înregistrare, ecusoane și documentație completă — gata în 24h.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 7 — TESTIMONIALE
+══════════════════════════════════════════════════════ -->
+<section id="testimoniale" class="sec sec-dark">
+  <div class="sec-inner">
+    <div class="sec-head reveal-up">
+      <div class="sec-eyebrow sec-eyebrow--light">Ce spun șoferii noștri</div>
+      <h2 class="sec-title sec-title--light">TESTIMONIALE</h2>
+    </div>
+
+    <div class="testi-grid">
+      <div class="testi-card reveal-up" data-delay="0">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Lucrez cu Paint Auto Rent de 2 ani. Mașina mereu curată, service inclus fără bătăi de cap. Câștig constant cu Uber și sunt mulțumit de preț."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">MC</div>
+          <div>
+            <div class="testi-name">Mihai C.</div>
+            <div class="testi-role">Șofer Uber · 2 ani cu Paint Auto Rent</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card reveal-up" data-delay="0.12">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Cel mai bun preț din București. Fără bătăi de cap cu ITP, asigurare sau revizie. Paint Auto Rent se ocupă de tot. Recomand oricui vrea să înceapă."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">AT</div>
+          <div>
+            <div class="testi-name">Alexandru T.</div>
+            <div class="testi-role">Șofer Bolt · 1 an cu Paint Auto Rent</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card reveal-up" data-delay="0.24">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Echipa Paint Auto Rent e mereu la telefon când am nevoie. Odată am avut o problemă noaptea și în 30 de minute era rezolvată. Profesionalism total."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">FM</div>
+          <div>
+            <div class="testi-name">Florin M.</div>
+            <div class="testi-role">Șofer Uber & Bolt · 3 ani cu Paint Auto Rent</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 8 — CONTACT
+══════════════════════════════════════════════════════ -->
+<section id="contact" class="sec sec-white" id="rezerva">
+  <div class="sec-inner">
+    <div class="contact-split">
+      <div class="contact-left reveal-up">
+        <div class="sec-eyebrow">Vorbește cu noi</div>
+        <h2 class="sec-title">SUNĂ ACUM</h2>
+        <p class="contact-desc">Nu așteptăm formulare. Un telefon și discutăm tot în câteva minute.</p>
+
+        <a href="tel:+40000000000" class="contact-phone">+40 700 000 000</a>
+
+        <div class="contact-actions">
+          <a href="https://wa.me/40700000000" class="contact-wa">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.855L0 24l6.335-1.508A11.933 11.933 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.007-1.374l-.36-.213-3.728.888.918-3.618-.234-.372A9.818 9.818 0 0 1 2.182 12C2.182 6.568 6.568 2.182 12 2.182S21.818 6.568 21.818 12 17.432 21.818 12 21.818z"/></svg>
+            WhatsApp
+          </a>
+          <div class="contact-address">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Str. Fabrica de Chibrituri 24-26, Sector 5, București
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-right reveal-up" data-delay="0.15">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2849.123456789!2d26.0945!3d44.4165!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDTCsDI0JzU5LjQiTiAyNsKwMDUnNDAuMiJF!5e0!3m2!1sro!2sro!4v1"
+          width="100%" height="100%"
+          style="border:0;" allowfullscreen="" loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════════ -->
+<footer id="footer">
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="footer-logo" id="footer-logo">PAINT<span>RENT</span></div>
+      <div class="footer-tagline">Partenerul tău de încredere pentru Uber &amp; Bolt în București.</div>
+    </div>
+    <div class="footer-links">
+      <a href="#de-ce">De Ce Paint Auto Rent</a>
+      <a href="#flota">Flota</a>
+      <a href="#cum-functioneaza">Cum Funcționează</a>
+      <a href="#calculator">Calculator</a>
+      <a href="#testimoniale">Testimoniale</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="footer-contact">
+      <a href="tel:+40000000000">+40 700 000 000</a>
+      <a href="mailto:paintautorent@email.ro">paintautorent@email.ro</a>
+      <span>Str. Fabrica de Chibrituri 24-26<br>Sector 5, București</span>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Paint Auto Rent SRL · Toate drepturile rezervate</span>
+    <span>CIF: RO000000000</span>
+  </div>
+</footer>
+
+<!-- PHONE POPUP -->
+<div id="phone-popup" class="phone-popup" aria-hidden="true">
+  <div class="phone-popup-box">
+    <button class="phone-popup-close" id="popup-close" aria-label="Închide">✕</button>
+    <div class="phone-popup-icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3-8.59A2 2 0 0 1 3.61 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17z"/></svg>
+    </div>
+    <div class="phone-popup-label">Sună-ne acum</div>
+    <a href="tel:+40700000000" class="phone-popup-num">+40 700 000 000</a>
+    <a href="https://wa.me/40700000000" class="phone-popup-wa">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.855L0 24l6.335-1.508A11.933 11.933 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.007-1.374l-.36-.213-3.728.888.918-3.618-.234-.372A9.818 9.818 0 0 1 2.182 12C2.182 6.568 6.568 2.182 12 2.182S21.818 6.568 21.818 12 17.432 21.818 12 21.818z"/></svg>
+      WhatsApp
+    </a>
+  </div>
+</div>
+
+<script src="prismatic-burst.js"></script>
+<script src="hero.js"></script>
+<script src="divider.js"></script>
+<script src="sections-3d.js"></script>
+<script type="module" src="hero-3d.js"></script>
+</body>
+</html>
