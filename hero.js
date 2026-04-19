@@ -88,7 +88,7 @@ document.querySelectorAll('a,button,.finput,select').forEach(el => {
       }
     }
 
-    for (let i = 0; i < 55; i++) particles.push(new Dot());
+    for (let i = 0; i < 28; i++) particles.push(new Dot());
     loop();
   };
 
@@ -192,13 +192,10 @@ document.querySelectorAll('a,button,.finput,select').forEach(el => {
     }
 
     draw() {
-      ctx.shadowBlur  = this.size * 7;
-      ctx.shadowColor = `rgba(30,110,220,${this.alpha * 0.5})`;
       ctx.beginPath();
       ctx.arc(this.rx, this.ry, this.size, 0, Math.PI * 2);
       ctx.fillStyle = `rgba(60,148,255,${this.alpha})`;
       ctx.fill();
-      ctx.shadowBlur = 0;
     }
   }
 
@@ -943,7 +940,7 @@ document.querySelectorAll('.benefit').forEach(b => {
   const pts  = [];
 
   window.addEventListener('mousemove', e => {
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 2; i++) {
       const col = COLS[i % COLS.length];
       pts.push({
         x: e.clientX, y: e.clientY,
@@ -964,17 +961,14 @@ document.querySelectorAll('.benefit').forEach(b => {
       p.x  += p.vx;
       p.y  += p.vy;
       p.vy += 0.08;
-      p.a  -= 0.038;
+      p.a  -= 0.05;
       p.r  *= 0.96;
       if (p.a <= 0) { pts.splice(i, 1); continue; }
       const [r,g,b] = p.col;
-      ctx.shadowBlur  = p.r * 5;
-      ctx.shadowColor = `rgba(${r},${g},${b},0.6)`;
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
       ctx.fillStyle = `rgba(${r},${g},${b},${p.a.toFixed(3)})`;
       ctx.fill();
     }
-    ctx.shadowBlur = 0;
   })();
 })();

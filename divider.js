@@ -77,10 +77,13 @@
     ctx.fillRect(0, 0, W, fadeH);
   }
 
-  function loop () {
+  let _last = 0;
+  function loop (ts) {
+    requestAnimationFrame(loop);
+    if (ts - _last < 33) return; // cap at ~30fps
+    _last = ts;
     offset += SPEED;
     drawStripes();
-    requestAnimationFrame(loop);
   }
 
   resize();

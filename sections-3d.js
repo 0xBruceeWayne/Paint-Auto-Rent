@@ -262,7 +262,11 @@
   });
 
   /* ─── Loop ─── */
-  function loop() {
+  let _sLast = 0;
+  function loop(ts) {
+    requestAnimationFrame(loop);
+    if (ts - _sLast < 33) return; // cap at ~30fps
+    _sLast = ts;
     instances.forEach(inst => {
       inst.cfg.shapes.forEach((scfg, idx) => {
         inst.states[idx].ax += scfg.sx;
@@ -270,7 +274,6 @@
       });
       inst.tick();
     });
-    requestAnimationFrame(loop);
   }
 
   window.addEventListener('resize', () => instances.forEach(i => i.resize()));
@@ -306,8 +309,11 @@
     }, { threshold: 0.05 });
     obs.observe(cvs);
 
-    function draw() {
+    let _nLast = 0;
+    function draw(ts) {
       requestAnimationFrame(draw);
+      if (ts - _nLast < 33) return;
+      _nLast = ts;
       ctx.clearRect(0, 0, W, H);
       t += 0.004;
 
