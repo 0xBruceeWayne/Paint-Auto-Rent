@@ -123,7 +123,11 @@
       { shape:'icosahedron', size:340, sx:0.00110, sy:0.00070, ox:0.88, oy:0.25 },
       { shape:'rings',       size:260, sx:0.00000, sy:0.00120, ox:0.82, oy:0.80 },
     ]},
-    { id:'cum-functioneaza', dark:false, shapes:[] },
+    { id:'cum-functioneaza', dark:false, shapes:[
+      { shape:'icosahedron', size:340, sx:0.00070, sy:0.00085, ox:0.91, oy:0.28 },
+      { shape:'rings',       size:260, sx:0.00000, sy:0.00100, ox:0.09, oy:0.72 },
+      { shape:'diamond',     size:180, sx:0.00055, sy:0.00130, ox:0.88, oy:0.82 },
+    ]},
     { id:'parteneri', dark:false, shapes:[
       { shape:'diamond',    size:480, sx:0.00090, sy:0.00120, ox:0.12, oy:0.50 },
       { shape:'cube',       size:280, sx:0.00060, sy:0.00090, ox:0.86, oy:0.25 },
