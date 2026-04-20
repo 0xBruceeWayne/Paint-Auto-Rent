@@ -737,23 +737,22 @@ body{
   pointer-events:none;
 }
 .step-icon{
-  width:88px;height:88px;margin:0 auto 24px;
+  width:120px;height:120px;margin:0 auto 28px;
   display:flex;align-items:center;justify-content:center;
   position:relative;z-index:1;
   border-radius:50%;
-  background:linear-gradient(135deg,#1a6ae8 0%,#0a4fd4 100%);
-  box-shadow:0 8px 32px rgba(26,106,232,.38),0 2px 8px rgba(26,106,232,.22),
-             inset 0 1px 0 rgba(255,255,255,.18);
-  transition:transform .3s ease, box-shadow .3s ease;
+  background:linear-gradient(135deg,#2275f0 0%,#0a4fd4 100%);
+  box-shadow:0 12px 40px rgba(26,106,232,.42),0 3px 10px rgba(26,106,232,.25),
+             inset 0 1px 0 rgba(255,255,255,.22);
+  transition:transform .35s ease, box-shadow .35s ease;
 }
 .step-icon:hover{
-  transform:translateY(-4px) scale(1.06);
-  box-shadow:0 16px 48px rgba(26,106,232,.5),0 4px 12px rgba(26,106,232,.3);
+  transform:translateY(-6px) scale(1.07);
+  box-shadow:0 22px 56px rgba(26,106,232,.55),0 6px 16px rgba(26,106,232,.32);
 }
 .step-icon svg{
-  width:36px;height:36px;
-  stroke:#fff;stroke-width:1.8;
-  filter:drop-shadow(0 1px 3px rgba(0,0,0,.25));
+  width:52px;height:52px;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,.3));
 }
 .step-icon canvas{ display:none; }
 .step-num{ display:none; }
