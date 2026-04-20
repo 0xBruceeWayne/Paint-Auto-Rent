@@ -762,6 +762,18 @@ body{
 }
 .step-desc{font-size:.82rem;color:rgba(0,0,0,.45);line-height:1.65}
 
+/* Blue filled frame for cum-functioneaza steps */
+#cum-functioneaza .step{
+  background:linear-gradient(145deg,#1e74f0 0%,#0a4fd4 100%);
+  border-radius:20px;
+  padding:40px 28px 36px;
+  box-shadow:0 12px 48px rgba(26,106,232,.32);
+  position:relative;
+}
+#cum-functioneaza .step-title{color:#fff;font-size:1.1rem}
+#cum-functioneaza .step-desc{color:rgba(255,255,255,.82)}
+#cum-functioneaza .step-arrow{color:#1a6ae8;padding-top:0;align-self:center}
+
 .step-arrow{
   font-size:2rem;color:var(--blue);padding-top:24px;
   opacity:.6;flex-shrink:0;

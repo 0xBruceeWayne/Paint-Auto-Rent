@@ -238,16 +238,17 @@
     instances.push({ cfg, states, secState, tick, resize, cvs });
   });
 
-  /* ─── Upgrade 2 — IntersectionObserver fade-in ─── */
+  /* ─── Upgrade 2 — IntersectionObserver fade-in + visibility gate ─── */
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       const inst = instances.find(i => i.cvs === entry.target);
       if (!inst) return;
+      inst.visible = entry.isIntersecting;
       inst.cvs.style.opacity = entry.isIntersecting ? '1' : '0';
     });
   }, { threshold: 0.05 });
 
-  instances.forEach(inst => observer.observe(inst.cvs));
+  instances.forEach(inst => { inst.visible = false; observer.observe(inst.cvs); });
 
   /* ─── Inject chrome slash dividers ─── */
   CFGS.forEach((cfg, idx) => {
@@ -261,13 +262,14 @@
     sec.insertBefore(slash, sec.firstChild);
   });
 
-  /* ─── Loop ─── */
+  /* ─── Loop — only render currently visible sections ─── */
   let _sLast = 0;
   function loop(ts) {
     requestAnimationFrame(loop);
     if (ts - _sLast < 33) return; // cap at ~30fps
     _sLast = ts;
     instances.forEach(inst => {
+      if (!inst.visible) return; // skip off-screen sections entirely
       inst.cfg.shapes.forEach((scfg, idx) => {
         inst.states[idx].ax += scfg.sx;
         inst.states[idx].ay += scfg.sy;

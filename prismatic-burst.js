@@ -333,10 +333,12 @@ void main(){
   ];
 
   /* ── Animation loop ── */
-  let last = performance.now(), elapsed = 0;
+  let last = performance.now(), elapsed = 0, _pLast = 0;
 
   function loop(now) {
     requestAnimationFrame(loop);
+    if (now - _pLast < 16.6) return; // cap at 60fps
+    _pLast = now;
     const dt = Math.max(0, Math.min(now - last, 100)) * 0.001;
     last = now;
     elapsed += dt;
