@@ -327,9 +327,9 @@ void main(){
 
   /* orb state: x,y in [0..1] hero-relative; hw,hh = half-dimensions */
   const _orbs = [
-    { el:_o1, x:0.5, y:0.5, hw:340, hh:240, spd:0.012, inv:false },
-    { el:_o2, x:0.5, y:0.5, hw:190, hh:190, spd:0.0065, inv:false },
-    { el:_o3, x:0.5, y:0.5, hw:480, hh:330, spd:0.003, inv:true  },
+    { el:_o1, x:0.5, y:0.5, hw:340, hh:240, spd:0.0036, inv:false },
+    { el:_o2, x:0.5, y:0.5, hw:190, hh:190, spd:0.002,  inv:false },
+    { el:_o3, x:0.5, y:0.5, hw:480, hh:330, spd:0.0009, inv:true  },
   ];
 
   /* ── Animation loop ── */
