@@ -14,8 +14,8 @@ html{
 }
 body{
   height:100%;overflow-x:hidden;overflow-y:scroll;cursor:none;
-  scroll-snap-type:y proximity;
   scroll-behavior:smooth;
+  overscroll-behavior-y:none;
 }
 
 /* ── VIGNETTE OVERLAY ────────────────────────────── */
@@ -69,7 +69,7 @@ body{
 #hero{
   position:relative;width:100vw;height:100vh;
   overflow:hidden;background:transparent;
-  scroll-snap-align:start;
+
 }
 
 /* MAP PHOTO — replaced by #map-global zoom background */
@@ -439,7 +439,7 @@ body{
 ══════════════════════════════════════════════════════ */
 .sec{
   padding:80px 80px;
-  scroll-snap-align:start;
+
   min-height:100vh;
   display:flex;align-items:center;
 }
@@ -994,7 +994,7 @@ body{
   -webkit-backdrop-filter:blur(8px);
   border-top:3px solid var(--blue);
   padding:50px 80px 24px;
-  scroll-snap-align:start;
+
 }
 .footer-inner{
   max-width:1100px;margin:0 auto;
