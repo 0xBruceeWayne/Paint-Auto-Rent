@@ -712,15 +712,80 @@ document.querySelectorAll('.stat-card, .testi-card').forEach(card => {
 });
 
 // ══════════════════════════════════════════════════════
-//  STEP ICONS — scale + color on hover
+//  STEP ICONS — scale + color on hover (non-cum sections)
 // ══════════════════════════════════════════════════════
 document.querySelectorAll('.step').forEach(step => {
   const icon = step.querySelector('.step-icon');
-  step.addEventListener('mouseenter', () => {
-    gsap.to(icon, { scale: 1.15, duration: 0.25, ease: 'back.out(2)' });
+  if (icon) {
+    step.addEventListener('mouseenter', () => {
+      gsap.to(icon, { scale: 1.15, duration: 0.25, ease: 'back.out(2)' });
+    });
+    step.addEventListener('mouseleave', () => {
+      gsap.to(icon, { scale: 1, duration: 0.4, ease: 'elastic.out(1,0.5)' });
+    });
+  }
+});
+
+// ══════════════════════════════════════════════════════
+//  CUM-FUNCTIONEAZA — liquid glass depth split
+//  On hover: title floats forward (Z+50), desc mid-layer
+//  (Z+25), card lifts + deepens shadow. Elastic snap-back.
+// ══════════════════════════════════════════════════════
+document.querySelectorAll('#cum-functioneaza .step').forEach((card, idx) => {
+  const title = card.querySelector('.step-title');
+  const desc  = card.querySelector('.step-desc');
+
+  gsap.set(card,  { transformPerspective: 900, transformStyle: 'preserve-3d' });
+  gsap.set(title, { transformStyle: 'preserve-3d', z: 0 });
+  gsap.set(desc,  { transformStyle: 'preserve-3d', z: 0 });
+
+  card.addEventListener('mouseenter', () => {
+    /* card lifts — no tilt, pure Z elevation */
+    gsap.to(card, {
+      y: -10, scale: 1.03,
+      boxShadow: [
+        '0 32px 80px rgba(26,106,232,.55)',
+        '0 0 48px rgba(100,180,255,.22)',
+        'inset 0 1px 0 rgba(255,255,255,.5)',
+        'inset 0 -1px 0 rgba(0,0,0,.14)',
+        'inset 1px 0 0 rgba(255,255,255,.25)',
+        'inset -1px 0 0 rgba(255,255,255,.14)',
+      ].join(','),
+      duration: 0.55, ease: 'power3.out',
+    });
+    /* title floats to front layer */
+    gsap.to(title, {
+      z: 52,
+      textShadow: '0 6px 24px rgba(255,255,255,.45), 0 2px 8px rgba(0,0,60,.3)',
+      duration: 0.55, ease: 'power3.out',
+    });
+    /* desc to mid layer */
+    gsap.to(desc, {
+      z: 26,
+      duration: 0.55, ease: 'power3.out',
+    });
   });
-  step.addEventListener('mouseleave', () => {
-    gsap.to(icon, { scale: 1, duration: 0.4, ease: 'elastic.out(1,0.5)' });
+
+  card.addEventListener('mouseleave', () => {
+    gsap.to(card, {
+      y: 0, scale: 1,
+      boxShadow: [
+        '0 12px 48px rgba(26,106,232,.32)',
+        'inset 0 1px 0 rgba(255,255,255,.38)',
+        'inset 0 -1px 0 rgba(0,0,0,.12)',
+        'inset 1px 0 0 rgba(255,255,255,.18)',
+        'inset -1px 0 0 rgba(255,255,255,.10)',
+      ].join(','),
+      duration: 0.9, ease: 'elastic.out(1, 0.45)',
+    });
+    gsap.to(title, {
+      z: 0, textShadow: 'none',
+      duration: 0.9, ease: 'elastic.out(1, 0.45)',
+    });
+    gsap.to(desc, {
+      z: 0,
+      duration: 0.9, ease: 'elastic.out(1, 0.45)',
+    });
   });
 });
 
