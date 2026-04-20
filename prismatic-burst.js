@@ -85,15 +85,13 @@ float layeredNoise(vec2 px){
   vec2 p = mod(px + vec2(uTime*30.0,-uTime*21.0), 1024.0);
   vec2 q = rot30()*p;
   float n = 0.0;
-  n += 0.36*vnoise(q);
-  n += 0.22*vnoise(q*2.0+17.0);
-  n += 0.16*vnoise(q*4.0+47.0);
-  n += 0.11*hash21(q*8.0+113.0);
-  n += 0.07*hash21(q*16.0+191.0);
-  n += 0.04*hash21(q*32.0+277.0);
-  n += 0.02*hash21(q*64.0+431.0);
-  n += 0.01*hash21(q*128.0+617.0);
-  n += 0.005*hash21(q*256.0+937.0);
+  n += 0.40*vnoise(q*0.5);
+  n += 0.28*vnoise(q);
+  n += 0.16*vnoise(q*2.0+17.0);
+  n += 0.09*vnoise(q*4.0+47.0);
+  n += 0.05*vnoise(q*8.0+113.0);
+  n += 0.015*vnoise(q*16.0+191.0);
+  n += 0.005*vnoise(q*32.0+277.0);
   return n;
 }
 vec3 rayDir(vec2 frag, vec2 res, vec2 offset, float dist){
