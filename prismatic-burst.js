@@ -304,6 +304,34 @@ void main(){
     mouseTarget[1] = Math.min(Math.max((e.clientY - r.top)   / r.height, 0), 1);
   }, { passive: true });
 
+  /* ── CSS cursor-glow orbs (DOM-based, always works) ── */
+  hero.style.overflow = 'hidden';
+  const _css = document.createElement('style');
+  _css.textContent = `
+.pb-orb{position:absolute;border-radius:50%;pointer-events:none;top:0;left:0;will-change:transform;}
+#pb-o1{width:680px;height:480px;
+  background:radial-gradient(ellipse,rgba(30,110,240,.65) 0%,rgba(26,106,232,.25) 42%,transparent 68%);
+  filter:blur(85px);z-index:3;}
+#pb-o2{width:380px;height:380px;
+  background:radial-gradient(circle,rgba(100,195,255,.55) 0%,rgba(77,184,255,.15) 50%,transparent 70%);
+  filter:blur(55px);z-index:4;}
+#pb-o3{width:960px;height:660px;
+  background:radial-gradient(ellipse,rgba(10,55,200,.35) 0%,rgba(8,40,180,.08) 55%,transparent 68%);
+  filter:blur(115px);z-index:2;}`;
+  document.head.appendChild(_css);
+
+  const _o1 = document.createElement('div'); _o1.className='pb-orb'; _o1.id='pb-o1';
+  const _o2 = document.createElement('div'); _o2.className='pb-orb'; _o2.id='pb-o2';
+  const _o3 = document.createElement('div'); _o3.className='pb-orb'; _o3.id='pb-o3';
+  hero.appendChild(_o1); hero.appendChild(_o2); hero.appendChild(_o3);
+
+  /* orb state: x,y in [0..1] hero-relative; hw,hh = half-dimensions */
+  const _orbs = [
+    { el:_o1, x:0.5, y:0.5, hw:340, hh:240, spd:0.10, inv:false },
+    { el:_o2, x:0.5, y:0.5, hw:190, hh:190, spd:0.055, inv:false },
+    { el:_o3, x:0.5, y:0.5, hw:480, hh:330, spd:0.022, inv:true  },
+  ];
+
   /* ── Animation loop ── */
   let last = performance.now(), elapsed = 0;
 
@@ -325,6 +353,16 @@ void main(){
     gl.bindVertexArray(vao);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     gl.bindVertexArray(null);
+
+    /* update CSS orb positions */
+    const hW = hero.clientWidth, hH = hero.clientHeight;
+    _orbs.forEach(o => {
+      const tx = o.inv ? 1 - mouseTarget[0] : mouseTarget[0];
+      const ty = o.inv ? 1 - mouseTarget[1] : mouseTarget[1];
+      o.x += (tx - o.x) * o.spd;
+      o.y += (ty - o.y) * o.spd;
+      o.el.style.transform = `translate(${o.x*hW - o.hw}px,${o.y*hH - o.hh}px)`;
+    });
   }
 
   requestAnimationFrame(loop);
