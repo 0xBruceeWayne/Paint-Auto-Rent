@@ -14,7 +14,7 @@ html{
 }
 body{
   height:100%;overflow-x:hidden;overflow-y:scroll;cursor:none;
-  scroll-snap-type:y mandatory;
+  scroll-snap-type:y proximity;
   scroll-behavior:smooth;
 }
 
@@ -737,12 +737,25 @@ body{
   pointer-events:none;
 }
 .step-icon{
-  width:120px;height:120px;margin:0 auto 22px;
+  width:88px;height:88px;margin:0 auto 24px;
   display:flex;align-items:center;justify-content:center;
   position:relative;z-index:1;
-  overflow:visible;
+  border-radius:50%;
+  background:linear-gradient(135deg,#1a6ae8 0%,#0a4fd4 100%);
+  box-shadow:0 8px 32px rgba(26,106,232,.38),0 2px 8px rgba(26,106,232,.22),
+             inset 0 1px 0 rgba(255,255,255,.18);
+  transition:transform .3s ease, box-shadow .3s ease;
 }
-.step-icon canvas{ display:block; }
+.step-icon:hover{
+  transform:translateY(-4px) scale(1.06);
+  box-shadow:0 16px 48px rgba(26,106,232,.5),0 4px 12px rgba(26,106,232,.3);
+}
+.step-icon svg{
+  width:36px;height:36px;
+  stroke:#fff;stroke-width:1.8;
+  filter:drop-shadow(0 1px 3px rgba(0,0,0,.25));
+}
+.step-icon canvas{ display:none; }
 .step-num{ display:none; }
 .step-title{
   font-size:1rem;font-weight:800;letter-spacing:.5px;
