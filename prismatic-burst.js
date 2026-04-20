@@ -26,6 +26,7 @@
   canvas.style.cssText = [
     'position:absolute', 'inset:0', 'width:100%', 'height:100%',
     'pointer-events:none', 'z-index:1',
+    'image-rendering:high-quality',
   ].join(';');
   hero.insertBefore(canvas, hero.firstChild);
 
@@ -34,8 +35,8 @@
   if (mapGlobal) mapGlobal.style.display = 'none';
 
   /* ── WebGL2 ── */
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  const gl  = canvas.getContext('webgl2', { alpha: false, antialias: false, powerPreference: 'high-performance' });
+  const dpr = Math.max(window.devicePixelRatio || 2, 2);
+  const gl  = canvas.getContext('webgl2', { alpha: false, antialias: true, powerPreference: 'high-performance' });
   if (!gl) { console.warn('WebGL2 not supported'); return; }
 
   /* ── Shaders ── */
@@ -76,11 +77,13 @@ float layeredNoise(vec2 px){
   vec2 p = mod(px + vec2(uTime*30.0,-uTime*21.0), 1024.0);
   vec2 q = rot30()*p;
   float n = 0.0;
-  n += 0.40*hash21(q);
-  n += 0.25*hash21(q*2.0+17.0);
-  n += 0.20*hash21(q*4.0+47.0);
-  n += 0.10*hash21(q*8.0+113.0);
-  n += 0.05*hash21(q*16.0+191.0);
+  n += 0.35*hash21(q);
+  n += 0.22*hash21(q*2.0+17.0);
+  n += 0.18*hash21(q*4.0+47.0);
+  n += 0.12*hash21(q*8.0+113.0);
+  n += 0.08*hash21(q*16.0+191.0);
+  n += 0.04*hash21(q*32.0+277.0);
+  n += 0.01*hash21(q*64.0+431.0);
   return n;
 }
 vec3 rayDir(vec2 frag, vec2 res, vec2 offset, float dist){
@@ -138,7 +141,7 @@ void main(){
     hoverMat = rotY(m.x*0.6)*rotX(m.y*0.6);
   }
 
-  for(int i=0;i<24;++i){
+  for(int i=0;i<32;++i){
     vec3 P = marchT*dir;
     P.z -= 2.0;
     float rad = length(P);
