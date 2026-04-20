@@ -68,22 +68,32 @@ uniform float uNoiseAmount;
 uniform int   uRayCount;
 
 float hash21(vec2 p){
-  p = floor(p);
-  float f = 52.9829189 * fract(dot(p, vec2(0.065, 0.005)));
-  return fract(f);
+  vec2 q = fract(p * vec2(0.1031, 0.1030));
+  q += dot(q, q.yx + 33.33);
+  return fract((q.x + q.y) * q.x);
+}
+float vnoise(vec2 p){
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  f = f*f*(3.0-2.0*f);
+  return mix(
+    mix(hash21(i), hash21(i+vec2(1,0)), f.x),
+    mix(hash21(i+vec2(0,1)), hash21(i+vec2(1,1)), f.x), f.y);
 }
 mat2 rot30(){ return mat2(0.8,-0.5,0.5,0.8); }
 float layeredNoise(vec2 px){
   vec2 p = mod(px + vec2(uTime*30.0,-uTime*21.0), 1024.0);
   vec2 q = rot30()*p;
   float n = 0.0;
-  n += 0.35*hash21(q);
-  n += 0.22*hash21(q*2.0+17.0);
-  n += 0.18*hash21(q*4.0+47.0);
-  n += 0.12*hash21(q*8.0+113.0);
-  n += 0.08*hash21(q*16.0+191.0);
+  n += 0.36*vnoise(q);
+  n += 0.22*vnoise(q*2.0+17.0);
+  n += 0.16*vnoise(q*4.0+47.0);
+  n += 0.11*hash21(q*8.0+113.0);
+  n += 0.07*hash21(q*16.0+191.0);
   n += 0.04*hash21(q*32.0+277.0);
-  n += 0.01*hash21(q*64.0+431.0);
+  n += 0.02*hash21(q*64.0+431.0);
+  n += 0.01*hash21(q*128.0+617.0);
+  n += 0.005*hash21(q*256.0+937.0);
   return n;
 }
 vec3 rayDir(vec2 frag, vec2 res, vec2 offset, float dist){
