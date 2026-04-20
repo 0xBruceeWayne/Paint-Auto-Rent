@@ -834,15 +834,15 @@ document.querySelectorAll('.benefit').forEach(b => {
       onEnter() {
         gsap.to(chars, {
           opacity: 1, y: 0, x: 0, rotation: 0,
-          duration: 0.47,
+          duration: 0.14,
           ease: 'back.out(1.4)',
-          stagger: { each: 0.027, from: 'start' },
+          stagger: { each: 0.008, from: 'start' },
         });
         // Red underline draws after chars land
         gsap.fromTo(el, { '--ul': '0%' }, {
           '--ul': '100%',
           duration: 0.5,
-          delay: chars.length * 0.027 + 0.03,
+          delay: chars.length * 0.008 + 0.03,
           ease: 'power3.out',
         });
       },
