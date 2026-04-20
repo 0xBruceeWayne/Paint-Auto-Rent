@@ -12,7 +12,7 @@
     speed:      0.18,    // very slow ray animation
     animType:   2,       // 0=rotate  1=rotate3d  2=hover
     distort:    6,
-    dampness:   0.97,    // ~1s mouse lag — silky smooth
+    dampness:   0.28,    // fast mouse response ~0.3s
     rayCount:   0,
     noise:      0.8,
   };
@@ -146,7 +146,7 @@ void main(){
   mat3 hoverMat = mat3(1.0);
   if(uAnimType==2){
     vec2 m = uMouse*2.0-1.0;
-    hoverMat = rotY(m.x*0.6)*rotX(m.y*0.6);
+    hoverMat = rotY(m.x*1.4 + uTime*0.14)*rotX(m.y*1.4 + uTime*0.05);
   }
 
   for(int i=0;i<32;++i){
