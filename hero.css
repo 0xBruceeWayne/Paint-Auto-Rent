@@ -762,16 +762,25 @@ body{
 }
 .step-desc{font-size:.82rem;color:rgba(0,0,0,.45);line-height:1.65}
 
-/* Blue filled frame for cum-functioneaza steps */
+/* Blue filled frame for cum-functioneaza steps — equal height */
+#cum-functioneaza .steps{align-items:stretch}
 #cum-functioneaza .step{
   background:linear-gradient(145deg,#1e74f0 0%,#0a4fd4 100%);
   border-radius:20px;
-  padding:40px 28px 36px;
+  padding:44px 32px 40px;
   box-shadow:0 12px 48px rgba(26,106,232,.32);
-  position:relative;
+  display:flex;flex-direction:column;justify-content:center;
+  font-family:var(--font);
 }
-#cum-functioneaza .step-title{color:#fff;font-size:1.1rem}
-#cum-functioneaza .step-desc{color:rgba(255,255,255,.82)}
+#cum-functioneaza .step-title{
+  color:#fff;
+  font-size:1.7rem;font-weight:800;letter-spacing:.5px;
+  margin-bottom:14px;
+}
+#cum-functioneaza .step-desc{
+  color:rgba(255,255,255,.85);
+  font-size:1.05rem;line-height:1.6;
+}
 #cum-functioneaza .step-arrow{color:#1a6ae8;padding-top:0;align-self:center}
 
 .step-arrow{
