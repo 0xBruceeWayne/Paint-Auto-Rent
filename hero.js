@@ -3,6 +3,10 @@
 // ══════════════════════════════════════════════════════
 gsap.registerPlugin(ScrollTrigger);
 
+// Pause RAF loops when tab is hidden
+let _tabVisible = true;
+document.addEventListener('visibilitychange', () => { _tabVisible = !document.hidden; });
+
 // ══════════════════════════════════════════════════════
 //  CUSTOM CURSOR — dot + lagging ring, no trail
 // ══════════════════════════════════════════════════════

@@ -34,7 +34,7 @@
   if (mapGlobal) mapGlobal.style.display = 'none';
 
   /* ── WebGL2 ── */
-  const dpr = 1; // cap at 1x — 4× FPS gain on retina, burst is inherently soft
+  const dpr = 0.5; // render at half res — effect is soft so no visible difference, 4× GPU savings
   const gl  = canvas.getContext('webgl2', { alpha: false, antialias: false, powerPreference: 'high-performance' });
   if (!gl) { console.warn('WebGL2 not supported'); return; }
 
@@ -294,11 +294,13 @@ void main(){
   }, { passive: true });
 
   /* ── Animation loop ── */
-  let last = performance.now(), elapsed = 0;
+  let last = performance.now(), elapsed = 0, _pLast = 0;
 
   function loop(now) {
+    requestAnimationFrame(loop);
+    if (now - _pLast < 33) return; // cap at ~30fps
     const dt = Math.max(0, Math.min(now - last, 100)) * 0.001;
-    last = now;
+    last = _pLast = now;
     elapsed += dt;
 
     const tau   = 0.02 + CFG.dampness * 0.5;
@@ -313,8 +315,6 @@ void main(){
     gl.bindVertexArray(vao);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     gl.bindVertexArray(null);
-
-    requestAnimationFrame(loop);
   }
 
   requestAnimationFrame(loop);
