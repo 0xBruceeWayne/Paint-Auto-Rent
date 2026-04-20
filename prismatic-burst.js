@@ -308,6 +308,7 @@ void main(){
   let last = performance.now(), elapsed = 0;
 
   function loop(now) {
+    requestAnimationFrame(loop);
     const dt = Math.max(0, Math.min(now - last, 100)) * 0.001;
     last = now;
     elapsed += dt;
