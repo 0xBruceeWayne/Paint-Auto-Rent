@@ -19,6 +19,22 @@
 </head>
 <body>
 
+<!-- ── LIQUID GLASS SVG FILTERS ─────────────────────── -->
+<svg width="0" height="0" aria-hidden="true"
+     style="position:absolute;pointer-events:none;overflow:hidden">
+  <defs>
+    <!-- lg-refract: fractal noise displacement → lens-distort the backdrop -->
+    <filter id="lg-refract" x="-8%" y="-8%" width="116%" height="116%"
+            color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.013 0.009"
+                    numOctaves="3" seed="6" result="noise"/>
+      <feColorMatrix type="saturate" values="0" in="noise" result="mono"/>
+      <feDisplacementMap in="SourceGraphic" in2="mono"
+                         scale="24" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
 <div id="map-global"></div>
 <div id="map-overlay"></div>
 <div id="section-flash"></div>
@@ -483,10 +499,10 @@
   </div>
 </div>
 
-<script src="prismatic-burst.js?v=14"></script>
-<script src="hero.js?v=14"></script>
-<script src="divider.js?v=14"></script>
-<script src="sections-3d.js?v=14"></script>
+<script src="prismatic-burst.js?v=15"></script>
+<script src="hero.js?v=15"></script>
+<script src="divider.js?v=15"></script>
+<script src="sections-3d.js?v=15"></script>
 <script src="steps-3d.js"></script>
 <!-- hero-3d.js disabled: no model loaded, was running a full WebGL+bloom context for nothing -->
 </body>
