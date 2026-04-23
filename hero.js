@@ -666,16 +666,7 @@ document.querySelectorAll('.sec-desc').forEach(el => {
   });
 });
 
-// ══════════════════════════════════════════════════════
-//  CURSOR SPOTLIGHT — dark sections
-// ══════════════════════════════════════════════════════
-document.querySelectorAll('.sec-dark').forEach(sec => {
-  sec.addEventListener('mousemove', e => {
-    const r = sec.getBoundingClientRect();
-    sec.style.setProperty('--cx', (e.clientX - r.left) + 'px');
-    sec.style.setProperty('--cy', (e.clientY - r.top)  + 'px');
-  });
-});
+// Cursor spotlight removed — dark sections use uniform background
 
 // ══════════════════════════════════════════════════════
 //  MAGNETIC EFFECT — CTA buttons + fleet buttons

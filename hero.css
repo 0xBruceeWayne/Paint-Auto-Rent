@@ -542,20 +542,7 @@ body{
 }
 .sec--compact{padding:60px 80px}
 
-/* Cursor spotlight on dark sections */
-.sec-dark::before{
-  content:'';position:absolute;
-  width:600px;height:600px;
-  border-radius:50%;
-  background:radial-gradient(circle,rgba(0,20,60,0.9) 0%,transparent 70%);
-  transform:translate(-50%,-50%);
-  pointer-events:none;
-  opacity:0;
-  transition:opacity .3s;
-  z-index:0;
-  left:var(--cx,50%);top:var(--cy,50%);
-}
-.sec-dark:hover::before{opacity:1}
+/* Cursor spotlight removed — uniform dark blue background */
 .sec-dark .sec-inner{position:relative;z-index:1}
 .sec-inner{max-width:1100px;margin:0 auto;width:100%;position:relative;z-index:4}
 
