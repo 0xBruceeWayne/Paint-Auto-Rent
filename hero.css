@@ -314,19 +314,18 @@ body{
   overflow:hidden;
 }
 
-/* Dynamic specular highlight — follows cursor via --spec-x/--spec-y (set in hero.js) */
+/* Static top-left specular — consistent, no cursor colour shift */
 .hero-card::before{
   content:'';
   position:absolute;inset:0;
-  background:radial-gradient(
-    circle at var(--spec-x,30%) var(--spec-y,22%),
-    rgba(255,255,255,0.62) 0%,
-    rgba(255,255,255,0.18) 35%,
-    rgba(200,220,255,0.06) 60%,
-    transparent 75%
+  background:linear-gradient(
+    135deg,
+    rgba(255,255,255,0.55) 0%,
+    rgba(255,255,255,0.12) 40%,
+    rgba(255,255,255,0.04) 70%,
+    transparent 100%
   );
   pointer-events:none;z-index:0;
-  transition:background 0.05s linear;
 }
 
 /* Rim light pulse — subtle breathing animation on the top edge */
