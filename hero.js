@@ -840,6 +840,11 @@ document.querySelectorAll('.benefit').forEach(b => {
     cy += (ty - cy) * 0.09;
     card.style.transform =
       `perspective(900px) rotateY(${cx.toFixed(3)}deg) rotateX(${cy.toFixed(3)}deg) translateZ(0)`;
+    // Liquid glass specular — highlight shifts opposite to tilt (fixed light source illusion)
+    const sx = (50 - cx * 22).toFixed(1);
+    const sy = (22 - cy * 18).toFixed(1);
+    card.style.setProperty('--spec-x', `${sx}%`);
+    card.style.setProperty('--spec-y', `${sy}%`);
   })();
 })();
 
