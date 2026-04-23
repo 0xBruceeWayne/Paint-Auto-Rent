@@ -546,9 +546,7 @@ body{
   -webkit-backdrop-filter:blur(18px);
 }
 .sec-dark{
-  background:rgba(3,9,28,0.88);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
+  background:#03091c;
   position:relative;overflow:hidden;
 }
 .sec--compact{padding:60px 80px}
