@@ -238,18 +238,18 @@ document.querySelectorAll('a,button,.finput,select').forEach(el => {
   let displayScale = 1;
 
   // Cursor parallax — 3 depth layers
-  let tpx = 0, tpy = 0;   // target parallax (layer 1 — background)
-  let cpx = 0, cpy = 0;   // current parallax (lerped)
-  const spc = document.getElementById('spc'); // layer 2 — particles
+  let tpx = 0, tpy = 0;   // target parallax
+  let cpx = 0, cpy = 0;   // current position
+  let vx  = 0, vy  = 0;   // velocity — physics-based, no sudden starts
+  const spc = document.getElementById('spc');
 
-  // Scroll camera dive — lerped transform-origin toward city intersection
   let scrollP    = 0;
-  let curOx = 50, curOy = 50;   // current origin % (lerped)
+  let curOx = 50, curOy = 50;
 
   window.addEventListener('mousemove', e => {
-    const nx = (e.clientX / innerWidth  - 0.5) * 2; // -1 → 1
+    const nx = (e.clientX / innerWidth  - 0.5) * 2;
     const ny = (e.clientY / innerHeight - 0.5) * 2;
-    tpx = nx * -6;   // 70% less movement than before
+    tpx = nx * -6;
     tpy = ny * -3.9;
   }, { passive: true });
 
@@ -271,8 +271,10 @@ document.querySelectorAll('a,button,.finput,select').forEach(el => {
   (function zoomLoop() {
     requestAnimationFrame(zoomLoop);
     displayScale += (targetScale - displayScale) * 0.07;
-    cpx += (tpx - cpx) * 0.028;  // smooth but no frame stepping
-    cpy += (tpy - cpy) * 0.028;
+    // Velocity-based spring: gentle acceleration + friction = no sudden jumps
+    vx += (tpx - cpx) * 0.004;  vy += (tpy - cpy) * 0.004;
+    vx *= 0.88;                  vy *= 0.88;
+    cpx += vx;                   cpy += vy;
 
     // Camera dive: transform-origin migrates from center → ring road intersection (63%, 56%)
     const tOx = 50 + scrollP * 13;
