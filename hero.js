@@ -271,8 +271,8 @@ document.querySelectorAll('a,button,.finput,select').forEach(el => {
   (function zoomLoop() {
     requestAnimationFrame(zoomLoop);
     displayScale += (targetScale - displayScale) * 0.07;
-    cpx += (tpx - cpx) * 0.013;  // 70% smoother
-    cpy += (tpy - cpy) * 0.013;
+    cpx += (tpx - cpx) * 0.028;  // smooth but no frame stepping
+    cpy += (tpy - cpy) * 0.028;
 
     // Camera dive: transform-origin migrates from center → ring road intersection (63%, 56%)
     const tOx = 50 + scrollP * 13;
