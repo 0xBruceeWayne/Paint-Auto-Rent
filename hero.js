@@ -312,7 +312,7 @@ function initButtons() {
       const dx = (e.clientX - r.left - r.width  / 2) / (r.width  / 2);
       const dy = (e.clientY - r.top  - r.height / 2) / (r.height / 2);
       gsap.to(btn, {
-        rotateX: -dy * 12, rotateY: dx * 12,
+        rotateX: -dy * 7.2, rotateY: dx * 7.2,
         x: dx * 6, y: dy * 3 - 5,
         duration: 0.18, ease: 'power2.out',
         transformPerspective: 600, transformOrigin: 'center center',
@@ -694,7 +694,7 @@ document.querySelectorAll('.stat-card, .testi-card').forEach(card => {
     const dx = (e.clientX - r.left - r.width  / 2) / (r.width  / 2);
     const dy = (e.clientY - r.top  - r.height / 2) / (r.height / 2);
     gsap.to(card, {
-      rotateX: -dy * 8, rotateY: dx * 8,
+      rotateX: -dy * 4.8, rotateY: dx * 4.8,
       duration: 0.2, ease: 'power2.out',
       transformPerspective: 800, transformOrigin: 'center center',
     });
@@ -818,8 +818,8 @@ document.querySelectorAll('.benefit').forEach(b => {
     const r  = card.getBoundingClientRect();
     const dx = (e.clientX - r.left - r.width  / 2) / (r.width  / 2);
     const dy = (e.clientY - r.top  - r.height / 2) / (r.height / 2);
-    tx = dx *  1.12;
-    ty = dy * -0.88;
+    tx = dx *  0.67;
+    ty = dy * -0.53;
   });
 
   hero.addEventListener('mouseleave', () => {
@@ -937,8 +937,8 @@ document.querySelectorAll('.benefit').forEach(b => {
 
     const strength = 1 - dist / RADIUS;           // 0 at edge, 1 at center
     const pull     = strength * 14;               // max 14px magnetic pull
-    const tiltX    = (dy / RADIUS) * -12 * strength;
-    const tiltY    = (dx / RADIUS) *  12 * strength;
+    const tiltX    = (dy / RADIUS) * -7.2 * strength;
+    const tiltY    = (dx / RADIUS) *  7.2 * strength;
     const glow     = (strength * 28).toFixed(0);
 
     gsap.to(logo, {
@@ -962,8 +962,8 @@ document.querySelectorAll('.benefit').forEach(b => {
 
     card.addEventListener('mousemove', e => {
       const r  = card.getBoundingClientRect();
-      s.tx = ((e.clientY - r.top)  / r.height - 0.5) * -7;
-      s.ty = ((e.clientX - r.left) / r.width  - 0.5) *  7;
+      s.tx = ((e.clientY - r.top)  / r.height - 0.5) * -4.2;
+      s.ty = ((e.clientX - r.left) / r.width  - 0.5) *  4.2;
     });
 
     card.addEventListener('mouseleave', () => {
