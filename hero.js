@@ -249,8 +249,8 @@ document.querySelectorAll('a,button,.finput,select').forEach(el => {
   window.addEventListener('mousemove', e => {
     const nx = (e.clientX / innerWidth  - 0.5) * 2; // -1 → 1
     const ny = (e.clientY / innerHeight - 0.5) * 2;
-    tpx = nx * -20;  // background drifts opposite to cursor
-    tpy = ny * -13;
+    tpx = nx * -6;   // 70% less movement than before
+    tpy = ny * -3.9;
   }, { passive: true });
 
   function onScroll() {
@@ -271,8 +271,8 @@ document.querySelectorAll('a,button,.finput,select').forEach(el => {
   (function zoomLoop() {
     requestAnimationFrame(zoomLoop);
     displayScale += (targetScale - displayScale) * 0.07;
-    cpx += (tpx - cpx) * 0.045;
-    cpy += (tpy - cpy) * 0.045;
+    cpx += (tpx - cpx) * 0.013;  // 70% smoother
+    cpy += (tpy - cpy) * 0.013;
 
     // Camera dive: transform-origin migrates from center → ring road intersection (63%, 56%)
     const tOx = 50 + scrollP * 13;
