@@ -1092,22 +1092,47 @@ body{
 }
 .cmd-map-frame{
   position:relative;
-  border:1px solid rgba(26,106,232,0.45);
+  /* 3D frame: layered shadows simulate depth plate */
+  border:1px solid rgba(26,106,232,0.55);
   box-shadow:
-    0 0 0 1px rgba(26,106,232,0.15),
-    0 0 40px rgba(26,106,232,0.18),
-    inset 0 0 20px rgba(26,106,232,0.06);
+    /* outer glow */
+    0 0 0 1px rgba(26,106,232,0.18),
+    0 0 50px rgba(26,106,232,0.22),
+    /* 3D depth layers — offset shadows create plate thickness */
+    4px 6px 0 0 rgba(26,106,232,0.12),
+    8px 12px 0 0 rgba(26,106,232,0.07),
+    12px 18px 0 0 rgba(26,106,232,0.04),
+    /* liquid glass inner rim */
+    inset 0 1.5px 0 rgba(255,255,255,0.18),
+    inset 0 -1px 0 rgba(26,106,232,0.15),
+    inset 1.5px 0 0 rgba(255,255,255,0.12);
   overflow:hidden;
   height:380px;
   transform-style:preserve-3d;
   will-change:transform;
   transition:box-shadow .3s;
+  /* Liquid glass surface on frame */
+  background:rgba(8,18,50,0.25);
+  backdrop-filter:blur(2px);
 }
 .cmd-map-frame:hover{
   box-shadow:
-    0 0 0 1px rgba(26,106,232,0.35),
-    0 0 60px rgba(26,106,232,0.30),
-    inset 0 0 30px rgba(26,106,232,0.10);
+    0 0 0 1px rgba(26,106,232,0.4),
+    0 0 70px rgba(26,106,232,0.35),
+    5px 8px 0 0 rgba(26,106,232,0.18),
+    10px 16px 0 0 rgba(26,106,232,0.10),
+    14px 22px 0 0 rgba(26,106,232,0.06),
+    inset 0 1.5px 0 rgba(255,255,255,0.22),
+    inset 0 -1px 0 rgba(26,106,232,0.20),
+    inset 1.5px 0 0 rgba(255,255,255,0.16);
+}
+/* liquid glass shimmer on map frame top edge */
+.cmd-map-frame::before{
+  content:'';position:absolute;
+  top:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.55) 40%,rgba(255,255,255,0.75) 50%,rgba(255,255,255,0.55) 60%,transparent);
+  z-index:6;pointer-events:none;
+  animation:lg-rim-pulse 4s ease-in-out infinite;
 }
 
 /* Corner L-brackets */
@@ -1208,20 +1233,72 @@ body{
   50%{text-shadow:0 0 35px rgba(26,106,232,0.55),0 0 60px rgba(26,106,232,0.2)}
 }
 .cmd-actions{display:flex;flex-direction:column;gap:16px}
-.cmd-wa{
-  display:inline-flex;align-items:center;gap:10px;
-  font-family:var(--font);font-size:.7rem;font-weight:800;
-  letter-spacing:3px;text-transform:uppercase;
-  color:#fff;background:#25D366;text-decoration:none;
-  padding:14px 28px;width:fit-content;
-  border:1px solid rgba(37,211,102,0.4);
-  box-shadow:0 0 20px rgba(37,211,102,0.2);
-  transition:background .18s,box-shadow .18s,transform .18s;
+
+/* ── Button row: WA + Call side by side, equal width ── */
+.cmd-btns-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* Liquid glass base button */
+.cmd-btn{
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  font-family:var(--font);font-size:.68rem;font-weight:800;
+  letter-spacing:2.5px;text-transform:uppercase;
+  text-decoration:none;color:#fff;
+  padding:15px 20px;
+  position:relative;overflow:hidden;
+  /* Liquid glass surface */
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(20px) saturate(180%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
+  border:1px solid rgba(255,255,255,0.18);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.25),
+    inset 0 -1px 0 rgba(0,0,0,0.15),
+    0 8px 24px rgba(0,0,0,0.25);
+  transition:transform .18s,box-shadow .18s,background .18s;
 }
-.cmd-wa:hover{
-  background:#1ebe5a;
-  box-shadow:0 0 35px rgba(37,211,102,0.45);
-  transform:translateY(-2px);
+.cmd-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.18) 0%,rgba(255,255,255,0) 55%);
+  pointer-events:none;
+}
+.cmd-btn:hover{transform:translateY(-3px)}
+
+/* WhatsApp — green tint glass */
+.cmd-btn--wa{
+  background:rgba(37,211,102,0.18);
+  border-color:rgba(37,211,102,0.35);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.25),
+    inset 0 -1px 0 rgba(0,0,0,0.15),
+    0 8px 24px rgba(0,0,0,0.25),
+    0 0 22px rgba(37,211,102,0.18);
+}
+.cmd-btn--wa:hover{
+  background:rgba(37,211,102,0.28);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.3),
+    inset 0 -1px 0 rgba(0,0,0,0.15),
+    0 12px 32px rgba(0,0,0,0.3),
+    0 0 40px rgba(37,211,102,0.35);
+}
+
+/* Call — blue tint glass */
+.cmd-btn--call{
+  background:rgba(26,106,232,0.18);
+  border-color:rgba(26,106,232,0.35);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.25),
+    inset 0 -1px 0 rgba(0,0,0,0.15),
+    0 8px 24px rgba(0,0,0,0.25),
+    0 0 22px rgba(26,106,232,0.18);
+}
+.cmd-btn--call:hover{
+  background:rgba(26,106,232,0.28);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.3),
+    inset 0 -1px 0 rgba(0,0,0,0.15),
+    0 12px 32px rgba(0,0,0,0.3),
+    0 0 40px rgba(26,106,232,0.35);
 }
 .cmd-address-card{
   display:flex;align-items:flex-start;gap:10px;
