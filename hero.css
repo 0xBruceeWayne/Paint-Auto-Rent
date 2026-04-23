@@ -294,7 +294,7 @@ body{
   position:relative;
   max-width:680px;width:100%;
   /* TRUE liquid glass: translucent, not opaque */
-  background:rgba(255,255,255,0.18);
+  background:rgba(255,255,255,0.75);
   backdrop-filter:url(#lg-refract) blur(28px) saturate(220%) brightness(1.06);
   -webkit-backdrop-filter:blur(28px) saturate(220%) brightness(1.06);
   border:1px solid rgba(255,255,255,0.45);
@@ -377,7 +377,7 @@ body{
   color:var(--blue);
 }
 .card-hl .red{color:var(--black);-webkit-text-fill-color:var(--black)}
-.card-hl .ghost{color:transparent;-webkit-text-fill-color:transparent;-webkit-text-stroke:2px rgba(0,0,0,0.35)}
+.card-hl .ghost{color:#fff;-webkit-text-fill-color:#fff;-webkit-text-stroke:2px #000;paint-order:stroke fill}
 
 .card-sub{
   font-size:.66rem;font-weight:600;letter-spacing:5px;
