@@ -8,7 +8,7 @@ button{-webkit-appearance:none;appearance:none;outline:none}
 }
 html{
   font-family:var(--font);
-  background:#040c1e;cursor:none;
+  background:#eef2ff;cursor:none;
   height:100%;overflow-x:hidden;
   -webkit-font-smoothing:antialiased;
 }
@@ -16,6 +16,52 @@ body{
   height:100%;overflow-x:hidden;overflow-y:scroll;cursor:none;
   scroll-snap-type:y mandatory;
   overscroll-behavior-y:none;
+}
+
+/* ── APPLE GRADIENT ORB BACKGROUND ───────────────────── */
+#lg-bg{
+  position:fixed;inset:0;z-index:-2;
+  background:linear-gradient(145deg,#eef3ff 0%,#f8faff 45%,#f0eeff 100%);
+  overflow:hidden;
+  pointer-events:none;
+}
+.lg-orb{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(70px);
+  will-change:transform;
+}
+.lg-orb--a{
+  width:80vw;height:80vh;
+  top:-25%;left:-20%;
+  background:radial-gradient(circle,rgba(90,145,255,0.32) 0%,transparent 65%);
+  animation:orb-drift-a 22s ease-in-out infinite;
+}
+.lg-orb--b{
+  width:70vw;height:70vh;
+  bottom:-20%;right:-15%;
+  background:radial-gradient(circle,rgba(140,90,255,0.22) 0%,transparent 65%);
+  animation:orb-drift-b 28s ease-in-out infinite;
+}
+.lg-orb--c{
+  width:55vw;height:55vh;
+  top:35%;left:30%;
+  background:radial-gradient(circle,rgba(60,180,255,0.18) 0%,transparent 65%);
+  animation:orb-drift-c 18s ease-in-out infinite;
+}
+@keyframes orb-drift-a{
+  0%,100%{transform:translate(0,0) scale(1)}
+  33%{transform:translate(12%,8%) scale(1.08)}
+  66%{transform:translate(-6%,4%) scale(0.96)}
+}
+@keyframes orb-drift-b{
+  0%,100%{transform:translate(0,0) scale(1)}
+  40%{transform:translate(-10%,-7%) scale(1.06)}
+  70%{transform:translate(7%,-3%) scale(0.94)}
+}
+@keyframes orb-drift-c{
+  0%,100%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(-8%,6%) scale(1.12)}
 }
 
 /* ── VIGNETTE OVERLAY ────────────────────────────── */
@@ -61,7 +107,7 @@ body{
 }
 #map-global::after{
   content:'';position:absolute;inset:0;
-  background:rgba(0,15,70,0.68);
+  background:rgba(240,245,255,0.96);
   pointer-events:none;
 }
 
@@ -243,39 +289,38 @@ body{
   gap:18px;padding:70px 40px 14vh;
 }
 
-/* ── HERO CARD — Apple Liquid Glass ──────────────── */
+/* ── HERO CARD — Frosted White Glass (opaque white blur) ── */
 .hero-card{
   position:relative;
   max-width:680px;width:100%;
-  /* Liquid glass surface */
-  background:rgba(255,255,255,0.07);
-  backdrop-filter:url(#lg-refract) blur(28px) saturate(200%) brightness(1.08);
-  -webkit-backdrop-filter:blur(28px) saturate(200%) brightness(1.08);
-  border:1px solid rgba(255,255,255,0.20);
+  background:rgba(255,255,255,0.92);
+  backdrop-filter:url(#lg-refract) blur(48px) saturate(180%) brightness(1.02);
+  -webkit-backdrop-filter:blur(48px) saturate(180%) brightness(1.02);
+  border:1px solid rgba(255,255,255,0.95);
   padding:32px 48px 28px;
   display:flex;flex-direction:column;gap:10px;
-  /* Layered glass depth shadows */
   box-shadow:
-    0 32px 80px rgba(0,0,0,0.55),
-    inset 0 1.5px 0 rgba(255,255,255,0.50),
-    inset 0 -1px 0   rgba(0,0,0,0.14),
-    inset 1.5px 0 0  rgba(255,255,255,0.26),
-    inset -1px 0 0   rgba(255,255,255,0.13);
+    0 24px 64px rgba(0,30,100,0.13),
+    0 4px 16px rgba(0,30,100,0.07),
+    inset 0 1.5px 0 rgba(255,255,255,0.95),
+    inset 0 -1px 0   rgba(0,0,0,0.06),
+    inset 1.5px 0 0  rgba(255,255,255,0.70),
+    inset -1px 0 0   rgba(255,255,255,0.40);
   opacity:0;transform:translateY(28px);
   transform-style:preserve-3d;
   overflow:hidden;
 }
 
-/* Animated liquid shimmer — the wandering specular highlight */
+/* Animated liquid shimmer */
 .hero-card::before{
   content:'';
   position:absolute;inset:0;
   background:linear-gradient(
     125deg,
-    rgba(255,255,255,0.22) 0%,
-    rgba(255,255,255,0.05) 38%,
-    rgba(140,180,255,0.07) 62%,
-    rgba(255,255,255,0.18) 100%
+    rgba(255,255,255,0.70) 0%,
+    rgba(255,255,255,0.08) 38%,
+    rgba(220,235,255,0.06) 62%,
+    rgba(255,255,255,0.55) 100%
   );
   pointer-events:none;z-index:0;
   animation:lg-hero-sheen 11s ease-in-out infinite;
@@ -291,13 +336,12 @@ body{
 /* All card children sit above the shimmer */
 .hero-card > *{ position:relative; z-index:1; }
 
-/* Corner L-brackets — glass white */
+/* Corner L-brackets — glass white with blue dots */
 .c{position:absolute;width:22px;height:22px;pointer-events:none;z-index:2}
-.c.tl{top:-1px;left:-1px;  border-top:2px solid rgba(255,255,255,.55);border-left:2px solid rgba(255,255,255,.55)}
-.c.tr{top:-1px;right:-1px; border-top:2px solid rgba(255,255,255,.55);border-right:2px solid rgba(255,255,255,.55)}
-.c.bl{bottom:-1px;left:-1px; border-bottom:2px solid rgba(255,255,255,.55);border-left:2px solid rgba(255,255,255,.55)}
-.c.br{bottom:-1px;right:-1px;border-bottom:2px solid rgba(255,255,255,.55);border-right:2px solid rgba(255,255,255,.55)}
-/* Blue accent dot at TL and BR */
+.c.tl{top:-1px;left:-1px;  border-top:2px solid rgba(255,255,255,.9);border-left:2px solid rgba(255,255,255,.9)}
+.c.tr{top:-1px;right:-1px; border-top:2px solid rgba(255,255,255,.9);border-right:2px solid rgba(255,255,255,.9)}
+.c.bl{bottom:-1px;left:-1px; border-bottom:2px solid rgba(255,255,255,.9);border-left:2px solid rgba(255,255,255,.9)}
+.c.br{bottom:-1px;right:-1px;border-bottom:2px solid rgba(255,255,255,.9);border-right:2px solid rgba(255,255,255,.9)}
 .c.tl::after,.c.br::after{content:'';position:absolute;width:5px;height:5px;background:var(--blue)}
 .c.tl::after{top:-2px;left:-2px}
 .c.br::after{bottom:-2px;right:-2px}
@@ -311,7 +355,7 @@ body{
   opacity:0;transform:translateY(14px);
 }
 .card-eyebrow::before,.card-eyebrow::after{
-  content:'';width:28px;height:1px;background:rgba(255,255,255,.4);flex-shrink:0;
+  content:'';width:28px;height:1px;background:rgba(0,30,100,.22);flex-shrink:0;
 }
 
 .card-hl{
@@ -319,15 +363,14 @@ body{
   line-height:.86;text-transform:uppercase;
   text-align:center;
   opacity:0;transform:translateY(18px);
-  color:#4db8ff;
+  color:var(--blue);
 }
-/* On liquid glass over dark bg: AUTO → white, RENT → white outline */
-.card-hl .red{color:#fff;-webkit-text-fill-color:#fff}
-.card-hl .ghost{color:transparent;-webkit-text-fill-color:transparent;-webkit-text-stroke:2px rgba(255,255,255,0.7)}
+.card-hl .red{color:var(--black);-webkit-text-fill-color:var(--black)}
+.card-hl .ghost{color:transparent;-webkit-text-fill-color:transparent;-webkit-text-stroke:2px rgba(0,0,0,0.35)}
 
 .card-sub{
   font-size:.66rem;font-weight:600;letter-spacing:5px;
-  color:rgba(255,255,255,0.65);text-transform:uppercase;text-align:center;
+  color:rgba(0,0,0,0.42);text-transform:uppercase;text-align:center;
   opacity:0;transform:translateY(10px);
 }
 
