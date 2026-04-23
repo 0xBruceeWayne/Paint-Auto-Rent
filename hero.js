@@ -909,6 +909,42 @@ document.querySelectorAll('.benefit').forEach(b => {
 })();
 
 // ══════════════════════════════════════════════════════
+//  COMMAND CENTER MAP — 3D tilt on cursor
+// ══════════════════════════════════════════════════════
+(function initCmdMap() {
+  const wrap = document.getElementById('cmd-map');
+  if (!wrap) return;
+  const frame = wrap.querySelector('.cmd-map-frame');
+  let tx = 0, ty = 0, cx = 0, cy = 0;
+
+  wrap.addEventListener('mousemove', e => {
+    const r  = frame.getBoundingClientRect();
+    const dx = (e.clientX - r.left - r.width  / 2) / (r.width  / 2);
+    const dy = (e.clientY - r.top  - r.height / 2) / (r.height / 2);
+    tx = dx * 4.8; ty = -dy * 3.6;
+  });
+  wrap.addEventListener('mouseleave', () => { tx = 0; ty = 0; });
+
+  (function loop() {
+    requestAnimationFrame(loop);
+    cx += (tx - cx) * 0.08; cy += (ty - cy) * 0.08;
+    frame.style.transform =
+      `perspective(900px) rotateY(${cx.toFixed(3)}deg) rotateX(${cy.toFixed(3)}deg)`;
+  })();
+
+  // GSAP reveal — map slides in from left
+  ScrollTrigger.create({
+    trigger: wrap, start: 'top 80%', once: true,
+    onEnter() {
+      gsap.fromTo(frame,
+        { opacity:0, x:-40, rotateY:-12 },
+        { opacity:1, x:0,   rotateY:0, duration:1.1, ease:'power3.out' }
+      );
+    }
+  });
+})();
+
+// ══════════════════════════════════════════════════════
 //  MAGNETIC FOOTER LOGO — 3D tilt + red glow on proximity
 // ══════════════════════════════════════════════════════
 (function initFooterLogo() {

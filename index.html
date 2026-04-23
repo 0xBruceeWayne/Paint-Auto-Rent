@@ -15,7 +15,7 @@
 </script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-<link rel="stylesheet" href="hero.css?v=24">
+<link rel="stylesheet" href="hero.css?v=25">
 </head>
 <body>
 
@@ -436,37 +436,56 @@
 <!-- ═══════════════════════════════════════════════════
      SECTION 8 — CONTACT
 ══════════════════════════════════════════════════════ -->
-<section id="contact" class="sec sec-white" id="rezerva">
-  <div class="sec-inner">
-    <div class="contact-split">
-      <div class="contact-left reveal-up">
-        <div class="sec-eyebrow">Vorbește cu noi</div>
-        <h2 class="sec-title">SUNĂ ACUM</h2>
-        <p class="contact-desc">Nu așteptăm formulare. Un telefon și discutăm tot în câteva minute.</p>
+<section id="contact" class="sec sec-dark cmd-section">
+  <div class="cmd-inner">
 
-        <a href="tel:+40000000000" class="contact-phone">+40 700 000 000</a>
-
-        <div class="contact-actions">
-          <a href="https://wa.me/40700000000" class="contact-wa">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.855L0 24l6.335-1.508A11.933 11.933 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.007-1.374l-.36-.213-3.728.888.918-3.618-.234-.372A9.818 9.818 0 0 1 2.182 12C2.182 6.568 6.568 2.182 12 2.182S21.818 6.568 21.818 12 17.432 21.818 12 21.818z"/></svg>
-            WhatsApp
-          </a>
-          <div class="contact-address">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            Str. Fabrica de Chibrituri 24-26, Sector 5, București
-          </div>
+    <!-- ── LEFT: 3D MAP PANEL ── -->
+    <div class="cmd-left reveal-up">
+      <div class="cmd-map-wrap" id="cmd-map">
+        <div class="cmd-map-frame">
+          <span class="cmd-c cmd-tl"></span><span class="cmd-c cmd-tr"></span>
+          <span class="cmd-c cmd-bl"></span><span class="cmd-c cmd-br"></span>
+          <div class="cmd-scanline"></div>
+          <div class="cmd-ping"></div>
+          <div class="cmd-ping cmd-ping--delay"></div>
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2849.123456789!2d26.0945!3d44.4165!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDTCsDI0JzU5LjQiTiAyNsKwMDUnNDAuMiJF!5e0!3m2!1sro!2sro!4v1"
+            width="100%" height="100%" style="border:0;display:block"
+            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+        <div class="cmd-coords">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
+          44.4165°N · 26.0945°E
         </div>
       </div>
+    </div>
 
-      <div class="contact-right reveal-up" data-delay="0.15">
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2849.123456789!2d26.0945!3d44.4165!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDTCsDI0JzU5LjQiTiAyNsKwMDUnNDAuMiJF!5e0!3m2!1sro!2sro!4v1"
-          width="100%" height="100%"
-          style="border:0;" allowfullscreen="" loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
+    <!-- ── RIGHT: CONTACT INFO ── -->
+    <div class="cmd-right reveal-up" data-delay="0.12">
+      <div class="cmd-eyebrow">
+        <span class="cmd-status-dot"></span>
+        Disponibil 7/7 · Răspundem imediat
+      </div>
+
+      <h2 class="cmd-title">SUNĂ<br><span class="cmd-title-accent">ACUM</span></h2>
+      <p class="cmd-desc">Nu așteptăm formulare. Un telefon și discutăm tot în câteva minute.</p>
+
+      <a href="tel:+40700000000" class="cmd-phone">+40 700 000 000</a>
+
+      <div class="cmd-actions">
+        <a href="https://wa.me/40700000000" class="cmd-wa" id="cmd-wa-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.855L0 24l6.335-1.508A11.933 11.933 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.007-1.374l-.36-.213-3.728.888.918-3.618-.234-.372A9.818 9.818 0 0 1 2.182 12C2.182 6.568 6.568 2.182 12 2.182S21.818 6.568 21.818 12 17.432 21.818 12 21.818z"/></svg>
+          WhatsApp
+        </a>
+
+        <div class="cmd-address-card">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>Str. Fabrica de Chibrituri 24-26<br>Sector 5, București</span>
+        </div>
       </div>
     </div>
+
   </div>
 </section>
 
@@ -516,7 +535,7 @@
 </div>
 
 <script src="prismatic-burst.js?v=17"></script>
-<script src="hero.js?v=26"></script>
+<script src="hero.js?v=27"></script>
 <script src="divider.js?v=17"></script>
 <script src="sections-3d.js?v=17"></script>
 <script src="steps-3d.js"></script>
