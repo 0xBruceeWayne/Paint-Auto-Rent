@@ -1138,6 +1138,211 @@ document.querySelectorAll('.benefit').forEach(b => {
 })();
 
 // ══════════════════════════════════════════════════════
+//  LIQUID GLASS 4D — cursor sphere + card light + DOM injection
+// ══════════════════════════════════════════════════════
+
+// ── 1. Cursor glass sphere ─────────────────────────
+(function initCursorGlass() {
+  if (IS_MOBILE) return;
+
+  const sphere = document.createElement('div');
+  sphere.id = 'lg-cursor';
+  document.body.appendChild(sphere);
+
+  let mx = -300, my = -300, cx = -300, cy = -300;
+  let visible = false;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    if (!visible) { sphere.classList.add('lc-visible'); visible = true; }
+  }, { passive: true });
+
+  document.addEventListener('mouseleave', () => {
+    sphere.classList.remove('lc-visible'); visible = false;
+  });
+
+  document.addEventListener('mousedown', () => sphere.classList.add('lc-click'));
+  document.addEventListener('mouseup',   () => sphere.classList.remove('lc-click'));
+
+  // Hover expansion on interactive elements
+  const HOVER_SEL = 'a,button,.fleet-card,.testi-card,.gnav-dot,.cmd-btn,.hbtn,.calc-tab';
+  document.addEventListener('mouseover', e => {
+    if (e.target.closest(HOVER_SEL)) sphere.classList.add('lc-hover');
+  });
+  document.addEventListener('mouseout', e => {
+    if (e.target.closest(HOVER_SEL)) sphere.classList.remove('lc-hover');
+  });
+
+  // Section halo colour — shifts as you enter different sections
+  const HALO = {
+    'de-ce':          'rgba(26,106,232,0.20)',
+    'flota':          'rgba(255,140,30,0.22)',
+    'cum-functioneaza':'rgba(26,200,180,0.18)',
+    'parteneri':      'rgba(26,106,232,0.16)',
+    'testimoniale':   'rgba(130,50,255,0.22)',
+    'contact':        'rgba(20,200,200,0.20)',
+  };
+  Object.entries(HALO).forEach(([id, col]) => {
+    const sec = document.getElementById(id);
+    if (!sec) return;
+    ScrollTrigger.create({
+      trigger: sec, start: 'top center', end: 'bottom center',
+      onEnter:      () => sphere.style.setProperty('--cursor-halo', col),
+      onLeave:      () => sphere.style.removeProperty('--cursor-halo'),
+      onEnterBack:  () => sphere.style.setProperty('--cursor-halo', col),
+      onLeaveBack:  () => sphere.style.removeProperty('--cursor-halo'),
+    });
+  });
+
+  // Spring lerp at 8% — smooth but responsive
+  (function loop() {
+    requestAnimationFrame(loop);
+    cx += (mx - cx) * 0.082;
+    cy += (my - cy) * 0.082;
+    sphere.style.left = cx.toFixed(1) + 'px';
+    sphere.style.top  = cy.toFixed(1) + 'px';
+  })();
+})();
+
+// ── 2. 4D mouse-reactive light on glass cards ──────
+// Tracks cursor position relative to each card and updates
+// CSS custom props --lx/--ly used by the radial-gradient highlight.
+(function initCardGlassLight() {
+  if (IS_MOBILE) return;
+
+  const CARDS = document.querySelectorAll('.fleet-card, .testi-card, .cmd-address-card');
+
+  CARDS.forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r  = card.getBoundingClientRect();
+      const lx = ((e.clientX - r.left) / r.width  * 100).toFixed(1) + '%';
+      const ly = ((e.clientY - r.top)  / r.height * 100).toFixed(1) + '%';
+      card.style.setProperty('--lx', lx);
+      card.style.setProperty('--ly', ly);
+    }, { passive: true });
+
+    card.addEventListener('mouseleave', () => {
+      card.style.setProperty('--lx', '30%');
+      card.style.setProperty('--ly', '20%');
+    });
+  });
+})();
+
+// ── 3. Inject glass shimmer + rim into fleet cards ─
+(function injectFleetGlass() {
+  document.querySelectorAll('.fleet-card').forEach(card => {
+    if (card.querySelector('.fleet-glass-shimmer')) return; // idempotent
+    const shimmer = document.createElement('div');
+    shimmer.className = 'fleet-glass-shimmer';
+    const rim = document.createElement('div');
+    rim.className = 'fleet-glass-rim';
+    card.appendChild(shimmer);
+    card.appendChild(rim);
+  });
+})();
+
+// ── 4. Mobile touch scroll — velocity momentum ─────
+(function initMobileScroll() {
+  if (!IS_MOBILE) return;
+  let startY = 0, velY = 0, lastY = 0, lastT = 0, rafId = null;
+
+  document.addEventListener('touchstart', e => {
+    startY = lastY = e.touches[0].clientY;
+    lastT = Date.now();
+    velY = 0;
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+  }, { passive: true });
+
+  document.addEventListener('touchmove', e => {
+    const y = e.touches[0].clientY;
+    const dt = Math.max(1, Date.now() - lastT);
+    velY = (lastY - y) / dt * 16; // px per frame at 60fps
+    lastY = y; lastT = Date.now();
+  }, { passive: true });
+
+  document.addEventListener('touchend', () => {
+    function coast() {
+      if (Math.abs(velY) < 0.4) return;
+      window.scrollBy(0, velY);
+      velY *= 0.94; // friction
+      rafId = requestAnimationFrame(coast);
+    }
+    rafId = requestAnimationFrame(coast);
+  }, { passive: true });
+})();
+
+// ══════════════════════════════════════════════════════
+//  SECTION AURAS v2 — scroll-driven glowing orbs
+//  Key fix: GSAP owns ALL transforms via xPercent/yPercent.
+//  No CSS transform on .sec-aura — avoids GSAP clobbering translate.
+//  Orbs are large (120-160% section width) and fully opaque
+//  so they're always clearly visible against the dark bg.
+// ══════════════════════════════════════════════════════
+(function initSectionAuras() {
+  const CFG = {
+    'flota': {
+      a1: { color:'rgba(255,130,15,0.75)',  x:'22%', y:'52%', w:'120%' },
+      a2: { color:'rgba(26,90,255,0.60)',   x:'80%', y:'38%', w:'100%' }
+    },
+    'testimoniale': {
+      a1: { color:'rgba(150,40,255,0.70)',  x:'74%', y:'44%', w:'115%' },
+      a2: { color:'rgba(20,160,255,0.55)',  x:'24%', y:'62%', w:'95%'  }
+    },
+    'contact': {
+      a1: { color:'rgba(0,210,185,0.65)',   x:'40%', y:'50%', w:'130%' },
+      a2: { color:'rgba(220,55,255,0.52)',  x:'82%', y:'68%', w:'100%' }
+    }
+  };
+
+  Object.entries(CFG).forEach(([id, { a1, a2 }]) => {
+    const sec = document.getElementById(id);
+    if (!sec) return;
+
+    function makeOrb(cfg) {
+      const el = document.createElement('div');
+      el.className = 'sec-aura';
+      // width via inline — padding-top trick keeps it square (circle after border-radius:50%)
+      el.style.cssText =
+        'left:' + cfg.x + ';top:' + cfg.y + ';' +
+        'width:' + cfg.w + ';padding-top:' + cfg.w + ';' +
+        'background:radial-gradient(circle,' + cfg.color + ' 0%,transparent 65%)';
+      sec.prepend(el);
+      // GSAP owns the centering — keeping translate + scale in one matrix
+      gsap.set(el, { xPercent: -50, yPercent: -50, scale: 0.2, opacity: 0 });
+      return el;
+    }
+
+    const orb1 = makeOrb(a1);
+    const orb2 = makeOrb(a2);
+
+    // Orb 1 — zooms in slowly from tiny as section enters viewport
+    gsap.to(orb1, {
+      scale: 1.3, opacity: 1,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: sec,
+        start: 'top bottom',   // starts when section top hits bottom of screen
+        end:   'bottom top',   // ends when section leaves top of screen
+        scrub: 2.5             // slow, smooth scroll-linked
+      }
+    });
+
+    // Orb 2 — zooms in from large to normal, arriving mid-scroll (the "another aura" moment)
+    gsap.set(orb2, { scale: 2.4 }); // reset to large — GSAP set keeps xPercent/yPercent
+    gsap.to(orb2, {
+      scale: 0.9, opacity: 1,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: sec,
+        start: '20% bottom',
+        end:   'bottom top',
+        scrub: 3
+      }
+    });
+  });
+})();
+
+// ══════════════════════════════════════════════════════
 //  SVG LENS DISTORTION — cursor proximity warps hero card
 //  feDisplacementMap scale driven by cursor distance.
 //  Close = curved glass lens. Far = flat glass.

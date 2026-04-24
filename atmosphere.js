@@ -7,7 +7,8 @@ import * as THREE from 'three';
 
 const IS_MOBILE = (('ontouchstart' in window) || navigator.maxTouchPoints > 0)
                || window.innerWidth <= 768;
-const COUNT = IS_MOBILE ? 70 : 240;
+const IS_4K = devicePixelRatio >= 2 || window.innerWidth >= 2560;
+const COUNT = IS_MOBILE ? 70 : IS_4K ? 360 : 240;
 
 const canvas = document.getElementById('atmo-canvas');
 if (!canvas) throw new Error('[atmosphere] canvas#atmo-canvas not found');
@@ -25,7 +26,7 @@ const renderer = new THREE.WebGLRenderer({
   antialias: false,
   powerPreference: 'low-power',
 });
-renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+renderer.setPixelRatio(Math.min(devicePixelRatio, IS_MOBILE ? 1 : 2));
 renderer.setSize(innerWidth, innerHeight);
 renderer.setClearColor(0x000000, 0);
 

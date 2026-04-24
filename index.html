@@ -15,7 +15,7 @@
 </script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-<link rel="stylesheet" href="hero.css?v=32">
+<link rel="stylesheet" href="hero.css?v=37">
 </head>
 <body>
 
@@ -141,6 +141,22 @@
 
   <div class="shell">
 
+    <!-- TOP CTA BUTTONS -->
+    <div class="top-btns" id="hbtns">
+      <button class="hbtn" data-target="#rezerva">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3-8.59A2 2 0 0 1 3.61 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17z"/></svg>
+        Rezervă Acum
+      </button>
+      <button class="hbtn" data-target="#flota">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        Vezi Flota
+      </button>
+      <button class="hbtn" data-target="#cum-functioneaza">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Cum Funcționează
+      </button>
+    </div>
+
     <!-- CENTER WHITE CARD -->
     <div class="mid">
       <div class="hero-card" id="card">
@@ -158,22 +174,6 @@
           </button>
         </form>
       </div>
-    </div>
-
-    <!-- CTA BUTTONS — moved below hero card -->
-    <div class="top-btns" id="hbtns">
-      <button class="hbtn" data-target="#rezerva">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3-8.59A2 2 0 0 1 3.61 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17z"/></svg>
-        Rezervă Acum
-      </button>
-      <button class="hbtn" data-target="#flota">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-        Vezi Flota
-      </button>
-      <button class="hbtn" data-target="#cum-functioneaza">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-        Cum Funcționează
-      </button>
     </div>
 
     <!-- BOTTOM STATS BAR -->
@@ -584,8 +584,8 @@
 </div>
 
 <script src="prismatic-burst.js?v=17"></script>
-<script type="module" src="atmosphere.js?v=1"></script>
-<script src="hero.js?v=30"></script>
+<script type="module" src="atmosphere.js?v=2"></script>
+<script src="hero.js?v=33"></script>
 <script src="divider.js?v=17"></script>
 <script src="sections-3d.js?v=17"></script>
 <script src="steps-3d.js"></script>
