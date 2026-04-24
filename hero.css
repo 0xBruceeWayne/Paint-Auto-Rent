@@ -555,29 +555,31 @@ body{
   -webkit-backdrop-filter:blur(18px);
 }
 .sec-dark{
-  background:rgba(4,11,32,0.78);
-  position:relative;overflow:hidden;
+  background:rgba(4,9,28,0.82);
+  position:relative;
+  overflow-x:clip;           /* horizontal clip without a scroll container */
+  /* overflow-y intentionally VISIBLE — aura orbs must bloom past section edge */
 }
 .sec--compact{padding:60px 80px}
 
-/* Cursor spotlight removed — uniform dark blue background */
-.sec-dark .sec-inner{position:relative;z-index:1}
+.sec-dark .sec-inner{position:relative;z-index:2}
 
 /* ── Section aura orbs ─────────────────────────────────
-   GSAP handles ALL transforms via xPercent/yPercent + scale.
-   No CSS transform here — GSAP owns it entirely.
+   GSAP owns ALL transforms (xPercent/yPercent + scale).
+   z-index:1 puts orbs above sec-dark background, below content.
+   overflow-x:clip on parent lets blur bleed without h-scroll.
 ──────────────────────────────────────────────────────── */
 .sec-aura{
   position:absolute;
   border-radius:50%;
   pointer-events:none;
-  z-index:0;
+  z-index:1;                 /* above dark bg, below content (z:2) */
   will-change:transform,opacity;
-  filter:blur(100px);
+  filter:blur(140px);        /* wide soft bloom */
   opacity:0;
-  /* NO transform here — GSAP sets xPercent:-50 yPercent:-50 + scale */
+  /* NO CSS transform — GSAP sets xPercent:-50 yPercent:-50 + scale */
 }
-.sec-inner{max-width:1100px;margin:0 auto;width:100%;position:relative;z-index:4}
+.sec-inner{max-width:1100px;margin:0 auto;width:100%;position:relative;z-index:2}
 
 /* ── SLASH DIVIDERS ──────────────────────────────── */
 .sec-slash{

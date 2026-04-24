@@ -1279,19 +1279,34 @@ document.querySelectorAll('.benefit').forEach(b => {
 //  Orbs are large (120-160% section width) and fully opaque
 //  so they're always clearly visible against the dark bg.
 // ══════════════════════════════════════════════════════
+//  SECTION AURA ORBS — scroll-reactive bloom per dark section
+//  Each section gets 2 orbs. Orb1 zooms in from small to large.
+//  Orb2 descends from huge to settled. Together they create
+//  a "hero entering" feel — vivid, unmistakeable.
+//
+//  KEY FIXES vs previous version:
+//  - sec-dark now overflow-x:clip so blur bleeds out freely
+//  - z-index:1 on .sec-aura sits above dark background (z:auto)
+//  - Orbs start at scale:0.35 and end at scale:2.0 — full zoom
+//  - Opacity 0 → 0.95 — no more faded whispers
+//  - blur(140px) set in CSS for wide soft bloom
+// ══════════════════════════════════════════════════════
 (function initSectionAuras() {
   const CFG = {
     'flota': {
-      a1: { color:'rgba(255,130,15,0.75)',  x:'22%', y:'52%', w:'120%' },
-      a2: { color:'rgba(26,90,255,0.60)',   x:'80%', y:'38%', w:'100%' }
+      // Warm orange sun + deep blue electric — car/energy palette
+      a1: { color:'rgba(255,110,10,0.90)',  x:'18%', y:'55%', w:'140%' },
+      a2: { color:'rgba(20,80,255,0.80)',   x:'82%', y:'35%', w:'120%' }
     },
     'testimoniale': {
-      a1: { color:'rgba(150,40,255,0.70)',  x:'74%', y:'44%', w:'115%' },
-      a2: { color:'rgba(20,160,255,0.55)',  x:'24%', y:'62%', w:'95%'  }
+      // Purple nebula + electric cyan — trust/glow palette
+      a1: { color:'rgba(130,20,255,0.90)',  x:'72%', y:'48%', w:'140%' },
+      a2: { color:'rgba(10,140,255,0.80)',  x:'22%', y:'58%', w:'120%'  }
     },
     'contact': {
-      a1: { color:'rgba(0,210,185,0.65)',   x:'40%', y:'50%', w:'130%' },
-      a2: { color:'rgba(220,55,255,0.52)',  x:'82%', y:'68%', w:'100%' }
+      // Teal + magenta — action/CTA palette
+      a1: { color:'rgba(0,200,180,0.85)',   x:'38%', y:'52%', w:'145%' },
+      a2: { color:'rgba(200,40,255,0.78)',  x:'80%', y:'65%', w:'120%' }
     }
   };
 
@@ -1302,42 +1317,40 @@ document.querySelectorAll('.benefit').forEach(b => {
     function makeOrb(cfg) {
       const el = document.createElement('div');
       el.className = 'sec-aura';
-      // width via inline — padding-top trick keeps it square (circle after border-radius:50%)
       el.style.cssText =
         'left:' + cfg.x + ';top:' + cfg.y + ';' +
         'width:' + cfg.w + ';padding-top:' + cfg.w + ';' +
-        'background:radial-gradient(circle,' + cfg.color + ' 0%,transparent 65%)';
+        'background:radial-gradient(circle,' + cfg.color + ' 0%,rgba(0,0,0,0) 62%)';
       sec.prepend(el);
-      // GSAP owns the centering — keeping translate + scale in one matrix
-      gsap.set(el, { xPercent: -50, yPercent: -50, scale: 0.2, opacity: 0 });
+      gsap.set(el, { xPercent: -50, yPercent: -50, scale: 0.35, opacity: 0 });
       return el;
     }
 
     const orb1 = makeOrb(a1);
     const orb2 = makeOrb(a2);
 
-    // Orb 1 — zooms in slowly from tiny as section enters viewport
+    // Orb 1 — rises from tiny speck to full bloom as section enters
     gsap.to(orb1, {
-      scale: 1.3, opacity: 1,
+      scale: 2.0, opacity: 0.95,
       ease: 'none',
       scrollTrigger: {
         trigger: sec,
-        start: 'top bottom',   // starts when section top hits bottom of screen
-        end:   'bottom top',   // ends when section leaves top of screen
-        scrub: 2.5             // slow, smooth scroll-linked
+        start: 'top bottom',
+        end:   'bottom top',
+        scrub: 2.2
       }
     });
 
-    // Orb 2 — zooms in from large to normal, arriving mid-scroll (the "another aura" moment)
-    gsap.set(orb2, { scale: 2.4 }); // reset to large — GSAP set keeps xPercent/yPercent
+    // Orb 2 — descends from oversized to settled (reverse zoom) — creates depth
+    gsap.set(orb2, { scale: 3.5 });
     gsap.to(orb2, {
-      scale: 0.9, opacity: 1,
+      scale: 1.0, opacity: 0.80,
       ease: 'none',
       scrollTrigger: {
         trigger: sec,
-        start: '20% bottom',
+        start: 'top bottom',
         end:   'bottom top',
-        scrub: 3
+        scrub: 3.0
       }
     });
   });
