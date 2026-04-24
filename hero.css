@@ -1412,18 +1412,82 @@ body{
 ══════════════════════════════════════════════════════ */
 @media(max-width:900px){
 
-  /* ── Global ─────────────────────────────────────── */
-  html,body{cursor:auto}
-  body{ scroll-snap-type:y proximity }
+  /* ══ PERFORMANCE — kill every heavy GPU effect ══ */
+  .sec-aura{ display:none !important }
+  #atmo-canvas{ display:none !important }        /* kill Three.js atmosphere */
+  .fleet-glass-shimmer,.fleet-glass-rim{ display:none !important }
+  .fleet-card,.testi-card{
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+    background:rgba(6,14,40,0.96) !important;
+  }
+  .testi-card{ background:rgba(5,10,28,0.96) !important; }
+  .step-icon{
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+  }
+  .gnav-pill{
+    backdrop-filter:blur(18px) saturate(180%) !important;
+    -webkit-backdrop-filter:blur(18px) saturate(180%) !important;
+  }
+
+  /* ══ SCROLL SNAP — mandatory full-screen pages ══ */
+  html{
+    scroll-snap-type:y mandatory;
+    overflow-y:scroll;
+    height:100%;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:none;
+    scroll-behavior:smooth;
+  }
+  body{
+    height:100%;
+    overscroll-behavior-y:none;
+    cursor:auto;
+  }
   #cur,#cring{ display:none }
 
-  /* ── Orb bg — scale down for perf ───────────────── */
+  /* Every section snaps & fits screen */
+  .sec{
+    height:100svh;
+    min-height:100svh;
+    max-height:100svh;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding:20px 18px;
+    scroll-snap-align:start;
+    scroll-snap-stop:always;
+    box-sizing:border-box;
+  }
+  .sec-inner{
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    max-width:100%;
+  }
+  #hero{
+    height:100svh;
+    scroll-snap-align:start;
+    scroll-snap-stop:always;
+  }
+  #footer{
+    scroll-snap-align:start;
+    height:auto;
+    min-height:auto;
+  }
+
+  /* ── Orb bg ─────────────────────────────────────── */
   .lg-orb--a{width:120vw;height:60vh}
   .lg-orb--b{width:100vw;height:50vh}
 
-  /* ── Sections ────────────────────────────────────── */
-  .sec{ padding:64px 24px; min-height:auto }
-  .sec--compact{ padding:48px 24px }
+  /* ── Slash dividers — remove on mobile ──────────── */
+  .sec-slash{ display:none }
+
+  /* ── Reveal — disable GSAP entrance on mobile ───── */
+  .reveal-up{ opacity:1 !important; transform:none !important }
 
   /* ── Slash dividers ──────────────────────────────── */
   .sec-slash{ height:48px }
@@ -1432,18 +1496,17 @@ body{
   .reveal-up{ opacity:1 !important; transform:none !important }
 
   /* ── Hero ────────────────────────────────────────── */
-  #hero{ scroll-snap-align:none }
+  #hero{ scroll-snap-align:start }
   .hero-side{ display:none }
   .shell{ gap:0 }
   .mid{
-    padding:80px 16px 0;
-    gap:12px;
+    padding:72px 16px 0;
+    gap:10px;
     justify-content:flex-start;
-    padding-top:88px;
   }
   .top-btns{
-    padding:14px 16px 0;
-    gap:8px;
+    padding:12px 16px 0;
+    gap:7px;
     flex-wrap:wrap;
     justify-content:center;
   }
@@ -1500,31 +1563,74 @@ body{
   .sec-desc{ font-size:.88rem }
 
   /* ── Stat cards ──────────────────────────────────── */
-  .stat-cards{ grid-template-columns:1fr;gap:16px;margin-bottom:32px }
-  .stat-num{ font-size:clamp(2.6rem,10vw,4rem) }
+  .stat-cards{ grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px }
+  .stat-card{ padding:16px 14px }
+  .stat-num{ font-size:clamp(2rem,8vw,3rem) }
+  .stat-label{ font-size:.52rem }
 
   /* ── Benefit strip ───────────────────────────────── */
-  .benefit-strip{ grid-template-columns:1fr 1fr }
-  .benefit{ padding:20px 16px;gap:12px }
-  .benefit-icon{ width:32px;height:32px }
-  .benefit-icon svg{ width:15px;height:15px }
-  .benefit-title{ font-size:.72rem }
-  .benefit-sub{ font-size:.64rem }
+  .benefit-strip{ grid-template-columns:1fr 1fr;margin-bottom:0 }
+  .benefit{ padding:14px 12px;gap:8px }
+  .benefit-icon{ width:26px;height:26px }
+  .benefit-icon svg{ width:12px;height:12px }
+  .benefit-title{ font-size:.65rem }
+  .benefit-sub{ font-size:.58rem }
 
-  /* ── Fleet ───────────────────────────────────────── */
-  .fleet-grid{ grid-template-columns:1fr;gap:16px }
+  /* ── Fleet — horizontal carousel ─────────────────── */
+  #flota .sec-inner{ justify-content:flex-start;padding-top:16px }
+  #flota .sec-head{ margin-bottom:16px }
+  .fleet-grid{
+    display:flex;
+    flex-direction:row;
+    overflow-x:scroll;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    gap:12px;
+    padding-bottom:16px;
+    grid-template-columns:unset;
+    scrollbar-width:none;
+  }
+  .fleet-grid::-webkit-scrollbar{ display:none }
+  .fleet-card{
+    flex:0 0 80vw;
+    scroll-snap-align:center;
+  }
+  .fleet-img{ height:150px }
+  .fleet-dots{
+    display:flex;justify-content:center;gap:6px;margin-top:8px;
+  }
+  .fleet-dot{
+    width:6px;height:6px;border-radius:50%;
+    background:rgba(255,255,255,0.25);transition:background .2s;
+  }
+  .fleet-dot.active{ background:#1a6ae8 }
 
   /* ── Steps ───────────────────────────────────────── */
-  .steps{ flex-direction:column;align-items:center;gap:16px;margin-bottom:36px }
-  .step-arrow{ transform:rotate(90deg);padding:4px 0;font-size:1.5rem }
-  #cum-functioneaza .step{
-    max-width:100%;width:100%;
-    padding:32px 24px;
-    border-radius:16px;
+  #cum-functioneaza .sec-inner{ justify-content:flex-start;padding-top:12px }
+  #cum-functioneaza .sec-head{ margin-bottom:14px }
+  .steps{
+    flex-direction:row;
+    overflow-x:scroll;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    gap:10px;
+    margin-bottom:16px;
+    align-items:stretch;
+    padding-bottom:12px;
   }
-  #cum-functioneaza .step-title{ font-size:1.4rem }
-  #cum-functioneaza .step-desc{ font-size:.92rem }
-  .cta-big-btn{ padding:16px 36px;font-size:.82rem }
+  .steps::-webkit-scrollbar{ display:none }
+  .step-arrow{ display:none }
+  #cum-functioneaza .step{
+    flex:0 0 78vw;
+    scroll-snap-align:center;
+    padding:24px 20px;
+    border-radius:16px;
+    max-width:none;
+  }
+  #cum-functioneaza .step-title{ font-size:1.25rem }
+  #cum-functioneaza .step-desc{ font-size:.86rem }
+  .cta-big-btn{ padding:13px 28px;font-size:.76rem }
 
   /* ── Calculator ──────────────────────────────────── */
   .calc-wrap{ grid-template-columns:1fr;gap:28px }
@@ -1537,29 +1643,54 @@ body{
   .partner-logo{ min-width:140px;padding:24px 16px }
   .partner-sep{ display:none }
 
-  /* ── Testimonials ────────────────────────────────── */
-  .testi-grid{ grid-template-columns:1fr;gap:16px }
-  .testi-card{ padding:26px 22px }
+  /* ── Testimonials — horizontal carousel ─────────── */
+  #testimoniale .sec-inner{ justify-content:flex-start;padding-top:16px }
+  #testimoniale .sec-head{ margin-bottom:16px }
+  .testi-grid{
+    display:flex;
+    flex-direction:row;
+    overflow-x:scroll;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    gap:12px;
+    padding-bottom:16px;
+    grid-template-columns:unset;
+  }
+  .testi-grid::-webkit-scrollbar{ display:none }
+  .testi-card{
+    flex:0 0 84vw;
+    scroll-snap-align:center;
+    padding:22px 18px;
+  }
+  .testi-dots{
+    display:flex;justify-content:center;gap:6px;margin-top:8px;
+  }
+  .testi-dot{
+    width:6px;height:6px;border-radius:50%;
+    background:rgba(255,255,255,0.25);transition:background .2s;
+  }
+  .testi-dot.active{ background:#4477ff }
 
   /* ── Contact / Command Center ────────────────────── */
   .cmd-section{ padding:0 }
+  .cmd-left{ display:none }
   .cmd-inner{
     grid-template-columns:1fr;
-    padding:56px 24px 48px;
-    gap:36px;
+    padding:0 22px;
+    gap:20px;
+    justify-content:center;
   }
-  .cmd-left{ perspective:none }
-  .cmd-map-frame{ height:240px }
-  .cmd-map-wrap{ gap:10px }
-  .cmd-coords{ font-size:.52rem;letter-spacing:2px }
+  .cmd-right{ display:flex;flex-direction:column;justify-content:center }
   .cmd-title{
-    font-size:clamp(3rem,12vw,5rem);
+    font-size:clamp(2.8rem,12vw,4.5rem);
     letter-spacing:-2px;
-    margin-bottom:14px;
+    margin-bottom:12px;
   }
-  .cmd-phone{ font-size:clamp(1.4rem,6vw,2.2rem);margin-bottom:24px }
+  .cmd-phone{ font-size:clamp(1.3rem,6vw,2rem);margin-bottom:18px }
   .cmd-btn{ padding:13px 16px;font-size:.62rem }
-  .cmd-address-card{ font-size:.68rem;padding:12px 14px }
+  .cmd-btns-row{ gap:10px }
+  .cmd-address-card{ font-size:.65rem;padding:10px 12px }
 
   /* ── Footer ──────────────────────────────────────── */
   #footer{ padding:44px 24px 20px }

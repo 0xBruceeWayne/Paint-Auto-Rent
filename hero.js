@@ -1230,6 +1230,7 @@ document.querySelectorAll('.benefit').forEach(b => {
 
 // ── 3. Inject glass shimmer + rim into fleet cards ─
 (function injectFleetGlass() {
+  if (IS_MOBILE) return;
   document.querySelectorAll('.fleet-card').forEach(card => {
     if (card.querySelector('.fleet-glass-shimmer')) return; // idempotent
     const shimmer = document.createElement('div');
@@ -1374,4 +1375,40 @@ document.querySelectorAll('.benefit').forEach(b => {
     curScale += (tgtScale - curScale) * 0.09;
     dispMap.setAttribute('scale', curScale > 0.05 ? curScale.toFixed(2) : '0');
   })();
+})();
+
+// ── 6. Mobile carousel dot indicators ─────────────
+(function initCarouselDots() {
+  if (!IS_MOBILE) return;
+
+  function makeDots(grid, cards, dotClass, containerClass) {
+    if (!grid || cards.length < 2) return;
+    const wrap = document.createElement('div');
+    wrap.className = containerClass;
+    grid.parentElement.insertBefore(wrap, grid.nextSibling);
+
+    cards.forEach((_, i) => {
+      const d = document.createElement('div');
+      d.className = dotClass + (i === 0 ? ' active' : '');
+      wrap.appendChild(d);
+    });
+
+    const dots = wrap.querySelectorAll('.' + dotClass);
+    let rafId;
+    grid.addEventListener('scroll', () => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const idx = Math.round(grid.scrollLeft / grid.offsetWidth);
+        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+      });
+    }, { passive: true });
+  }
+
+  const fleetGrid = document.querySelector('.fleet-grid');
+  const fleetCards = fleetGrid ? fleetGrid.querySelectorAll('.fleet-card') : [];
+  makeDots(fleetGrid, fleetCards, 'fleet-dot', 'fleet-dots');
+
+  const testiGrid = document.querySelector('.testi-grid');
+  const testiCards = testiGrid ? testiGrid.querySelectorAll('.testi-card') : [];
+  makeDots(testiGrid, testiCards, 'testi-dot', 'testi-dots');
 })();
