@@ -18,6 +18,15 @@ body{
   overscroll-behavior-y:none;
 }
 
+/* ── 3D ATMOSPHERE BACKGROUND CANVAS ─────────────────── */
+#atmo-canvas{
+  position:fixed;top:0;left:0;
+  width:100vw;height:100vh;
+  z-index:-1;
+  pointer-events:none;
+  will-change:transform;
+}
+
 /* ── APPLE GRADIENT ORB BACKGROUND ───────────────────── */
 #lg-bg{
   position:fixed;inset:0;z-index:-2;
@@ -458,14 +467,68 @@ body{
 }
 
 /* ── TOP BUTTONS (at very top of hero shell) ──────── */
+/* ── CTA BUTTON ROW — Liquid Glass island, below hero card ── */
 .top-btns{
-  display:flex;gap:76px;justify-content:center;flex-wrap:nowrap;
-  padding:22px 40px 0;
-  opacity:0;transform:translateY(-14px);
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:nowrap;
+  padding:0 32px 0;
+  opacity:0;
+  transform:translateY(14px);
   pointer-events:all;
+
+  /* Liquid Glass container — the "island" */
+  background:rgba(255,255,255,0.72);
+  backdrop-filter:blur(36px) saturate(220%) brightness(1.12);
+  -webkit-backdrop-filter:blur(36px) saturate(220%) brightness(1.12);
+  border:1px solid rgba(255,255,255,0.90);
+  border-radius:100px;
+  box-shadow:
+    /* bright top rim — the "island" white edge */
+    inset 0 2px 0 rgba(255,255,255,1.0),
+    inset 0 -1px 0 rgba(0,0,120,0.10),
+    /* depth layers */
+    0 8px 32px rgba(0,30,120,0.18),
+    0 2px 8px  rgba(0,30,120,0.10),
+    /* subtle outer glow */
+    0 0 0 1px rgba(255,255,255,0.55),
+    /* blue depth base */
+    0 20px 60px rgba(10,32,96,0.14);
+  position:relative;
+  overflow:hidden;
+  transform-style:preserve-3d;
 }
 
-/* ── 3 WHITE 3D BUTTONS ───────────────────────────── */
+/* Specular shimmer sweep — brightest white highlight */
+.top-btns::before{
+  content:'';
+  position:absolute;
+  top:0;left:-30%;right:-30%;height:2px;
+  background:linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,255,255,0.65) 25%,
+    rgba(255,255,255,1.0)  50%,
+    rgba(255,255,255,0.65) 75%,
+    transparent 100%);
+  pointer-events:none;
+  border-radius:100px;
+}
+
+/* Inner glass gradient — top half brighter, bottom cooler */
+.top-btns::after{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(170deg,
+    rgba(255,255,255,0.55) 0%,
+    rgba(255,255,255,0.18) 45%,
+    rgba(180,210,255,0.10) 70%,
+    rgba(100,150,255,0.04) 100%);
+  pointer-events:none;
+  border-radius:100px;
+}
+
+/* ── INDIVIDUAL BUTTONS ───────────────────────────── */
 .hero-btns{
   display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
   opacity:0;transform:translateY(10px);
@@ -476,36 +539,53 @@ body{
   appearance:none !important;
   pointer-events:all;
   position:relative;
-  display:flex;align-items:center;gap:9px;
-  background:var(--blue);
-  color:#ffffff;
+  z-index:1;
+  display:flex;align-items:center;gap:10px;
+  background:transparent;
+  /* DARK BLUE letters */
+  color:#0a2060;
   border:none !important;
   outline:none !important;
-  font-family:var(--font);font-size:.86rem;font-weight:700;
-  letter-spacing:2.5px;text-transform:uppercase;
-  padding:16px 32px;
+  font-family:var(--font);
+  font-size:0.98rem;
+  font-weight:800;
+  letter-spacing:2.2px;
+  text-transform:uppercase;
+  padding:20px 36px;
   cursor:pointer;
-  box-shadow:0 6px 24px rgba(0,0,0,0.65), inset 0 1px 0 rgba(100,170,255,0.3);
-  will-change:transform,box-shadow;
-  transition:box-shadow 0.1s,background 0.15s,transform 0.1s;
+  will-change:transform;
+  transition:color 0.18s, transform 0.14s;
+}
+.hbtn svg{
+  flex-shrink:0;
+  stroke:#0a2060;
+  transition:stroke .18s, transform .18s;
 }
 .hbtn::-moz-focus-inner{ border:0; padding:0; }
 .hbtn:focus,
-.hbtn:focus-visible,
-.hbtn:focus-within,
-.hbtn:focus-within *{
+.hbtn:focus-visible{
   outline:none !important;
-  outline-width:0 !important;
-  outline-offset:0 !important;
-  box-shadow:0 6px 24px rgba(0,0,0,0.65), inset 0 1px 0 rgba(100,170,255,0.3) !important;
-  background:var(--blue) !important;
 }
-.hbtn svg{flex-shrink:0;stroke:currentColor;transition:stroke .2s}
-.hbtn:hover{background:#1050b8;box-shadow:0 10px 32px rgba(0,0,0,0.75), inset 0 1px 0 rgba(100,170,255,0.3)}
+.hbtn:hover{
+  color:#1a3a8a;
+}
+.hbtn:hover svg{
+  stroke:#1a3a8a;
+  transform:scale(1.15);
+}
 .hbtn:active{
-  box-shadow:0 2px 8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(80,150,255,0.15) !important;
-  transform:translateY(2px) !important;
-  background:var(--blue) !important;
+  transform:translateY(1px) scale(0.98) !important;
+  color:#0a1840 !important;
+}
+
+/* Dividers between buttons — thin glass line */
+.hbtn + .hbtn::before{
+  content:'';
+  position:absolute;
+  left:0;top:22%;bottom:22%;
+  width:1px;
+  background:linear-gradient(180deg, transparent, rgba(10,32,96,0.18) 40%, rgba(10,32,96,0.18) 60%, transparent);
+  pointer-events:none;
 }
 
 /* ── BOTTOM STATS BAR ─────────────────────────────── */
@@ -546,7 +626,7 @@ body{
   -webkit-backdrop-filter:blur(18px);
 }
 .sec-dark{
-  background:#03091c;
+  background:rgba(3,9,28,0.88);
   position:relative;overflow:hidden;
 }
 .sec--compact{padding:60px 80px}
@@ -1092,78 +1172,88 @@ body{
 }
 .cmd-map-frame{
   position:relative;
-  /* 3D frame: layered shadows simulate depth plate */
-  border:1px solid rgba(26,106,232,0.55);
+  /* Solid 3D frame — thick border with depth layers */
+  border:3px solid rgba(26,106,232,0.85);
+  border-radius:0;
   box-shadow:
-    /* outer glow */
-    0 0 0 1px rgba(26,106,232,0.18),
-    0 0 50px rgba(26,106,232,0.22),
-    /* 3D depth layers — offset shadows create plate thickness */
-    4px 6px 0 0 rgba(26,106,232,0.12),
-    8px 12px 0 0 rgba(26,106,232,0.07),
-    12px 18px 0 0 rgba(26,106,232,0.04),
-    /* liquid glass inner rim */
-    inset 0 1.5px 0 rgba(255,255,255,0.18),
-    inset 0 -1px 0 rgba(26,106,232,0.15),
-    inset 1.5px 0 0 rgba(255,255,255,0.12);
+    /* outer glow ring */
+    0 0 0 1px rgba(26,106,232,0.35),
+    0 0 30px rgba(26,106,232,0.28),
+    0 0 70px rgba(26,106,232,0.12),
+    /* 3D plate depth — stacked offset shadows */
+    5px 7px 0 0 rgba(26,106,232,0.22),
+    10px 14px 0 0 rgba(26,106,232,0.13),
+    15px 21px 0 0 rgba(26,106,232,0.07),
+    20px 28px 0 0 rgba(26,106,232,0.03),
+    /* depth bottom/right edge */
+    0 6px 0 0 rgba(10,50,160,0.4),
+    6px 0 0 0 rgba(10,50,160,0.3),
+    /* inner bevel */
+    inset 0 1px 0 rgba(255,255,255,0.22),
+    inset 0 -1px 0 rgba(0,20,80,0.4),
+    inset 1px 0 0 rgba(255,255,255,0.15),
+    inset -1px 0 0 rgba(0,20,80,0.3);
   overflow:hidden;
   height:380px;
   transform-style:preserve-3d;
   will-change:transform;
-  transition:box-shadow .3s;
-  /* Liquid glass surface on frame */
-  background:rgba(8,18,50,0.25);
-  backdrop-filter:blur(2px);
+  transition:box-shadow .35s,border-color .35s;
+  background:rgba(8,18,50,0.12);
 }
 .cmd-map-frame:hover{
+  border-color:rgba(26,106,232,1);
   box-shadow:
-    0 0 0 1px rgba(26,106,232,0.4),
-    0 0 70px rgba(26,106,232,0.35),
-    5px 8px 0 0 rgba(26,106,232,0.18),
-    10px 16px 0 0 rgba(26,106,232,0.10),
-    14px 22px 0 0 rgba(26,106,232,0.06),
-    inset 0 1.5px 0 rgba(255,255,255,0.22),
-    inset 0 -1px 0 rgba(26,106,232,0.20),
-    inset 1.5px 0 0 rgba(255,255,255,0.16);
+    0 0 0 1px rgba(26,106,232,0.55),
+    0 0 40px rgba(26,106,232,0.45),
+    0 0 90px rgba(26,106,232,0.18),
+    6px 9px 0 0 rgba(26,106,232,0.28),
+    12px 18px 0 0 rgba(26,106,232,0.16),
+    18px 27px 0 0 rgba(26,106,232,0.09),
+    24px 36px 0 0 rgba(26,106,232,0.04),
+    0 7px 0 0 rgba(10,50,160,0.55),
+    7px 0 0 0 rgba(10,50,160,0.42),
+    inset 0 1px 0 rgba(255,255,255,0.28),
+    inset 0 -1px 0 rgba(0,20,80,0.5),
+    inset 1px 0 0 rgba(255,255,255,0.20),
+    inset -1px 0 0 rgba(0,20,80,0.4);
 }
-/* liquid glass shimmer on map frame top edge */
+/* Glowing top rim line */
 .cmd-map-frame::before{
   content:'';position:absolute;
-  top:0;left:10%;right:10%;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.55) 40%,rgba(255,255,255,0.75) 50%,rgba(255,255,255,0.55) 60%,transparent);
+  top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,
+    rgba(26,106,232,0.3) 0%,
+    rgba(60,140,255,0.9) 20%,
+    rgba(100,180,255,1.0) 50%,
+    rgba(60,140,255,0.9) 80%,
+    rgba(26,106,232,0.3) 100%);
   z-index:6;pointer-events:none;
-  animation:lg-rim-pulse 4s ease-in-out infinite;
+  animation:lg-rim-pulse 3.5s ease-in-out infinite;
+  box-shadow:0 0 12px rgba(26,106,232,0.7),0 0 24px rgba(26,106,232,0.3);
 }
 
-/* Corner L-brackets */
-.cmd-c{position:absolute;width:20px;height:20px;z-index:5;pointer-events:none}
-.cmd-tl{top:-1px;left:-1px;border-top:2px solid var(--blue);border-left:2px solid var(--blue)}
-.cmd-tr{top:-1px;right:-1px;border-top:2px solid var(--blue);border-right:2px solid var(--blue)}
-.cmd-bl{bottom:-1px;left:-1px;border-bottom:2px solid var(--blue);border-left:2px solid var(--blue)}
-.cmd-br{bottom:-1px;right:-1px;border-bottom:2px solid var(--blue);border-right:2px solid var(--blue)}
+/* Corner L-brackets — larger, brighter, matching solid frame */
+.cmd-c{position:absolute;width:28px;height:28px;z-index:7;pointer-events:none}
+.cmd-tl{top:-3px;left:-3px;border-top:4px solid rgba(100,180,255,1);border-left:4px solid rgba(100,180,255,1);
+  box-shadow:-2px -2px 10px rgba(26,106,232,0.6),inset 1px 1px 0 rgba(255,255,255,0.4)}
+.cmd-tr{top:-3px;right:-3px;border-top:4px solid rgba(100,180,255,1);border-right:4px solid rgba(100,180,255,1);
+  box-shadow:2px -2px 10px rgba(26,106,232,0.6)}
+.cmd-bl{bottom:-3px;left:-3px;border-bottom:4px solid rgba(100,180,255,1);border-left:4px solid rgba(100,180,255,1);
+  box-shadow:-2px 2px 10px rgba(26,106,232,0.6)}
+.cmd-br{bottom:-3px;right:-3px;border-bottom:4px solid rgba(100,180,255,1);border-right:4px solid rgba(100,180,255,1);
+  box-shadow:2px 2px 10px rgba(26,106,232,0.6)}
 /* Glow dots at TL and BR */
 .cmd-tl::after,.cmd-br::after{
   content:'';position:absolute;
-  width:5px;height:5px;border-radius:50%;
-  background:var(--blue);
-  box-shadow:0 0 8px 2px rgba(26,106,232,0.8);
+  width:7px;height:7px;border-radius:50%;
+  background:#fff;
+  box-shadow:0 0 10px 3px rgba(26,106,232,1),0 0 20px rgba(26,106,232,0.6);
 }
-.cmd-tl::after{top:-2px;left:-2px}
-.cmd-br::after{bottom:-2px;right:-2px}
+.cmd-tl::after{top:-3px;left:-3px}
+.cmd-br::after{bottom:-3px;right:-3px}
 
-/* Scanline sweep */
-.cmd-scanline{
-  position:absolute;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,rgba(26,106,232,0.7),rgba(26,106,232,0.9),rgba(26,106,232,0.7),transparent);
-  pointer-events:none;z-index:4;
-  animation:cmd-scan 3.5s linear infinite;
-}
-@keyframes cmd-scan{
-  0%{top:-2px;opacity:0}
-  5%{opacity:1}
-  95%{opacity:1}
-  100%{top:100%;opacity:0}
-}
+/* Scanline sweep — REMOVED */
+.cmd-scanline{ display:none; }
 
 /* Radar ping on map pin */
 .cmd-ping{
@@ -1374,25 +1464,293 @@ body{
 }
 
 /* ══════════════════════════════════════════════════════
-   RESPONSIVE
+   RESPONSIVE — TABLET  (≤ 900px)
 ══════════════════════════════════════════════════════ */
 @media(max-width:900px){
-  .sec{padding:70px 30px}
-  .stat-cards{grid-template-columns:1fr}
-  .benefit-strip{grid-template-columns:1fr 1fr}
-  .fleet-grid{grid-template-columns:1fr}
-  .steps{flex-direction:column;align-items:center}
-  .step-arrow{transform:rotate(90deg);padding:0}
-  .calc-wrap{grid-template-columns:1fr}
-  .testi-grid{grid-template-columns:1fr}
-  .cmd-inner{grid-template-columns:1fr;padding:60px 24px;gap:40px}
-  .cmd-map-frame{height:260px}
-  .cmd-title{font-size:clamp(2.8rem,10vw,4rem)}
-  .footer-inner{grid-template-columns:1fr;gap:28px}
-  .footer-contact{align-items:flex-start;text-align:left}
-  .footer-bottom{flex-direction:column;gap:8px}
-  .top-btns{padding:16px 20px 0;gap:8px}
-  .hbtn{font-size:.65rem;padding:10px 16px}
+
+  /* ── Global ─────────────────────────────────────── */
+  html,body{cursor:auto}
+  body{ scroll-snap-type:y proximity }
+  #cur,#cring{ display:none }
+
+  /* ── Orb bg — scale down for perf ───────────────── */
+  .lg-orb--a{width:120vw;height:60vh}
+  .lg-orb--b{width:100vw;height:50vh}
+
+  /* ── Sections ────────────────────────────────────── */
+  .sec{ padding:64px 24px; min-height:auto }
+  .sec--compact{ padding:48px 24px }
+
+  /* ── Slash dividers ──────────────────────────────── */
+  .sec-slash{ height:48px }
+
+  /* ── Reveal base ─────────────────────────────────── */
+  .reveal-up{ opacity:1 !important; transform:none !important }
+
+  /* ── Hero ────────────────────────────────────────── */
+  #hero{ scroll-snap-align:none }
+  .hero-side{ display:none }
+  .shell{ gap:0 }
+  .mid{
+    padding:80px 16px 0;
+    gap:12px;
+    justify-content:flex-start;
+    padding-top:88px;
+  }
+  .top-btns{
+    padding:0 12px;
+    gap:0;
+    flex-wrap:wrap;
+    justify-content:center;
+    border-radius:48px;
+  }
+  .hbtn{
+    font-size:.72rem;
+    padding:14px 18px;
+    letter-spacing:1.5px;
+    gap:7px;
+    color:#0a2060;
+  }
+  .hbtn svg{ width:11px;height:11px;stroke:#0a2060; }
+  .hero-card{
+    padding:24px 22px 20px;
+    gap:8px;
+    max-width:100%;
+    border-radius:4px;
+  }
+  .card-eyebrow{
+    font-size:.55rem;letter-spacing:5px;gap:10px;
+  }
+  .card-eyebrow::before,.card-eyebrow::after{ width:18px }
+  .card-hl{
+    font-size:clamp(2.8rem,14vw,5rem);
+    letter-spacing:-1px;
+    line-height:.86;
+  }
+  .card-sub{
+    font-size:.58rem;letter-spacing:3.5px;
+  }
+  .rent-form{ margin-top:4px }
+  .form-row{ grid-template-columns:1fr }
+  .form-btn{
+    padding:13px 24px;
+    font-size:.76rem;
+    letter-spacing:2px;
+  }
+
+  /* ── Bottom stats bar ────────────────────────────── */
+  .bottom-bar{ padding:14px 16px }
+  .bbar-inner{
+    gap:14px;
+    justify-content:space-between;
+    flex-wrap:nowrap;
+  }
+  .bbar-sep{ height:20px }
+  .bstat-n{ font-size:1.2rem }
+  .bstat-l{ font-size:.42rem;letter-spacing:1.5px }
+  .bstat-phone{ margin-left:0 }
+  .bstat-tag{ font-size:.42rem;letter-spacing:2px }
+  .bstat-num{ font-size:1.1rem;letter-spacing:0 }
+
+  /* ── Section headers ─────────────────────────────── */
+  .sec-head{ margin-bottom:40px }
+  .sec-title{ font-size:clamp(2rem,9vw,3.2rem) }
+  .sec-desc{ font-size:.88rem }
+
+  /* ── Stat cards ──────────────────────────────────── */
+  .stat-cards{ grid-template-columns:1fr;gap:16px;margin-bottom:32px }
+  .stat-num{ font-size:clamp(2.6rem,10vw,4rem) }
+
+  /* ── Benefit strip ───────────────────────────────── */
+  .benefit-strip{ grid-template-columns:1fr 1fr }
+  .benefit{ padding:20px 16px;gap:12px }
+  .benefit-icon{ width:32px;height:32px }
+  .benefit-icon svg{ width:15px;height:15px }
+  .benefit-title{ font-size:.72rem }
+  .benefit-sub{ font-size:.64rem }
+
+  /* ── Fleet ───────────────────────────────────────── */
+  .fleet-grid{ grid-template-columns:1fr;gap:16px }
+
+  /* ── Steps ───────────────────────────────────────── */
+  .steps{ flex-direction:column;align-items:center;gap:16px;margin-bottom:36px }
+  .step-arrow{ transform:rotate(90deg);padding:4px 0;font-size:1.5rem }
+  #cum-functioneaza .step{
+    max-width:100%;width:100%;
+    padding:32px 24px;
+    border-radius:16px;
+  }
+  #cum-functioneaza .step-title{ font-size:1.4rem }
+  #cum-functioneaza .step-desc{ font-size:.92rem }
+  .cta-big-btn{ padding:16px 36px;font-size:.82rem }
+
+  /* ── Calculator ──────────────────────────────────── */
+  .calc-wrap{ grid-template-columns:1fr;gap:28px }
+  .calc-result{ padding:28px 22px }
+  .calc-tabs{ gap:6px }
+  .calc-tab{ padding:7px 12px;font-size:.6rem }
+
+  /* ── Partners ────────────────────────────────────── */
+  .partners-row{ flex-wrap:wrap }
+  .partner-logo{ min-width:140px;padding:24px 16px }
+  .partner-sep{ display:none }
+
+  /* ── Testimonials ────────────────────────────────── */
+  .testi-grid{ grid-template-columns:1fr;gap:16px }
+  .testi-card{ padding:26px 22px }
+
+  /* ── Contact / Command Center ────────────────────── */
+  .cmd-section{ padding:0 }
+  .cmd-inner{
+    grid-template-columns:1fr;
+    padding:56px 24px 48px;
+    gap:36px;
+  }
+  .cmd-left{ perspective:none }
+  .cmd-map-frame{ height:240px }
+  .cmd-map-wrap{ gap:10px }
+  .cmd-coords{ font-size:.52rem;letter-spacing:2px }
+  .cmd-title{
+    font-size:clamp(3rem,12vw,5rem);
+    letter-spacing:-2px;
+    margin-bottom:14px;
+  }
+  .cmd-phone{ font-size:clamp(1.4rem,6vw,2.2rem);margin-bottom:24px }
+  .cmd-btn{ padding:13px 16px;font-size:.62rem }
+  .cmd-address-card{ font-size:.68rem;padding:12px 14px }
+
+  /* ── Footer ──────────────────────────────────────── */
+  #footer{ padding:44px 24px 20px }
+  .footer-inner{ grid-template-columns:1fr;gap:24px;margin-bottom:32px }
+  .footer-contact{ align-items:flex-start;text-align:left }
+  .footer-bottom{ flex-direction:column;gap:6px }
+  .footer-logo{ font-size:1.6rem }
+  .footer-tagline{ font-size:.65rem;max-width:100% }
+
+  /* ── Phone popup ─────────────────────────────────── */
+  .phone-popup-box{ padding:36px 28px 32px;margin:0 20px }
+}
+
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE — PHONE  (≤ 480px)
+══════════════════════════════════════════════════════ */
+@media(max-width:480px){
+
+  /* ── Global ─────────────────────────────────────── */
+  body{ scroll-snap-type:none }
+
+  /* ── Sections ────────────────────────────────────── */
+  .sec{ padding:52px 16px }
+  .sec--compact{ padding:40px 16px }
+
+  /* ── Hero ────────────────────────────────────────── */
+  .mid{ padding-top:76px }
+  .top-btns{
+    gap:0;
+    padding:0 10px;
+    border-radius:40px;
+  }
+  .hbtn{
+    font-size:.58rem;
+    padding:12px 12px;
+    letter-spacing:0.8px;
+    gap:5px;
+    color:#0a2060;
+  }
+  .hbtn svg{ width:10px;height:10px;stroke:#0a2060; }
+  .hero-card{
+    padding:20px 16px 18px;
+    gap:6px;
+  }
+  .card-hl{
+    font-size:clamp(2.4rem,16vw,3.8rem);
+    letter-spacing:-1px;
+    line-height:.84;
+  }
+  .card-eyebrow{ font-size:.50rem;letter-spacing:4px }
+  .card-sub{ font-size:.54rem;letter-spacing:3px }
+  .form-btn{ padding:12px 18px;font-size:.72rem }
+
+  /* ── Bottom bar — stack on tiny screens ──────────── */
+  .bbar-inner{
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .bbar-sep{ display:none }
+  .bstat{ text-align:center }
+  .bstat-n{ font-size:1.05rem }
+  .bstat-phone{ width:100%;text-align:center;margin-top:4px }
+  .bstat-num{ font-size:1rem }
+
+  /* ── Benefit strip — full width ──────────────────── */
+  .benefit-strip{ grid-template-columns:1fr }
+  .benefit{ border-right:none !important;border-bottom:1px solid rgba(255,255,255,0.5) }
+  .benefit:last-child{ border-bottom:none }
+
+  /* ── Section head ────────────────────────────────── */
+  .sec-title{ font-size:clamp(1.8rem,11vw,2.8rem) }
+  .sec-desc{ font-size:.82rem }
+
+  /* ── Stat cards ──────────────────────────────────── */
+  .stat-card{ padding:24px 18px }
+  .stat-num{ font-size:clamp(2.4rem,12vw,3.5rem) }
+
+  /* ── Steps ───────────────────────────────────────── */
+  #cum-functioneaza .step{ padding:28px 20px }
+  #cum-functioneaza .step-title{ font-size:1.25rem }
+  #cum-functioneaza .step-desc{ font-size:.86rem }
+
+  /* ── Fleet card ──────────────────────────────────── */
+  .fleet-img{ height:160px }
+  .fleet-name{ font-size:.95rem }
+  .fleet-info{ padding:16px 14px }
+
+  /* ── Testimonials ────────────────────────────────── */
+  .testi-card{ padding:22px 18px }
+  .testi-text{ font-size:.82rem }
+
+  /* ── Calculator ──────────────────────────────────── */
+  .calc-result{ padding:22px 16px }
+  .calc-row{ font-size:.75rem }
+  .calc-row strong{ font-size:1rem }
+  .calc-row--net strong{ font-size:1.75rem }
+
+  /* ── Partners ────────────────────────────────────── */
+  .partners-row{ flex-direction:column }
+  .partner-logo{ width:100%;min-width:100% }
+
+  /* ── Contact section ─────────────────────────────── */
+  .cmd-inner{ padding:44px 16px 40px;gap:28px }
+  .cmd-map-frame{ height:210px }
+  .cmd-title{ font-size:clamp(2.6rem,14vw,4rem);letter-spacing:-1.5px }
+  .cmd-phone{ font-size:clamp(1.2rem,7vw,1.8rem) }
+  .cmd-btns-row{ grid-template-columns:1fr }
+  .cmd-btn{ padding:15px 20px }
+  .cmd-c{ width:20px;height:20px }
+  .cmd-tl,.cmd-tr,.cmd-bl,.cmd-br{ border-width:3px }
+
+  /* ── Footer ──────────────────────────────────────── */
+  #footer{ padding:36px 16px 18px }
+  .footer-logo{ font-size:1.4rem }
+  .footer-links{ gap:8px }
+  .footer-links a{ font-size:.60rem }
+  .footer-contact a{ font-size:.75rem }
+
+  /* ── Phone popup ─────────────────────────────────── */
+  .phone-popup-box{ padding:30px 20px 26px;margin:0 12px }
+  .phone-popup-num{ font-size:1.75rem }
+  .phone-popup-icon{ width:52px;height:52px }
+
+  /* ── Glass: drop refract filter on mobile for perf ── */
+  .hero-card{
+    backdrop-filter:blur(22px) saturate(200%) brightness(1.05);
+    -webkit-backdrop-filter:blur(22px) saturate(200%) brightness(1.05);
+  }
+  .stat-card{
+    backdrop-filter:blur(18px) saturate(180%) !important;
+    -webkit-backdrop-filter:blur(18px) saturate(180%) !important;
+  }
 }
 
 /* ══════════════════════════════════════════════════════
@@ -1471,3 +1829,632 @@ body{
   display:inline-block;
   will-change:transform,opacity;
 }
+
+/* ══════════════════════════════════════════════════════
+   LIQUID GLASS FLOATING PILL NAV
+══════════════════════════════════════════════════════ */
+#glass-nav{
+  position:fixed;
+  top:18px;
+  left:50%;
+  transform:translateX(-50%) translateY(-72px);
+  z-index:5500;
+  opacity:0;
+  pointer-events:none;
+  transition:
+    opacity 0.55s cubic-bezier(0.34,1.56,0.64,1),
+    transform 0.55s cubic-bezier(0.34,1.56,0.64,1);
+}
+#glass-nav.gnav-visible{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+  pointer-events:all;
+}
+
+/* ── Pill shell ─────────────────────────────────────── */
+.gnav-pill{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  padding:8px 14px;
+  /* Apple Liquid Glass */
+  background:rgba(255,255,255,0.18);
+  backdrop-filter:blur(36px) saturate(240%) brightness(1.10);
+  -webkit-backdrop-filter:blur(36px) saturate(240%) brightness(1.10);
+  border:1px solid rgba(255,255,255,0.60);
+  border-radius:100px;
+  box-shadow:
+    0 8px 32px rgba(0,30,120,0.18),
+    0 2px 8px rgba(0,30,120,0.10),
+    inset 0 1.5px 0 rgba(255,255,255,0.95),
+    inset 0 -1px 0 rgba(255,255,255,0.30),
+    0 0 0 0.5px rgba(255,255,255,0.45);
+  transform-style:preserve-3d;
+  cursor:pointer;
+  transition:
+    box-shadow 0.35s ease,
+    transform 0.35s cubic-bezier(0.34,1.56,0.64,1),
+    padding 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  overflow:hidden;
+}
+.gnav-pill:hover{
+  box-shadow:
+    0 16px 48px rgba(0,30,120,0.25),
+    0 4px 16px rgba(0,30,120,0.14),
+    inset 0 1.5px 0 rgba(255,255,255,0.98),
+    inset 0 -1px 0 rgba(255,255,255,0.40),
+    /* chromatic aberration fringe */
+    -1px 0 0 0.5px rgba(255,80,80,0.08),
+    1px 0 0 0.5px rgba(80,80,255,0.08),
+    0 0 0 1px rgba(255,255,255,0.30);
+  transform:perspective(600px) rotateX(var(--gnav-rx,0deg)) rotateY(var(--gnav-ry,0deg)) translateZ(6px);
+  padding:8px 18px;
+}
+
+/* ── Animated shimmer stripe ────────────────────────── */
+.gnav-shimmer{
+  position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(
+    105deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.45) 45%,
+    rgba(255,255,255,0.65) 50%,
+    rgba(255,255,255,0.45) 55%,
+    rgba(255,255,255,0) 100%
+  );
+  background-size:300% 100%;
+  background-position:200% 0;
+  animation:gnav-sheen 4.5s ease-in-out infinite;
+  pointer-events:none;
+  z-index:0;
+}
+@keyframes gnav-sheen{
+  0%,100%{ background-position:200% 0; opacity:0.7; }
+  50%    { background-position:-50% 0; opacity:1.0; }
+}
+
+/* ── Top rim pulse ──────────────────────────────────── */
+.gnav-pill::before{
+  content:'';
+  position:absolute;top:0;left:12%;right:12%;height:1px;
+  background:linear-gradient(90deg,
+    transparent,
+    rgba(255,255,255,0.95) 30%,
+    rgba(255,255,255,1.0) 50%,
+    rgba(255,255,255,0.95) 70%,
+    transparent);
+  animation:lg-rim-pulse 3.5s ease-in-out infinite;
+  pointer-events:none;z-index:3;
+}
+
+/* Bottom edge depth */
+.gnav-pill::after{
+  content:'';
+  position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,
+    transparent,
+    rgba(26,106,232,0.12) 30%,
+    rgba(26,106,232,0.22) 50%,
+    rgba(26,106,232,0.12) 70%,
+    transparent);
+  pointer-events:none;z-index:3;
+}
+
+/* ── Each dot button ────────────────────────────────── */
+.gnav-dot{
+  position:relative;z-index:1;
+  display:flex;align-items:center;gap:0;
+  background:none;border:none;outline:none;
+  cursor:pointer;
+  padding:5px 6px;
+  border-radius:100px;
+  transition:
+    background 0.25s,
+    gap 0.35s cubic-bezier(0.34,1.56,0.64,1),
+    padding 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  white-space:nowrap;
+  overflow:hidden;
+}
+.gnav-dot:hover,
+.gnav-pill:hover .gnav-dot{
+  gap:7px;
+  padding:5px 9px;
+}
+.gnav-dot:hover{ background:rgba(255,255,255,0.35); }
+
+/* ── Dot indicator circle ───────────────────────────── */
+.gnav-dot-inner{
+  display:block;flex-shrink:0;
+  width:7px;height:7px;
+  border-radius:50%;
+  background:rgba(0,30,120,0.22);
+  border:1.5px solid rgba(0,30,120,0.12);
+  transition:
+    width 0.35s cubic-bezier(0.34,1.56,0.64,1),
+    height 0.35s cubic-bezier(0.34,1.56,0.64,1),
+    background 0.25s,
+    border-color 0.25s,
+    box-shadow 0.35s;
+}
+.gnav-dot:hover .gnav-dot-inner{
+  background:rgba(26,106,232,0.45);
+  border-color:rgba(26,106,232,0.55);
+  box-shadow:0 0 8px rgba(26,106,232,0.4);
+}
+
+/* Active dot state */
+.gnav-dot.gnav-active .gnav-dot-inner{
+  width:10px;height:10px;
+  background:var(--blue);
+  border-color:rgba(60,140,255,0.8);
+  box-shadow:
+    0 0 0 3px rgba(26,106,232,0.18),
+    0 0 12px rgba(26,106,232,0.55),
+    0 0 22px rgba(26,106,232,0.25);
+  animation:gnav-dot-pulse 2.2s ease-in-out infinite;
+}
+@keyframes gnav-dot-pulse{
+  0%,100%{
+    box-shadow:
+      0 0 0 3px rgba(26,106,232,0.18),
+      0 0 12px rgba(26,106,232,0.55),
+      0 0 22px rgba(26,106,232,0.25);
+  }
+  50%{
+    box-shadow:
+      0 0 0 5px rgba(26,106,232,0.12),
+      0 0 18px rgba(26,106,232,0.75),
+      0 0 36px rgba(26,106,232,0.35);
+  }
+}
+
+/* ── Section label ──────────────────────────────────── */
+.gnav-label{
+  display:block;
+  font-family:var(--font);
+  font-size:.48rem;
+  font-weight:800;
+  letter-spacing:2.5px;
+  text-transform:uppercase;
+  color:rgba(0,30,100,0.65);
+  max-width:0;
+  opacity:0;
+  overflow:hidden;
+  transition:
+    max-width 0.4s cubic-bezier(0.34,1.56,0.64,1),
+    opacity 0.25s ease;
+  pointer-events:none;
+}
+.gnav-pill:hover .gnav-label{
+  max-width:80px;
+  opacity:1;
+}
+.gnav-dot.gnav-active .gnav-label{
+  color:var(--blue);
+}
+
+/* ── Hide on mobile ─────────────────────────────────── */
+@media(max-width:900px){
+  #glass-nav{ display:none; }
+}
+
+/* ══════════════════════════════════════════════════════
+   SITE-WIDE LIQUID GLASS UPGRADE — v27
+   Apple iOS 26 treatment on every surface
+══════════════════════════════════════════════════════ */
+
+/* Shared keyframes */
+@keyframes lg-sweep{
+  0%  { background-position:200% 0; opacity:0.7; }
+  50% { opacity:1; }
+  100%{ background-position:-200% 0; opacity:0.7; }
+}
+@keyframes lg-pulse-rim{
+  0%,100%{ opacity:0.6; }
+  50%    { opacity:1.0; }
+}
+@keyframes lg-float{
+  0%,100%{ transform:translateY(0); }
+  50%    { transform:translateY(-4px); }
+}
+
+/* ── BOTTOM STATS BAR — frosted glass ───────────── */
+.bottom-bar{
+  background:rgba(4,12,35,0.72) !important;
+  backdrop-filter:blur(32px) saturate(180%) brightness(0.9) !important;
+  -webkit-backdrop-filter:blur(32px) saturate(180%) brightness(0.9) !important;
+  border-top:1px solid rgba(255,255,255,0.10) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    inset 0 -1px 0 rgba(26,106,232,0.12),
+    0 -8px 40px rgba(0,0,0,0.25) !important;
+  position:relative;overflow:hidden;
+}
+.bottom-bar::before{
+  content:'';position:absolute;top:0;left:-60%;right:-60%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.45) 30%,rgba(255,255,255,0.65) 50%,rgba(255,255,255,0.45) 70%,transparent);
+  animation:lg-pulse-rim 4s ease-in-out infinite;
+  pointer-events:none;
+}
+
+/* ── STAT CARDS — white liquid glass ────────────── */
+.stat-card{
+  background:rgba(255,255,255,0.62) !important;
+  backdrop-filter:blur(28px) saturate(200%) brightness(1.05) !important;
+  -webkit-backdrop-filter:blur(28px) saturate(200%) brightness(1.05) !important;
+  border:1px solid rgba(255,255,255,0.72) !important;
+  border-left:4px solid var(--blue) !important;
+  box-shadow:
+    0 12px 48px rgba(0,30,120,0.13),
+    0 2px 8px rgba(0,30,120,0.07),
+    inset 0 1.5px 0 rgba(255,255,255,0.98),
+    inset 0 -1px 0 rgba(255,255,255,0.35),
+    inset 1.5px 0 0 rgba(255,255,255,0.8),
+    0 0 0 0.5px rgba(255,255,255,0.5) !important;
+  position:relative;overflow:hidden;
+  transform-style:preserve-3d;
+}
+.stat-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,
+    rgba(255,255,255,0.65) 0%,
+    rgba(255,255,255,0.15) 40%,
+    rgba(180,210,255,0.08) 70%,
+    transparent 100%);
+  pointer-events:none;z-index:0;
+}
+.stat-card::after{
+  content:'';position:absolute;top:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.95) 40%,rgba(255,255,255,1) 50%,rgba(255,255,255,0.95) 60%,transparent);
+  animation:lg-pulse-rim 4s ease-in-out infinite;
+  pointer-events:none;z-index:3;
+}
+.stat-card > *{ position:relative;z-index:1; }
+.stat-card:hover{
+  box-shadow:
+    0 20px 64px rgba(0,30,120,0.20),
+    0 4px 16px rgba(0,30,120,0.10),
+    inset 0 1.5px 0 rgba(255,255,255,0.98),
+    inset 0 -1px 0 rgba(255,255,255,0.4),
+    0 0 0 1px rgba(26,106,232,0.15) !important;
+  transform:translateY(-4px) !important;
+}
+
+/* ── BENEFIT STRIP — liquid glass cells ─────────── */
+.benefit{
+  background:rgba(255,255,255,0.58) !important;
+  backdrop-filter:blur(24px) saturate(190%) !important;
+  -webkit-backdrop-filter:blur(24px) saturate(190%) !important;
+  border-right:1px solid rgba(255,255,255,0.60) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.95),
+    inset 0 -0.5px 0 rgba(255,255,255,0.3) !important;
+  position:relative;overflow:hidden;
+  transition:background .25s,box-shadow .25s,transform .25s !important;
+}
+.benefit::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.5) 0%,rgba(255,255,255,0.05) 50%,transparent 100%);
+  pointer-events:none;z-index:0;
+}
+.benefit:hover{
+  background:rgba(255,255,255,0.78) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.98),
+    0 8px 32px rgba(0,30,120,0.12),
+    0 0 0 1px rgba(26,106,232,0.12) !important;
+  transform:translateY(-2px);
+}
+.benefit > *{ position:relative;z-index:1; }
+.benefit-strip{
+  border:1px solid rgba(255,255,255,0.65) !important;
+  box-shadow:0 8px 32px rgba(0,30,120,0.10) !important;
+  overflow:hidden;
+}
+
+/* Benefit icon — glass circle */
+.benefit-icon{
+  background:rgba(26,106,232,0.12) !important;
+  backdrop-filter:blur(12px) !important;
+  -webkit-backdrop-filter:blur(12px) !important;
+  border:1px solid rgba(26,106,232,0.22) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    0 4px 16px rgba(26,106,232,0.18) !important;
+}
+
+/* ── FLEET CARDS — enhanced dark liquid glass ────── */
+.fleet-card{
+  background:rgba(8,18,50,0.72) !important;
+  backdrop-filter:blur(24px) saturate(160%) !important;
+  -webkit-backdrop-filter:blur(24px) saturate(160%) !important;
+  border:1px solid rgba(255,255,255,0.10) !important;
+  box-shadow:
+    0 12px 48px rgba(0,0,0,0.5),
+    inset 0 1.5px 0 rgba(255,255,255,0.14),
+    inset 0 -1px 0 rgba(255,255,255,0.04),
+    0 0 0 0.5px rgba(255,255,255,0.06) !important;
+}
+/* preserve the spinning border hover — just update the base */
+
+/* ── FLEET BTN — glass blue ─────────────────────── */
+.fleet-btn{
+  background:rgba(26,106,232,0.75) !important;
+  backdrop-filter:blur(12px) !important;
+  -webkit-backdrop-filter:blur(12px) !important;
+  border:1px solid rgba(255,255,255,0.18) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.3),
+    inset 0 -1px 0 rgba(0,0,50,0.2),
+    0 4px 16px rgba(26,106,232,0.35) !important;
+  position:relative;overflow:hidden;
+  transition:background .18s,box-shadow .18s !important;
+}
+.fleet-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.22) 0%,rgba(255,255,255,0) 55%);
+  pointer-events:none;z-index:0;
+}
+.fleet-btn:hover{
+  background:rgba(26,106,232,0.90) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.35),
+    0 8px 28px rgba(26,106,232,0.5) !important;
+}
+
+/* ── TESTIMONIAL CARDS — dark glass ─────────────── */
+.testi-card{
+  background:rgba(12,22,55,0.55) !important;
+  backdrop-filter:blur(28px) saturate(170%) !important;
+  -webkit-backdrop-filter:blur(28px) saturate(170%) !important;
+  border:1px solid rgba(255,255,255,0.08) !important;
+  box-shadow:
+    0 12px 48px rgba(0,0,0,0.45),
+    inset 0 1.5px 0 rgba(255,255,255,0.12),
+    inset 0 -1px 0 rgba(255,255,255,0.03) !important;
+  position:relative;overflow:hidden;
+  transition:border-color .25s,transform .25s,box-shadow .25s !important;
+}
+.testi-card::before{
+  content:'"';position:absolute;top:16px;right:24px;
+  font-size:5rem;font-weight:900;color:rgba(26,106,232,0.10);
+  line-height:1;font-family:Georgia,serif;
+  z-index:0;
+}
+.testi-card::after{
+  content:'';position:absolute;top:0;left:15%;right:15%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25) 40%,rgba(255,255,255,0.40) 50%,rgba(255,255,255,0.25) 60%,transparent);
+  animation:lg-pulse-rim 5s ease-in-out infinite;
+  pointer-events:none;z-index:2;
+}
+.testi-card > *{ position:relative;z-index:1; }
+.testi-card:hover{
+  border-color:rgba(26,106,232,0.35) !important;
+  transform:translateY(-5px) !important;
+  box-shadow:
+    0 24px 64px rgba(0,0,0,0.55),
+    inset 0 1.5px 0 rgba(255,255,255,0.16),
+    0 0 40px rgba(26,106,232,0.12) !important;
+}
+
+/* ── PARTNER LOGOS — white glass badges ──────────── */
+.partners-row{
+  border:1px solid rgba(255,255,255,0.65) !important;
+  background:rgba(255,255,255,0.42) !important;
+  backdrop-filter:blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter:blur(20px) saturate(180%) !important;
+  box-shadow:
+    0 8px 32px rgba(0,30,120,0.10),
+    inset 0 1.5px 0 rgba(255,255,255,0.90) !important;
+  overflow:hidden;position:relative;
+}
+.partners-row::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.85) 30%,rgba(255,255,255,1) 50%,rgba(255,255,255,0.85) 70%,transparent);
+  animation:lg-pulse-rim 6s ease-in-out infinite;
+  pointer-events:none;
+}
+.partner-logo{
+  background:transparent !important;
+  position:relative;overflow:hidden;
+  transition:background .2s,box-shadow .2s !important;
+}
+.partner-logo:hover{
+  background:rgba(255,255,255,0.70) !important;
+  box-shadow:inset 0 0 0 1px rgba(26,106,232,0.15) !important;
+}
+.partner-sep{background:rgba(255,255,255,0.50) !important}
+
+/* ── CALCULATOR RESULT — dark glass panel ───────── */
+.calc-result{
+  background:rgba(255,255,255,0.06) !important;
+  backdrop-filter:blur(28px) saturate(160%) !important;
+  -webkit-backdrop-filter:blur(28px) saturate(160%) !important;
+  border:1px solid rgba(255,255,255,0.10) !important;
+  border-top:3px solid var(--blue) !important;
+  box-shadow:
+    0 16px 56px rgba(0,0,0,0.4),
+    inset 0 1.5px 0 rgba(255,255,255,0.14),
+    inset 0 -1px 0 rgba(255,255,255,0.04) !important;
+  position:relative;overflow:hidden;
+}
+.calc-result::before{
+  content:'';position:absolute;top:3px;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(26,106,232,0.6) 40%,rgba(60,140,255,0.8) 50%,rgba(26,106,232,0.6) 60%,transparent);
+  animation:lg-pulse-rim 4.5s ease-in-out infinite;
+  pointer-events:none;
+}
+
+/* Calc tabs — glass active state */
+.calc-tab{
+  backdrop-filter:blur(8px) !important;
+  -webkit-backdrop-filter:blur(8px) !important;
+  transition:all .18s !important;
+}
+.calc-tab.active,.calc-tab:hover{
+  background:rgba(26,106,232,0.18) !important;
+  border-color:rgba(26,106,232,0.55) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.18),
+    0 0 16px rgba(26,106,232,0.2) !important;
+}
+
+/* ── HERO BUTTONS — transparent, glass island handles all styling ── */
+.hbtn{
+  position:relative;overflow:visible;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  border:none !important;
+  box-shadow:none !important;
+  background:transparent !important;
+}
+
+/* ── CTA BIG BUTTON — glass treatment ───────────── */
+.cta-big-btn{
+  position:relative;overflow:hidden;
+  backdrop-filter:blur(8px) !important;
+  -webkit-backdrop-filter:blur(8px) !important;
+  border:1px solid rgba(255,255,255,0.22) !important;
+  box-shadow:
+    0 8px 32px rgba(26,106,232,0.35),
+    inset 0 1.5px 0 rgba(255,255,255,0.30),
+    inset 0 -1px 0 rgba(0,0,50,0.20) !important;
+}
+.cta-big-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.20) 0%,rgba(255,255,255,0) 55%);
+  pointer-events:none;z-index:0;
+}
+.cta-big-btn > *{ position:relative;z-index:1; }
+.cta-big-btn:hover{
+  box-shadow:
+    0 16px 48px rgba(26,106,232,0.50),
+    inset 0 1.5px 0 rgba(255,255,255,0.40),
+    0 0 48px rgba(26,106,232,0.25) !important;
+  transform:translateY(-3px) !important;
+}
+
+/* ── PHONE POPUP BOX — white liquid glass ────────── */
+.phone-popup-box{
+  background:rgba(255,255,255,0.72) !important;
+  backdrop-filter:blur(40px) saturate(220%) brightness(1.08) !important;
+  -webkit-backdrop-filter:blur(40px) saturate(220%) brightness(1.08) !important;
+  border:1px solid rgba(255,255,255,0.75) !important;
+  box-shadow:
+    0 40px 100px rgba(0,30,120,0.22),
+    0 8px 32px rgba(0,30,120,0.12),
+    inset 0 1.5px 0 rgba(255,255,255,0.98),
+    inset 0 -1px 0 rgba(255,255,255,0.35),
+    0 0 0 0.5px rgba(255,255,255,0.55) !important;
+  position:relative;overflow:hidden;
+}
+.phone-popup-box::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.60) 0%,rgba(255,255,255,0.10) 45%,transparent 100%);
+  pointer-events:none;z-index:0;
+}
+.phone-popup-box::after{
+  content:'';position:absolute;top:0;left:15%;right:15%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.95) 40%,rgba(255,255,255,1) 50%,rgba(255,255,255,0.95) 60%,transparent);
+  animation:lg-pulse-rim 3.5s ease-in-out infinite;
+  pointer-events:none;z-index:3;
+}
+.phone-popup-box > *{ position:relative;z-index:1; }
+/* adjust text colors for white glass */
+.phone-popup-label{ color:rgba(0,0,0,0.45) !important; }
+.phone-popup-num{ color:var(--black) !important; }
+.phone-popup-num:hover{ color:var(--blue) !important; }
+.phone-popup-close{ color:rgba(0,0,0,0.35) !important; }
+.phone-popup-close:hover{ color:var(--black) !important; }
+
+/* ── PHONE POPUP WA BUTTON — glass green ─────────── */
+.phone-popup-wa{
+  backdrop-filter:blur(12px) !important;
+  -webkit-backdrop-filter:blur(12px) !important;
+  background:rgba(37,211,102,0.10) !important;
+  border:1px solid rgba(37,211,102,0.30) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.40),
+    0 4px 16px rgba(37,211,102,0.15) !important;
+  position:relative;overflow:hidden;
+}
+.phone-popup-wa::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.25) 0%,rgba(255,255,255,0) 55%);
+  pointer-events:none;
+}
+.phone-popup-wa:hover{
+  background:rgba(37,211,102,0.18) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.5),
+    0 8px 28px rgba(37,211,102,0.28),
+    0 0 24px rgba(37,211,102,0.18) !important;
+}
+
+/* ── FOOTER — deep smoked glass ──────────────────── */
+#footer{
+  background:rgba(3,9,28,0.82) !important;
+  backdrop-filter:blur(40px) saturate(180%) !important;
+  -webkit-backdrop-filter:blur(40px) saturate(180%) !important;
+  border-top:1px solid rgba(26,106,232,0.35) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(26,106,232,0.20),
+    0 -16px 64px rgba(0,0,0,0.3) !important;
+  position:relative;overflow:hidden;
+}
+#footer::before{
+  content:'';position:absolute;top:0;left:5%;right:5%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(26,106,232,0.5) 20%,rgba(60,140,255,0.8) 50%,rgba(26,106,232,0.5) 80%,transparent);
+  animation:lg-pulse-rim 5s ease-in-out infinite;
+  pointer-events:none;
+}
+
+/* ── ADDRESS CARD in Contact — glass upgrade ─────── */
+.cmd-address-card{
+  background:rgba(26,106,232,0.10) !important;
+  backdrop-filter:blur(16px) !important;
+  -webkit-backdrop-filter:blur(16px) !important;
+  border:1px solid rgba(26,106,232,0.22) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.12),
+    0 4px 20px rgba(0,0,0,0.2) !important;
+  position:relative;overflow:hidden;
+}
+.cmd-address-card::before{
+  content:'';position:absolute;top:0;left:20%;right:20%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25) 50%,transparent);
+  pointer-events:none;
+}
+
+/* ── FORM INPUTS — subtle glass ──────────────────── */
+.finput{
+  background:rgba(255,255,255,0.40) !important;
+  backdrop-filter:blur(12px) !important;
+  -webkit-backdrop-filter:blur(12px) !important;
+  border:1px solid rgba(255,255,255,0.55) !important;
+  border-bottom:2px solid rgba(0,0,0,0.20) !important;
+  box-shadow:inset 0 2px 6px rgba(0,0,0,0.06) !important;
+}
+.finput:focus{
+  background:rgba(255,255,255,0.65) !important;
+  border-color:rgba(255,255,255,0.75) !important;
+  border-bottom-color:var(--blue) !important;
+  box-shadow:
+    inset 0 2px 6px rgba(0,0,0,0.04),
+    0 0 0 3px rgba(26,106,232,0.12) !important;
+}
+
+/* ── FORM CTA BUTTON — glass over blue ───────────── */
+.form-btn{
+  position:relative;overflow:hidden;
+  backdrop-filter:blur(8px) !important;
+  -webkit-backdrop-filter:blur(8px) !important;
+  border:1px solid rgba(255,255,255,0.22) !important;
+}
+.form-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.22) 0%,rgba(255,255,255,0) 55%);
+  pointer-events:none;z-index:0;
+}
+.form-btn > *{ position:relative;z-index:1; }

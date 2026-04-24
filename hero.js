@@ -7,6 +7,10 @@ gsap.registerPlugin(ScrollTrigger);
 let _tabVisible = true;
 document.addEventListener('visibilitychange', () => { _tabVisible = !document.hidden; });
 
+// ── Mobile detection ─────────────────────────────────
+const IS_TOUCH = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+const IS_MOBILE = IS_TOUCH || window.innerWidth <= 768;
+
 // ══════════════════════════════════════════════════════
 //  CUSTOM CURSOR — dot + lagging ring, no trail
 // ══════════════════════════════════════════════════════
@@ -15,22 +19,24 @@ const ring = document.getElementById('cring');
 const M    = { x: innerWidth / 2, y: innerHeight / 2 };
 let rx = innerWidth / 2, ry = innerHeight / 2;
 
-window.addEventListener('mousemove', e => { M.x = e.clientX; M.y = e.clientY; }, { passive: true });
+if (!IS_MOBILE) {
+  window.addEventListener('mousemove', e => { M.x = e.clientX; M.y = e.clientY; }, { passive: true });
 
-(function cursorLoop() {
-  requestAnimationFrame(cursorLoop);
-  rx += (M.x - rx) * 0.11;
-  ry += (M.y - ry) * 0.11;
-  cur.style.left  = M.x + 'px';
-  cur.style.top   = M.y + 'px';
-  ring.style.left = rx  + 'px';
-  ring.style.top  = ry  + 'px';
-})();
+  (function cursorLoop() {
+    requestAnimationFrame(cursorLoop);
+    rx += (M.x - rx) * 0.11;
+    ry += (M.y - ry) * 0.11;
+    cur.style.left  = M.x + 'px';
+    cur.style.top   = M.y + 'px';
+    ring.style.left = rx  + 'px';
+    ring.style.top  = ry  + 'px';
+  })();
 
-document.querySelectorAll('a,button,.finput,select').forEach(el => {
-  el.addEventListener('mouseenter', () => document.body.classList.add('ch'));
-  el.addEventListener('mouseleave', () => document.body.classList.remove('ch'));
-});
+  document.querySelectorAll('a,button,.finput,select').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('ch'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('ch'));
+  });
+}
 
 // ══════════════════════════════════════════════════════
 //  STREET PARTICLES — red dots flowing along lit streets
@@ -246,17 +252,19 @@ document.querySelectorAll('a,button,.finput,select').forEach(el => {
   let scrollP    = 0;
   let curOx = 50, curOy = 50;
 
-  window.addEventListener('mousemove', e => {
-    const nx = (e.clientX / innerWidth  - 0.5) * 2;
-    const ny = (e.clientY / innerHeight - 0.5) * 2;
-    tpx = nx * -6;
-    tpy = ny * -3.9;
-  }, { passive: true });
+  if (!IS_MOBILE) {
+    window.addEventListener('mousemove', e => {
+      const nx = (e.clientX / innerWidth  - 0.5) * 2;
+      const ny = (e.clientY / innerHeight - 0.5) * 2;
+      tpx = nx * -6;
+      tpy = ny * -3.9;
+    }, { passive: true });
+  }
 
   function onScroll() {
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     scrollP = maxScroll > 0 ? Math.min(window.scrollY / maxScroll, 1) : 0;
-    targetScale = 1 + scrollP * 1.5;
+    targetScale = 1 + scrollP * (IS_MOBILE ? 0.4 : 1.5);
 
     if (overlay) {
       const vig = (scrollP * 0.65).toFixed(3);
@@ -271,21 +279,20 @@ document.querySelectorAll('a,button,.finput,select').forEach(el => {
   (function zoomLoop() {
     requestAnimationFrame(zoomLoop);
     displayScale += (targetScale - displayScale) * 0.07;
-    // Velocity-based spring: gentle acceleration + friction = no sudden jumps
-    vx += (tpx - cpx) * 0.004;  vy += (tpy - cpy) * 0.004;
-    vx *= 0.88;                  vy *= 0.88;
-    cpx += vx;                   cpy += vy;
 
-    // Camera dive: transform-origin migrates from center → ring road intersection (63%, 56%)
-    const tOx = 50 + scrollP * 13;
-    const tOy = 50 + scrollP *  6;
+    if (!IS_MOBILE) {
+      vx += (tpx - cpx) * 0.004;  vy += (tpy - cpy) * 0.004;
+      vx *= 0.88;                  vy *= 0.88;
+      cpx += vx;                   cpy += vy;
+    }
+
+    const tOx = 50 + scrollP * (IS_MOBILE ? 4 : 13);
+    const tOy = 50 + scrollP * (IS_MOBILE ? 2 : 6);
     curOx += (tOx - curOx) * 0.04;
     curOy += (tOy - curOy) * 0.04;
     mapEl.style.transformOrigin = `${curOx.toFixed(2)}% ${curOy.toFixed(2)}%`;
 
-    // Layer 1: background — slow drift
     mapEl.style.transform = `scale(${displayScale.toFixed(4)}) translate(${cpx.toFixed(2)}px,${cpy.toFixed(2)}px)`;
-    // Layer 2: street particles — 2.8× faster (mid depth)
     if (spc) spc.style.transform = `translate(${(-cpx * 2.8).toFixed(2)}px,${(-cpy * 2.8).toFixed(2)}px)`;
   })();
 })();
@@ -803,6 +810,7 @@ document.querySelectorAll('.benefit').forEach(b => {
 //  HERO CARD — 3D TILT + HOLOGRAPHIC SHEEN
 // ══════════════════════════════════════════════════════
 (function initHeroCardTilt() {
+  if (IS_MOBILE) return;
   const hero = document.getElementById('hero');
   const card = document.getElementById('card');
   if (!hero || !card) return;
@@ -917,20 +925,22 @@ document.querySelectorAll('.benefit').forEach(b => {
   const frame = wrap.querySelector('.cmd-map-frame');
   let tx = 0, ty = 0, cx = 0, cy = 0;
 
-  wrap.addEventListener('mousemove', e => {
-    const r  = frame.getBoundingClientRect();
-    const dx = (e.clientX - r.left - r.width  / 2) / (r.width  / 2);
-    const dy = (e.clientY - r.top  - r.height / 2) / (r.height / 2);
-    tx = dx * 4.8; ty = -dy * 3.6;
-  });
-  wrap.addEventListener('mouseleave', () => { tx = 0; ty = 0; });
+  if (!IS_MOBILE) {
+    wrap.addEventListener('mousemove', e => {
+      const r  = frame.getBoundingClientRect();
+      const dx = (e.clientX - r.left - r.width  / 2) / (r.width  / 2);
+      const dy = (e.clientY - r.top  - r.height / 2) / (r.height / 2);
+      tx = dx * 4.8; ty = -dy * 3.6;
+    });
+    wrap.addEventListener('mouseleave', () => { tx = 0; ty = 0; });
 
-  (function loop() {
-    requestAnimationFrame(loop);
-    cx += (tx - cx) * 0.08; cy += (ty - cy) * 0.08;
-    frame.style.transform =
-      `perspective(900px) rotateY(${cx.toFixed(3)}deg) rotateX(${cy.toFixed(3)}deg)`;
-  })();
+    (function loop() {
+      requestAnimationFrame(loop);
+      cx += (tx - cx) * 0.08; cy += (ty - cy) * 0.08;
+      frame.style.transform =
+        `perspective(900px) rotateY(${cx.toFixed(3)}deg) rotateX(${cy.toFixed(3)}deg)`;
+    })();
+  }
 
   // GSAP reveal — map slides in from left
   ScrollTrigger.create({
@@ -948,6 +958,7 @@ document.querySelectorAll('.benefit').forEach(b => {
 //  MAGNETIC FOOTER LOGO — 3D tilt + red glow on proximity
 // ══════════════════════════════════════════════════════
 (function initFooterLogo() {
+  if (IS_MOBILE) return;
   const logo = document.getElementById('footer-logo');
   if (!logo) return;
 
@@ -992,6 +1003,7 @@ document.querySelectorAll('.benefit').forEach(b => {
 //  FLEET CARDS — 3D TILT + GLASS SHIMMER
 // ══════════════════════════════════════════════════════
 (function initFleetTilt() {
+  if (IS_MOBILE) return;
   const cards = [];
   document.querySelectorAll('.fleet-card').forEach(card => {
     const s = { tx: 0, ty: 0, lx: 0, ly: 0 };
@@ -1025,6 +1037,7 @@ document.querySelectorAll('.benefit').forEach(b => {
 //  CURSOR PARTICLE TRAIL — blue comet sparks
 // ══════════════════════════════════════════════════════
 (function initCursorTrail() {
+  if (IS_MOBILE) return;
   const cvs = document.createElement('canvas');
   cvs.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:9999;';
   document.body.appendChild(cvs);
@@ -1068,5 +1081,92 @@ document.querySelectorAll('.benefit').forEach(b => {
       ctx.fillStyle = `rgba(${r},${g},${b},${p.a.toFixed(3)})`;
       ctx.fill();
     }
+  })();
+})();
+
+// ══════════════════════════════════════════════════════
+//  LIQUID GLASS FLOATING PILL NAV
+// ══════════════════════════════════════════════════════
+(function initGlassNav() {
+  if (IS_MOBILE) return;
+
+  const nav  = document.getElementById('glass-nav');
+  const pill = document.getElementById('gnav-pill');
+  const dots = document.querySelectorAll('.gnav-dot');
+  if (!nav || !pill || !dots.length) return;
+
+  // Show pill after hero leaves viewport
+  ScrollTrigger.create({
+    trigger: '#hero',
+    start: 'bottom 60%',
+    onEnter:     () => nav.classList.add('gnav-visible'),
+    onLeaveBack: () => nav.classList.remove('gnav-visible'),
+  });
+
+  // Active section tracking
+  const sectionIds = ['de-ce','flota','cum-functioneaza','parteneri','testimoniale','contact'];
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        dots.forEach(d => d.classList.toggle('gnav-active', d.dataset.target === id));
+      }
+    });
+  }, { threshold: 0.35 });
+  sectionIds.forEach(id => { const el = document.getElementById(id); if (el) obs.observe(el); });
+
+  // Click → smooth scroll
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      const target = document.getElementById(dot.dataset.target);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // 3D tilt on hover
+  pill.addEventListener('mousemove', e => {
+    const r = pill.getBoundingClientRect();
+    const dx = (e.clientX - r.left - r.width  / 2) / (r.width  / 2);
+    const dy = (e.clientY - r.top  - r.height / 2) / (r.height / 2);
+    pill.style.setProperty('--gnav-rx', `${(dy * -4).toFixed(2)}deg`);
+    pill.style.setProperty('--gnav-ry', `${(dx *  5).toFixed(2)}deg`);
+  });
+  pill.addEventListener('mouseleave', () => {
+    pill.style.setProperty('--gnav-rx', '0deg');
+    pill.style.setProperty('--gnav-ry', '0deg');
+  });
+})();
+
+// ══════════════════════════════════════════════════════
+//  SVG LENS DISTORTION — cursor proximity warps hero card
+//  feDisplacementMap scale driven by cursor distance.
+//  Close = curved glass lens. Far = flat glass.
+// ══════════════════════════════════════════════════════
+(function initLensDistortion() {
+  if (IS_MOBILE) return;
+  const card    = document.getElementById('card');
+  const dispMap = document.getElementById('lg-lens-disp');
+  if (!card || !dispMap) return;
+
+  card.style.filter = 'url(#lg-lens)';
+
+  let curScale = 0, tgtScale = 0;
+  const hero = document.getElementById('hero');
+
+  hero.addEventListener('mousemove', e => {
+    const r   = card.getBoundingClientRect();
+    const cx  = r.left + r.width  / 2;
+    const cy  = r.top  + r.height / 2;
+    const dist    = Math.hypot(e.clientX - cx, e.clientY - cy);
+    const maxDist = Math.max(r.width, r.height) * 0.85;
+    tgtScale = Math.max(0, 1 - dist / maxDist) * 11;
+  }, { passive: true });
+
+  hero.addEventListener('mouseleave', () => { tgtScale = 0; });
+
+  (function lensLoop() {
+    requestAnimationFrame(lensLoop);
+    curScale += (tgtScale - curScale) * 0.09;
+    dispMap.setAttribute('scale', curScale > 0.05 ? curScale.toFixed(2) : '0');
   })();
 })();
