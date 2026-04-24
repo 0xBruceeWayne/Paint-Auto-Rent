@@ -1304,9 +1304,9 @@ document.querySelectorAll('.benefit').forEach(b => {
       a2: { color:'rgba(10,140,255,0.80)',  x:'22%', y:'58%', w:'95%'  }
     },
     'contact': {
-      // Teal + magenta — action/CTA palette
-      a1: { color:'rgba(0,200,180,0.85)',   x:'38%', y:'50%', w:'110%' },
-      a2: { color:'rgba(200,40,255,0.78)',  x:'78%', y:'60%', w:'95%'  }
+      // Deep royal blue + vivid blue — dark premium CTA palette
+      a1: { color:'rgba(30,50,220,0.90)',   x:'38%', y:'50%', w:'110%' },
+      a2: { color:'rgba(80,20,200,0.82)',   x:'78%', y:'60%', w:'95%'  }
     }
   };
 
