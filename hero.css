@@ -557,8 +557,7 @@ body{
 .sec-dark{
   background:rgba(4,9,28,0.82);
   position:relative;
-  overflow-x:clip;           /* horizontal clip without a scroll container */
-  /* overflow-y intentionally VISIBLE — aura orbs must bloom past section edge */
+  overflow:clip;             /* clip both axes — no scroll container, orbs stay inside section */
 }
 .sec--compact{padding:60px 80px}
 

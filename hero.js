@@ -1294,19 +1294,19 @@ document.querySelectorAll('.benefit').forEach(b => {
 (function initSectionAuras() {
   const CFG = {
     'flota': {
-      // Warm orange sun + deep blue electric — car/energy palette
-      a1: { color:'rgba(255,110,10,0.90)',  x:'18%', y:'55%', w:'140%' },
-      a2: { color:'rgba(20,80,255,0.80)',   x:'82%', y:'35%', w:'120%' }
+      // Deep indigo + electric blue — dark premium car palette, no warm tones
+      a1: { color:'rgba(40,20,200,0.92)',   x:'20%', y:'50%', w:'110%' },
+      a2: { color:'rgba(10,100,255,0.82)',  x:'78%', y:'40%', w:'95%'  }
     },
     'testimoniale': {
       // Purple nebula + electric cyan — trust/glow palette
-      a1: { color:'rgba(130,20,255,0.90)',  x:'72%', y:'48%', w:'140%' },
-      a2: { color:'rgba(10,140,255,0.80)',  x:'22%', y:'58%', w:'120%'  }
+      a1: { color:'rgba(130,20,255,0.90)',  x:'72%', y:'48%', w:'110%' },
+      a2: { color:'rgba(10,140,255,0.80)',  x:'22%', y:'58%', w:'95%'  }
     },
     'contact': {
       // Teal + magenta — action/CTA palette
-      a1: { color:'rgba(0,200,180,0.85)',   x:'38%', y:'52%', w:'145%' },
-      a2: { color:'rgba(200,40,255,0.78)',  x:'80%', y:'65%', w:'120%' }
+      a1: { color:'rgba(0,200,180,0.85)',   x:'38%', y:'50%', w:'110%' },
+      a2: { color:'rgba(200,40,255,0.78)',  x:'78%', y:'60%', w:'95%'  }
     }
   };
 
@@ -1322,16 +1322,16 @@ document.querySelectorAll('.benefit').forEach(b => {
         'width:' + cfg.w + ';padding-top:' + cfg.w + ';' +
         'background:radial-gradient(circle,' + cfg.color + ' 0%,rgba(0,0,0,0) 62%)';
       sec.prepend(el);
-      gsap.set(el, { xPercent: -50, yPercent: -50, scale: 0.35, opacity: 0 });
+      gsap.set(el, { xPercent: -50, yPercent: -50, scale: 0.4, opacity: 0 });
       return el;
     }
 
     const orb1 = makeOrb(a1);
     const orb2 = makeOrb(a2);
 
-    // Orb 1 — rises from tiny speck to full bloom as section enters
+    // Orb 1 — zooms in from small — stays within section bounds (w:110% × scale 1.3 = 143%)
     gsap.to(orb1, {
-      scale: 2.0, opacity: 0.95,
+      scale: 1.3, opacity: 0.95,
       ease: 'none',
       scrollTrigger: {
         trigger: sec,
@@ -1341,10 +1341,10 @@ document.querySelectorAll('.benefit').forEach(b => {
       }
     });
 
-    // Orb 2 — descends from oversized to settled (reverse zoom) — creates depth
-    gsap.set(orb2, { scale: 3.5 });
+    // Orb 2 — descends from large to settled — w:95% × scale 1.8 = 171%, stays inside
+    gsap.set(orb2, { scale: 1.8 });
     gsap.to(orb2, {
-      scale: 1.0, opacity: 0.80,
+      scale: 0.9, opacity: 0.82,
       ease: 'none',
       scrollTrigger: {
         trigger: sec,
