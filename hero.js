@@ -7,6 +7,7 @@ gsap.registerPlugin(ScrollTrigger);
 //  HAIR-TRIGGER SNAP CONTROLLER — any wheel notch → next page, silky glide
 // ══════════════════════════════════════════════════════
 (function initHairSnap() {
+  return; // disabled — natural scroll
   if (window.innerWidth <= 768) return; // mobile uses CSS scroll-snap
 
   const DURATION = 780;

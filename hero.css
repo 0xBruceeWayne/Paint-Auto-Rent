@@ -140,8 +140,6 @@ body{
 #hero{
   position:relative;width:100vw;height:100vh;
   overflow:hidden;background:transparent;
-  scroll-snap-align:start;
-  scroll-snap-stop:always;
 }
 
 /* MAP PHOTO — replaced by #map-global zoom background */
@@ -564,12 +562,7 @@ body{
 ══════════════════════════════════════════════════════ */
 .sec{
   padding:80px 80px;
-  scroll-snap-align:start;
-  scroll-snap-stop:always;
-  height:100vh;
   min-height:100vh;
-  max-height:100vh;
-  overflow:hidden;
   display:flex;align-items:center;
 }
 .sec-white{
