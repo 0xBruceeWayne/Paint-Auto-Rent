@@ -642,14 +642,7 @@ function scrambleTo(el) {
   }, 23);
 }
 
-document.querySelectorAll('.sec-title').forEach(el => {
-  ScrollTrigger.create({
-    trigger: el,
-    start: 'top 85%',
-    once: true,
-    onEnter: () => scrambleTo(el),
-  });
-});
+// (Scramble effect disabled — splitText spawn-in below owns sec-title animation.)
 
 // ══════════════════════════════════════════════════════
 //  WORD-BY-WORD REVEAL — section descriptions
@@ -898,17 +891,18 @@ document.querySelectorAll('.benefit').forEach(b => {
       start: 'top 82%',
       once: true,
       onEnter() {
+        // Total spawn = 1.0s exactly: 0.5s stagger window + 0.5s per-char glide.
         gsap.to(chars, {
           opacity: 1, y: 0, x: 0, rotation: 0,
-          duration: 0.056,
+          duration: 0.5,
           ease: 'back.out(1.4)',
-          stagger: { each: 0.003, from: 'start' },
+          stagger: { amount: 0.5, from: 'start' },
         });
-        // Red underline draws after chars land
+        // Underline draws as the last chars land.
         gsap.fromTo(el, { '--ul': '0%' }, {
           '--ul': '100%',
-          duration: 0.2,
-          delay: chars.length * 0.003 + 0.012,
+          duration: 0.35,
+          delay: 0.7,
           ease: 'power3.out',
         });
       },
@@ -1141,9 +1135,10 @@ document.querySelectorAll('.benefit').forEach(b => {
 //  LIQUID GLASS 4D — cursor sphere + card light + DOM injection
 // ══════════════════════════════════════════════════════
 
-// ── 1. Cursor glass sphere ─────────────────────────
+// ── 1. Cursor glass sphere — DISABLED (replaced with square reticle) ──
 (function initCursorGlass() {
   if (IS_MOBILE) return;
+  return; // cursor bubble removed
 
   const sphere = document.createElement('div');
   sphere.id = 'lg-cursor';

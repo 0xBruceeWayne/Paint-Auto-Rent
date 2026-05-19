@@ -49,7 +49,7 @@ body{
 .lg-orb--b{
   width:70vw;height:70vh;
   bottom:-20%;right:-15%;
-  background:radial-gradient(circle,rgba(140,90,255,0.22) 0%,transparent 65%);
+  background:radial-gradient(circle,rgba(26,80,200,0.15) 0%,transparent 65%);
   animation:orb-drift-b 28s ease-in-out infinite;
 }
 .lg-orb--c{
@@ -88,21 +88,22 @@ body{
 }
 
 /* ── CUSTOM CURSOR ────────────────────────────────── */
+/* ── CURSOR: sharp 3px dot ── */
 #cur{
-  position:fixed;width:8px;height:8px;
-  background:var(--blue);border-radius:50%;
+  position:fixed;width:3px;height:3px;
+  background:#fff;
   pointer-events:none;z-index:10001;
   transform:translate(-50%,-50%);
-  box-shadow:0 0 6px 2px rgba(40,140,255,0.7);
 }
+/* ── Square reticle cursor ── */
 #cring{
-  position:fixed;width:34px;height:34px;
-  border:1.5px solid rgba(26,106,232,.5);
-  border-radius:50%;pointer-events:none;z-index:10000;
+  position:fixed;width:26px;height:26px;
+  border:1.5px solid rgba(26,106,232,0.7);
+  pointer-events:none;z-index:10000;
   transform:translate(-50%,-50%);
-  transition:width .18s,height .18s,border-color .18s;
+  transition:width .22s cubic-bezier(.23,1,.32,1),height .22s cubic-bezier(.23,1,.32,1),opacity .2s;
 }
-.ch #cring{width:52px;height:52px;border-color:var(--blue)}
+.ch #cring{width:38px;height:38px;border-color:var(--blue)}
 
 /* ── GLOBAL MAP — fixed behind entire site, zoom on scroll ── */
 #map-global{
@@ -376,6 +377,8 @@ body{
 .card-eyebrow::before,.card-eyebrow::after{
   content:'';width:28px;height:1px;background:rgba(0,30,100,.22);flex-shrink:0;
 }
+.card-eyebrow .brand-uber{ color:#000; font-weight:800; }
+.card-eyebrow .brand-bolt{ color:#34d186; font-weight:800; }
 
 .card-hl{
   font-size:clamp(3rem,5.5vw,6.5rem);font-weight:900;letter-spacing:-2px;
@@ -519,7 +522,7 @@ body{
 
 /* ── BOTTOM STATS BAR ─────────────────────────────── */
 .bottom-bar{
-  background:#040c1e;
+  background:#000;
   border-top:1px solid rgba(255,255,255,0.08);
   padding:16px 60px;
   opacity:0;transform:translateY(12px);
@@ -555,7 +558,7 @@ body{
   -webkit-backdrop-filter:blur(18px);
 }
 .sec-dark{
-  background:rgba(4,9,28,0.82);
+  background:#000;
   position:relative;
   overflow:clip;             /* clip both axes — no scroll container, orbs stay inside section */
 }
@@ -741,7 +744,7 @@ body{
   perspective:1400px;perspective-origin:50% 50%;
 }
 .fleet-card{
-  background:rgba(4,12,35,0.85);
+  background:rgba(8,8,8,0.92);
   border:1px solid rgba(255,255,255,.07);
   box-shadow:0 4px 28px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.04);
   overflow:hidden;
@@ -869,18 +872,18 @@ body{
 }
 .step-desc{font-size:.82rem;color:rgba(0,0,0,.45);line-height:1.65}
 
-/* Blue filled frame for cum-functioneaza steps — equal height */
+/* Black with blue geometric frame for cum-functioneaza steps — equal height */
 #cum-functioneaza .steps{align-items:stretch}
 #cum-functioneaza .step{
-  background:linear-gradient(145deg,#1e74f0 0%,#0a4fd4 100%);
+  background:#000;
   border-radius:20px;
   padding:44px 32px 40px;
+  border:1px solid rgba(26,106,232,0.35);
   box-shadow:
-    0 12px 48px rgba(26,106,232,.32),
-    inset 0 1px 0 rgba(255,255,255,.38),
-    inset 0 -1px 0 rgba(0,0,0,.12),
-    inset 1px 0 0 rgba(255,255,255,.18),
-    inset -1px 0 0 rgba(255,255,255,.10);
+    0 12px 48px rgba(0,0,0,.7),
+    0 0 0 1px rgba(26,106,232,0.15),
+    inset 0 1px 0 rgba(26,106,232,.18),
+    inset 0 -1px 0 rgba(26,106,232,.08);
   display:flex;flex-direction:column;justify-content:center;
   font-family:var(--font);
   transform-style:preserve-3d;
@@ -891,32 +894,32 @@ body{
   transition:box-shadow 0.5s ease;
 }
 
-/* liquid glass shimmer layer — morphs border-radius for fluid feel */
+/* blue geometric shimmer on black — diagonal blue streak */
 #cum-functioneaza .step::before{
   content:'';
   position:absolute;inset:0;
   border-radius:inherit;
   background:linear-gradient(
     135deg,
-    rgba(255,255,255,0.28) 0%,
-    rgba(255,255,255,0.06) 35%,
-    rgba(120,180,255,0.10) 60%,
-    rgba(255,255,255,0.18) 100%
+    rgba(26,106,232,0.12) 0%,
+    rgba(26,106,232,0.03) 35%,
+    rgba(0,180,255,0.06) 60%,
+    rgba(26,106,232,0.10) 100%
   );
   animation:liquid-sheen 7s ease-in-out infinite;
   pointer-events:none;
   z-index:0;
 }
 
-/* refraction edge ring */
+/* blue geometric edge ring */
 #cum-functioneaza .step::after{
   content:'';
   position:absolute;inset:0;
   border-radius:inherit;
-  border:1px solid rgba(255,255,255,0.22);
+  border:1px solid rgba(26,106,232,0.28);
   box-shadow:
-    inset 0 2px 6px rgba(255,255,255,0.18),
-    inset 0 -2px 6px rgba(0,0,30,0.22);
+    inset 0 2px 8px rgba(26,106,232,0.12),
+    inset 0 -2px 6px rgba(0,0,0,0.5);
   pointer-events:none;
   z-index:0;
 }
@@ -940,7 +943,7 @@ body{
   transition:transform 0.5s cubic-bezier(0.23,1,0.32,1), text-shadow 0.4s ease;
 }
 #cum-functioneaza .step-desc{
-  color:rgba(255,255,255,.85);
+  color:rgba(255,255,255,.55);
   font-size:1.05rem;line-height:1.6;
   transition:transform 0.5s cubic-bezier(0.23,1,0.32,1);
 }
@@ -1073,7 +1076,7 @@ body{
   display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
 }
 .testi-card{
-  background:#060d20;border:1px solid rgba(255,255,255,.06);
+  background:#080808;border:1px solid rgba(26,106,232,.15);
   padding:32px 28px;
   position:relative;
   transition:border-color .2s,transform .2s;
@@ -1363,7 +1366,7 @@ body{
    FOOTER
 ══════════════════════════════════════════════════════ */
 #footer{
-  background:rgba(4,11,32,0.98);
+  background:rgba(0,0,0,0.98);
   backdrop-filter:blur(8px);
   -webkit-backdrop-filter:blur(8px);
   border-top:3px solid var(--blue);
@@ -1420,9 +1423,9 @@ body{
   .fleet-card,.testi-card{
     backdrop-filter:none !important;
     -webkit-backdrop-filter:none !important;
-    background:rgba(6,14,40,0.96) !important;
+    background:rgba(8,8,8,0.97) !important;
   }
-  .testi-card{ background:rgba(5,10,28,0.96) !important; }
+  .testi-card{ background:rgba(8,8,8,0.97) !important; }
   .step-icon{
     backdrop-filter:none !important;
     -webkit-backdrop-filter:none !important;
@@ -1842,7 +1845,7 @@ body{
   -webkit-backdrop-filter:blur(8px);
 }
 .phone-popup-box{
-  background:#050a1e;
+  background:#080808;
   border:1px solid rgba(26,106,232,0.3);
   padding:44px 52px 40px;
   display:flex;flex-direction:column;align-items:center;gap:16px;
@@ -2138,7 +2141,7 @@ body{
 
 /* ── BOTTOM STATS BAR — frosted glass ───────────── */
 .bottom-bar{
-  background:rgba(4,12,35,0.72) !important;
+  background:rgba(0,0,0,0.72) !important;
   backdrop-filter:blur(32px) saturate(180%) brightness(0.9) !important;
   -webkit-backdrop-filter:blur(32px) saturate(180%) brightness(0.9) !important;
   border-top:1px solid rgba(255,255,255,0.10) !important;
@@ -2486,7 +2489,7 @@ body{
 
 /* ── FOOTER — deep smoked glass ──────────────────── */
 #footer{
-  background:rgba(3,9,28,0.82) !important;
+  background:rgba(0,0,0,0.82) !important;
   backdrop-filter:blur(40px) saturate(180%) !important;
   -webkit-backdrop-filter:blur(40px) saturate(180%) !important;
   border-top:1px solid rgba(26,106,232,0.35) !important;
@@ -2564,7 +2567,7 @@ html{
 
 /* ── Fleet cards — full Apple Liquid Glass ───────── */
 .fleet-card{
-  background:rgba(6,14,40,0.48) !important;
+  background:rgba(0,0,0,0.48) !important;
   backdrop-filter:blur(32px) saturate(240%) brightness(1.10) !important;
   -webkit-backdrop-filter:blur(32px) saturate(240%) brightness(1.10) !important;
   border:1px solid rgba(255,255,255,0.14) !important;
@@ -2623,7 +2626,7 @@ html{
 
 /* ── Testimonial cards — dark glass panels ───────── */
 .testi-card{
-  background:rgba(5,10,28,0.55) !important;
+  background:rgba(0,0,0,0.55) !important;
   backdrop-filter:blur(28px) saturate(220%) brightness(1.06) !important;
   -webkit-backdrop-filter:blur(28px) saturate(220%) brightness(1.06) !important;
   border:1px solid rgba(255,255,255,0.10) !important;
@@ -2659,7 +2662,7 @@ html{
 
 /* ── Contact address card — glass ────────────────── */
 .cmd-address-card{
-  background:rgba(6,14,40,0.52) !important;
+  background:rgba(0,0,0,0.52) !important;
   backdrop-filter:blur(24px) saturate(200%) !important;
   -webkit-backdrop-filter:blur(24px) saturate(200%) !important;
   border:1px solid rgba(255,255,255,0.12) !important;
@@ -2695,61 +2698,7 @@ html{
 .cmd-btn > *{ position:relative;z-index:1; }
 
 /* ── Cursor glass sphere ─────────────────────────── */
-#lg-cursor{
-  position:fixed;
-  width:64px;height:64px;
-  border-radius:50%;
-  pointer-events:none;
-  z-index:9998;
-  top:0;left:0;
-  transform:translate(-50%,-50%);
-  background:rgba(255,255,255,0.06);
-  backdrop-filter:blur(14px) saturate(180%) brightness(1.25);
-  -webkit-backdrop-filter:blur(14px) saturate(180%) brightness(1.25);
-  border:1px solid rgba(255,255,255,0.20);
-  box-shadow:
-    inset 0 2px 0 rgba(255,255,255,0.35),
-    inset 0 -1px 0 rgba(0,20,100,0.10),
-    0 8px 28px rgba(0,0,0,0.22),
-    0 0 0 0.5px rgba(255,255,255,0.08);
-  will-change:transform;
-  opacity:0;
-  transition:opacity 0.4s, width 0.3s cubic-bezier(0.34,1.56,0.64,1), height 0.3s cubic-bezier(0.34,1.56,0.64,1);
-}
-/* Inner specular dot — makes it look like a real glass sphere */
-#lg-cursor::before{
-  content:'';
-  position:absolute;
-  top:16%;left:18%;
-  width:32%;height:28%;
-  border-radius:50%;
-  background:rgba(255,255,255,0.60);
-  filter:blur(5px);
-}
-/* Subtle colour halo that shifts with sections */
-#lg-cursor::after{
-  content:'';
-  position:absolute;inset:-4px;
-  border-radius:50%;
-  background:var(--cursor-halo,rgba(26,106,232,0.18));
-  filter:blur(12px);
-  z-index:-1;
-  transition:background 0.6s ease;
-}
-#lg-cursor.lc-visible{ opacity:1; }
-#lg-cursor.lc-hover{
-  width:88px;height:88px;
-  background:rgba(255,255,255,0.10);
-  box-shadow:
-    inset 0 2px 0 rgba(255,255,255,0.45),
-    inset 0 -1px 0 rgba(0,20,100,0.12),
-    0 12px 40px rgba(0,0,0,0.30),
-    0 0 0 1px rgba(255,255,255,0.14);
-}
-#lg-cursor.lc-click{
-  width:44px;height:44px;
-  background:rgba(255,255,255,0.18);
-}
+#lg-cursor{ display:none }
 
 /* ── Aura mobile optimization ─────────────────────── */
 @media(max-width:900px){
