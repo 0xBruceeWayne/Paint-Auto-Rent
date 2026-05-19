@@ -10,12 +10,12 @@ html{
   font-family:var(--font);
   background:#eef2ff;cursor:none;
   overflow-x:hidden;
+  scroll-behavior:smooth;
   -webkit-font-smoothing:antialiased;
 }
 body{
-  overflow-x:hidden;cursor:none;
+  margin:0;cursor:none;
   overscroll-behavior-y:none;
-  margin:0;
 }
 
 /* ── 3D ATMOSPHERE BACKGROUND CANVAS ─────────────────── */
