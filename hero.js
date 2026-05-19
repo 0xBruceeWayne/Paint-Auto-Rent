@@ -24,8 +24,8 @@ if (!IS_MOBILE) {
 
   (function cursorLoop() {
     requestAnimationFrame(cursorLoop);
-    rx += (M.x - rx) * 0.11;
-    ry += (M.y - ry) * 0.11;
+    rx += (M.x - rx) * 0.42;
+    ry += (M.y - ry) * 0.42;
     cur.style.left  = M.x + 'px';
     cur.style.top   = M.y + 'px';
     ring.style.left = rx  + 'px';
@@ -281,8 +281,9 @@ if (!IS_MOBILE) {
     displayScale += (targetScale - displayScale) * 0.07;
 
     if (!IS_MOBILE) {
-      vx += (tpx - cpx) * 0.004;  vy += (tpy - cpy) * 0.004;
-      vx *= 0.88;                  vy *= 0.88;
+      // 50% slower reaction: halved the velocity blend factor + tighter damping.
+      vx += (tpx - cpx) * 0.002;  vy += (tpy - cpy) * 0.002;
+      vx *= 0.92;                  vy *= 0.92;
       cpx += vx;                   cpy += vy;
     }
 
@@ -892,10 +893,11 @@ document.querySelectorAll('.benefit').forEach(b => {
       once: true,
       onEnter() {
         // Total spawn = 1.0s exactly: 0.5s stagger window + 0.5s per-char glide.
+        // Smoother easing (expo.out — long tail, no overshoot) for buttery landing.
         gsap.to(chars, {
           opacity: 1, y: 0, x: 0, rotation: 0,
           duration: 0.5,
-          ease: 'back.out(1.4)',
+          ease: 'expo.out',
           stagger: { amount: 0.5, from: 'start' },
         });
         // Underline draws as the last chars land.
@@ -903,7 +905,7 @@ document.querySelectorAll('.benefit').forEach(b => {
           '--ul': '100%',
           duration: 0.35,
           delay: 0.7,
-          ease: 'power3.out',
+          ease: 'expo.out',
         });
       },
     });

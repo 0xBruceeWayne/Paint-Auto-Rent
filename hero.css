@@ -14,9 +14,11 @@ html{
 }
 body{
   height:100%;overflow-x:hidden;overflow-y:scroll;cursor:none;
-  scroll-snap-type:y mandatory;
+  scroll-snap-type:y proximity;
+  scroll-behavior:smooth;
   overscroll-behavior-y:none;
 }
+html{ scroll-behavior:smooth; }
 
 /* ── 3D ATMOSPHERE BACKGROUND CANVAS ─────────────────── */
 #atmo-canvas{
@@ -87,23 +89,38 @@ body{
   pointer-events:none;
 }
 
-/* ── CUSTOM CURSOR ────────────────────────────────── */
-/* ── CURSOR: sharp 3px dot ── */
+/* ── CUSTOM CURSOR — crosshair + diamond ring ── */
 #cur{
-  position:fixed;width:3px;height:3px;
-  background:#fff;
+  position:fixed;width:6px;height:6px;
+  background:var(--blue);
+  border-radius:50%;
+  box-shadow:0 0 14px rgba(26,106,232,0.95),0 0 28px rgba(26,106,232,0.55);
   pointer-events:none;z-index:10001;
   transform:translate(-50%,-50%);
+  mix-blend-mode:normal;
 }
-/* ── Square reticle cursor ── */
 #cring{
-  position:fixed;width:26px;height:26px;
-  border:1.5px solid rgba(26,106,232,0.7);
+  position:fixed;width:34px;height:34px;
+  border:1.5px solid rgba(26,106,232,0.85);
   pointer-events:none;z-index:10000;
-  transform:translate(-50%,-50%);
-  transition:width .22s cubic-bezier(.23,1,.32,1),height .22s cubic-bezier(.23,1,.32,1),opacity .2s;
+  transform:translate(-50%,-50%) rotate(45deg);
+  transition:width .18s cubic-bezier(.23,1,.32,1),height .18s cubic-bezier(.23,1,.32,1),border-color .18s ease,opacity .15s;
+  box-shadow:0 0 18px rgba(26,106,232,0.35),inset 0 0 8px rgba(26,106,232,0.25);
 }
-.ch #cring{width:38px;height:38px;border-color:var(--blue)}
+#cring::before,#cring::after{
+  content:'';position:absolute;background:rgba(26,106,232,0.95);
+}
+#cring::before{ left:50%;top:-7px;width:1.5px;height:6px;transform:translateX(-50%); }
+#cring::after { left:50%;bottom:-7px;width:1.5px;height:6px;transform:translateX(-50%); }
+.ch #cring{
+  width:54px;height:54px;
+  border-color:#fff;
+  box-shadow:0 0 24px rgba(255,255,255,0.6),inset 0 0 12px rgba(255,255,255,0.35);
+}
+.ch #cur{
+  background:#fff;
+  box-shadow:0 0 18px rgba(255,255,255,0.95),0 0 36px rgba(255,255,255,0.6);
+}
 
 /* ── GLOBAL MAP — fixed behind entire site, zoom on scroll ── */
 #map-global{
@@ -266,25 +283,25 @@ body{
 }
 .hside-num{
   font-family:var(--font);
-  font-size:1.35rem;
+  font-size:2rem;
   font-weight:900;
   line-height:1;
   color:#ffffff;
   letter-spacing:-0.5px;
 }
 .hside-num span{
-  font-size:0.75rem;
-  font-weight:600;
+  font-size:1.05rem;
+  font-weight:700;
   color:var(--blue);
   vertical-align:super;
-  margin-left:1px;
+  margin-left:2px;
 }
 .hside-tag{
   font-family:var(--font);
-  font-size:0.42rem;
-  font-weight:700;
-  letter-spacing:4px;
-  color:rgba(255,255,255,0.3);
+  font-size:0.62rem;
+  font-weight:800;
+  letter-spacing:5px;
+  color:rgba(255,255,255,0.55);
   text-transform:uppercase;
 }
 
@@ -368,14 +385,14 @@ body{
 
 /* ── CARD TYPOGRAPHY ──────────────────────────────── */
 .card-eyebrow{
-  font-size:.64rem;font-weight:700;letter-spacing:7px;
+  font-size:.88rem;font-weight:700;letter-spacing:8px;
   color:var(--blue);text-transform:uppercase;
-  display:flex;align-items:center;justify-content:center;gap:14px;
+  display:flex;align-items:center;justify-content:center;gap:16px;
   text-align:center;width:100%;
   opacity:0;transform:translateY(14px);
 }
 .card-eyebrow::before,.card-eyebrow::after{
-  content:'';width:28px;height:1px;background:rgba(0,30,100,.22);flex-shrink:0;
+  content:'';width:36px;height:1px;background:rgba(0,30,100,.22);flex-shrink:0;
 }
 .card-eyebrow .brand-uber{ color:#000; font-weight:800; }
 .card-eyebrow .brand-bolt{ color:#34d186; font-weight:800; }
@@ -402,8 +419,8 @@ body{
 }
 
 .card-sub{
-  font-size:.66rem;font-weight:600;letter-spacing:5px;
-  color:rgba(0,0,0,0.42);text-transform:uppercase;text-align:center;
+  font-size:.66rem;font-weight:700;letter-spacing:5px;
+  color:#000;text-transform:uppercase;text-align:center;
   opacity:0;transform:translateY(10px);
 }
 
@@ -1533,7 +1550,7 @@ body{
     border-radius:4px;
   }
   .card-eyebrow{
-    font-size:.55rem;letter-spacing:5px;gap:10px;
+    font-size:.72rem;letter-spacing:6px;gap:12px;
   }
   .card-eyebrow::before,.card-eyebrow::after{ width:18px }
   .card-hl{
