@@ -1806,12 +1806,11 @@ body{
 ══════════════════════════════════════════════════════ */
 @media(max-width:480px){
 
-  /* ── Global ─────────────────────────────────────── */
-  body{ scroll-snap-type:none }
-
-  /* ── Sections ────────────────────────────────────── */
-  .sec{ padding:52px 16px }
-  .sec--compact{ padding:40px 16px }
+  /* ── Sections — keep snap-fit on phone too ───────── */
+  .sec{
+    padding:calc(env(safe-area-inset-top) + 14px) 14px calc(env(safe-area-inset-bottom) + 14px);
+  }
+  .sec--compact{ padding:32px 14px }
 
   /* ── Hero ────────────────────────────────────────── */
   .mid{ padding-top:76px }
@@ -1839,16 +1838,24 @@ body{
   .card-sub{ font-size:.54rem;letter-spacing:3px }
   .form-btn{ padding:12px 18px;font-size:.72rem }
 
-  /* ── Bottom bar — stack on tiny screens ──────────── */
+  /* ── Bottom bar — symmetric 3-col grid + phone full row ── */
   .bbar-inner{
-    gap:10px;
-    flex-wrap:wrap;
-    justify-content:center;
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:8px 6px;
+    justify-items:center;
+    align-items:center;
+    padding:10px 12px;
   }
   .bbar-sep{ display:none }
   .bstat{ text-align:center }
-  .bstat-n{ font-size:1.05rem }
-  .bstat-phone{ width:100%;text-align:center;margin-top:4px }
+  .bstat-n{ font-size:.95rem }
+  .bstat-l{ font-size:.46rem;letter-spacing:1.5px }
+  .bstat-phone{
+    grid-column:1 / -1;
+    width:100%;text-align:center;margin-top:2px;
+    padding-top:8px;border-top:1px solid rgba(255,255,255,0.08);
+  }
   .bstat-num{ font-size:1rem }
 
   /* ── Benefit strip — full width ──────────────────── */
