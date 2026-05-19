@@ -14,7 +14,7 @@ html{
 }
 body{
   height:100%;overflow-x:hidden;overflow-y:scroll;cursor:none;
-  scroll-snap-type:y proximity;
+  scroll-snap-type:y mandatory;
   scroll-behavior:smooth;
   overscroll-behavior-y:none;
 }
