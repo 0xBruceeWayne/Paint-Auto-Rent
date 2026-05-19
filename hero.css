@@ -15,10 +15,8 @@ html{
 body{
   height:100%;overflow-x:hidden;overflow-y:scroll;cursor:none;
   scroll-snap-type:y mandatory;
-  scroll-behavior:smooth;
   overscroll-behavior-y:none;
 }
-html{ scroll-behavior:smooth; }
 
 /* ── 3D ATMOSPHERE BACKGROUND CANVAS ─────────────────── */
 #atmo-canvas{
@@ -143,6 +141,7 @@ html{ scroll-behavior:smooth; }
   position:relative;width:100vw;height:100vh;
   overflow:hidden;background:transparent;
   scroll-snap-align:start;
+  scroll-snap-stop:always;
 }
 
 /* MAP PHOTO — replaced by #map-global zoom background */
@@ -566,7 +565,11 @@ html{ scroll-behavior:smooth; }
 .sec{
   padding:80px 80px;
   scroll-snap-align:start;
+  scroll-snap-stop:always;
+  height:100vh;
   min-height:100vh;
+  max-height:100vh;
+  overflow:hidden;
   display:flex;align-items:center;
 }
 .sec-white{
