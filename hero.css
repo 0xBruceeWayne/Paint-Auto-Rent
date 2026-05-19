@@ -9,12 +9,13 @@ button{-webkit-appearance:none;appearance:none;outline:none}
 html{
   font-family:var(--font);
   background:#eef2ff;cursor:none;
-  height:100%;overflow-x:hidden;
+  overflow-x:hidden;
   -webkit-font-smoothing:antialiased;
 }
 body{
-  height:100%;overflow-x:hidden;overflow-y:scroll;cursor:none;
+  overflow-x:hidden;cursor:none;
   overscroll-behavior-y:none;
+  margin:0;
 }
 
 /* ── 3D ATMOSPHERE BACKGROUND CANVAS ─────────────────── */

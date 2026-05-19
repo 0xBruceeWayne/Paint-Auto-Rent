@@ -9,25 +9,35 @@ gsap.registerPlugin(ScrollTrigger);
 (function initHairSnap() {
   if (window.innerWidth <= 768) return; // mobile uses CSS scroll-snap
 
-  const DURATION = 780;          // ms — fast but not jarring
-  const LOCKOUT  = 90;           // ms after snap settles before next wheel registers
-  const TRIGGER  = 3;            // wheel delta px threshold — basically any nudge
-  // ease-out-expo: shoots fast, settles butter-smooth
+  const DURATION = 780;
+  const LOCKOUT  = 90;
+  const TRIGGER  = 3;
   const ease = (t) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+
+  // Detect the actual scrolling element. With html+body both at height:100%,
+  // body can be the scroll container — window.scrollY/scrollTo won't work then.
+  function getScroller() {
+    const docEl = document.scrollingElement || document.documentElement;
+    if (docEl.scrollHeight > docEl.clientHeight + 4) return docEl;
+    if (document.body.scrollHeight > document.body.clientHeight + 4) return document.body;
+    return docEl;
+  }
+  function curY()        { return getScroller().scrollTop; }
+  function setY(y)       { getScroller().scrollTop = y; }
 
   let animating = false;
   let lockedUntil = 0;
-  let queuedDir = 0;             // queue next direction during glide for chained scrolls
+  let queuedDir = 0;
 
   function sections() {
     return Array.from(document.querySelectorAll('#hero, .sec'));
   }
   function topOf(el) {
-    return Math.round(el.getBoundingClientRect().top + window.scrollY);
+    return Math.round(el.getBoundingClientRect().top + curY());
   }
   function nearestIdx() {
     const list = sections();
-    const y = window.scrollY;
+    const y = curY();
     let best = 0, bestD = Infinity;
     list.forEach((el, i) => {
       const d = Math.abs(topOf(el) - y);
@@ -39,7 +49,7 @@ gsap.registerPlugin(ScrollTrigger);
   function glideTo(targetIdx) {
     const list = sections();
     targetIdx = Math.max(0, Math.min(list.length - 1, targetIdx));
-    const startY = window.scrollY;
+    const startY = curY();
     const endY   = topOf(list[targetIdx]);
     if (Math.abs(endY - startY) < 2) { return; }
 
@@ -48,15 +58,13 @@ gsap.registerPlugin(ScrollTrigger);
 
     function frame(now) {
       const t = Math.min(1, (now - t0) / DURATION);
-      const y = startY + (endY - startY) * ease(t);
-      window.scrollTo(0, y);
+      setY(startY + (endY - startY) * ease(t));
       if (t < 1) {
         requestAnimationFrame(frame);
       } else {
-        window.scrollTo(0, topOf(list[targetIdx])); // hard-snap to integer pixel
+        setY(topOf(list[targetIdx]));
         animating = false;
         lockedUntil = performance.now() + LOCKOUT;
-        // Chain queued direction if user wheeled during glide
         if (queuedDir !== 0) {
           const next = queuedDir;
           queuedDir = 0;
@@ -68,18 +76,14 @@ gsap.registerPlugin(ScrollTrigger);
   }
 
   window.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaY) < TRIGGER) return; // let tiny noise pass through natively
     e.preventDefault();
-    if (Math.abs(e.deltaY) < TRIGGER) return;
     const dir = e.deltaY > 0 ? 1 : -1;
-    if (animating) {
-      queuedDir = dir;          // remember the user wants to keep going
-      return;
-    }
+    if (animating) { queuedDir = dir; return; }
     if (performance.now() < lockedUntil) return;
     glideTo(nearestIdx() + dir);
   }, { passive: false });
 
-  // Keyboard + spacebar
   window.addEventListener('keydown', (e) => {
     if (animating) return;
     if (['PageDown','ArrowDown',' '].includes(e.key)) {
