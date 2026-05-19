@@ -3,6 +3,88 @@
 // ══════════════════════════════════════════════════════
 gsap.registerPlugin(ScrollTrigger);
 
+// ══════════════════════════════════════════════════════
+//  HAIR-TRIGGER SNAP CONTROLLER — any small scroll jumps a full page
+// ══════════════════════════════════════════════════════
+(function initHairSnap() {
+  if (window.innerWidth <= 768) return; // mobile uses native scroll
+
+  const DURATION = 900;          // ms per glide
+  const LOCKOUT  = 180;          // ms after a snap before another wheel can fire
+  const TRIGGER  = 4;            // any wheel delta over this px triggers a snap
+  const ease = (t) => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3) / 2;
+
+  let animating = false;
+  let lockedUntil = 0;
+  let idx = 0;
+
+  function sections() {
+    return Array.from(document.querySelectorAll('#hero, .sec'));
+  }
+  function topOf(el) {
+    return Math.round(el.getBoundingClientRect().top + window.scrollY);
+  }
+  function nearestIdx() {
+    const list = sections();
+    const y = window.scrollY;
+    let best = 0, bestD = Infinity;
+    list.forEach((el, i) => {
+      const d = Math.abs(topOf(el) - y);
+      if (d < bestD) { bestD = d; best = i; }
+    });
+    return best;
+  }
+
+  function glideTo(targetIdx) {
+    const list = sections();
+    targetIdx = Math.max(0, Math.min(list.length - 1, targetIdx));
+    const startY = window.scrollY;
+    const endY   = topOf(list[targetIdx]);
+    if (Math.abs(endY - startY) < 2) { idx = targetIdx; return; }
+
+    animating = true;
+    idx = targetIdx;
+    const t0 = performance.now();
+
+    function frame(now) {
+      const t = Math.min(1, (now - t0) / DURATION);
+      const y = startY + (endY - startY) * ease(t);
+      window.scrollTo(0, y);
+      if (t < 1) {
+        requestAnimationFrame(frame);
+      } else {
+        window.scrollTo(0, topOf(list[targetIdx])); // hard-snap to pixel
+        animating = false;
+        lockedUntil = performance.now() + LOCKOUT;
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  window.addEventListener('wheel', (e) => {
+    if (animating || performance.now() < lockedUntil) {
+      e.preventDefault();
+      return;
+    }
+    if (Math.abs(e.deltaY) < TRIGGER) return;
+    e.preventDefault();
+    idx = nearestIdx();
+    glideTo(idx + (e.deltaY > 0 ? 1 : -1));
+  }, { passive: false });
+
+  // Keyboard support
+  window.addEventListener('keydown', (e) => {
+    if (animating) return;
+    if (['PageDown','ArrowDown',' '].includes(e.key)) {
+      e.preventDefault(); idx = nearestIdx(); glideTo(idx + 1);
+    } else if (['PageUp','ArrowUp'].includes(e.key)) {
+      e.preventDefault(); idx = nearestIdx(); glideTo(idx - 1);
+    } else if (e.key === 'Home') { e.preventDefault(); glideTo(0); }
+    else if (e.key === 'End')    { e.preventDefault(); glideTo(sections().length - 1); }
+  });
+})();
+
+
 // Pause RAF loops when tab is hidden
 let _tabVisible = true;
 document.addEventListener('visibilitychange', () => { _tabVisible = !document.hidden; });
