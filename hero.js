@@ -4,19 +4,20 @@
 gsap.registerPlugin(ScrollTrigger);
 
 // ══════════════════════════════════════════════════════
-//  HAIR-TRIGGER SNAP CONTROLLER — any small scroll jumps a full page
+//  HAIR-TRIGGER SNAP CONTROLLER — any wheel notch → next page, silky glide
 // ══════════════════════════════════════════════════════
 (function initHairSnap() {
-  if (window.innerWidth <= 768) return; // mobile uses native scroll
+  if (window.innerWidth <= 768) return; // mobile uses CSS scroll-snap
 
-  const DURATION = 900;          // ms per glide
-  const LOCKOUT  = 180;          // ms after a snap before another wheel can fire
-  const TRIGGER  = 4;            // any wheel delta over this px triggers a snap
-  const ease = (t) => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3) / 2;
+  const DURATION = 780;          // ms — fast but not jarring
+  const LOCKOUT  = 90;           // ms after snap settles before next wheel registers
+  const TRIGGER  = 3;            // wheel delta px threshold — basically any nudge
+  // ease-out-expo: shoots fast, settles butter-smooth
+  const ease = (t) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
 
   let animating = false;
   let lockedUntil = 0;
-  let idx = 0;
+  let queuedDir = 0;             // queue next direction during glide for chained scrolls
 
   function sections() {
     return Array.from(document.querySelectorAll('#hero, .sec'));
@@ -40,10 +41,9 @@ gsap.registerPlugin(ScrollTrigger);
     targetIdx = Math.max(0, Math.min(list.length - 1, targetIdx));
     const startY = window.scrollY;
     const endY   = topOf(list[targetIdx]);
-    if (Math.abs(endY - startY) < 2) { idx = targetIdx; return; }
+    if (Math.abs(endY - startY) < 2) { return; }
 
     animating = true;
-    idx = targetIdx;
     const t0 = performance.now();
 
     function frame(now) {
@@ -53,32 +53,39 @@ gsap.registerPlugin(ScrollTrigger);
       if (t < 1) {
         requestAnimationFrame(frame);
       } else {
-        window.scrollTo(0, topOf(list[targetIdx])); // hard-snap to pixel
+        window.scrollTo(0, topOf(list[targetIdx])); // hard-snap to integer pixel
         animating = false;
         lockedUntil = performance.now() + LOCKOUT;
+        // Chain queued direction if user wheeled during glide
+        if (queuedDir !== 0) {
+          const next = queuedDir;
+          queuedDir = 0;
+          setTimeout(() => glideTo(nearestIdx() + next), LOCKOUT);
+        }
       }
     }
     requestAnimationFrame(frame);
   }
 
   window.addEventListener('wheel', (e) => {
-    if (animating || performance.now() < lockedUntil) {
-      e.preventDefault();
+    e.preventDefault();
+    if (Math.abs(e.deltaY) < TRIGGER) return;
+    const dir = e.deltaY > 0 ? 1 : -1;
+    if (animating) {
+      queuedDir = dir;          // remember the user wants to keep going
       return;
     }
-    if (Math.abs(e.deltaY) < TRIGGER) return;
-    e.preventDefault();
-    idx = nearestIdx();
-    glideTo(idx + (e.deltaY > 0 ? 1 : -1));
+    if (performance.now() < lockedUntil) return;
+    glideTo(nearestIdx() + dir);
   }, { passive: false });
 
-  // Keyboard support
+  // Keyboard + spacebar
   window.addEventListener('keydown', (e) => {
     if (animating) return;
     if (['PageDown','ArrowDown',' '].includes(e.key)) {
-      e.preventDefault(); idx = nearestIdx(); glideTo(idx + 1);
+      e.preventDefault(); glideTo(nearestIdx() + 1);
     } else if (['PageUp','ArrowUp'].includes(e.key)) {
-      e.preventDefault(); idx = nearestIdx(); glideTo(idx - 1);
+      e.preventDefault(); glideTo(nearestIdx() - 1);
     } else if (e.key === 'Home') { e.preventDefault(); glideTo(0); }
     else if (e.key === 'End')    { e.preventDefault(); glideTo(sections().length - 1); }
   });
