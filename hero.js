@@ -1287,19 +1287,18 @@ document.querySelectorAll('.benefit').forEach(b => {
 //  - blur(140px) set in CSS for wide soft bloom
 // ══════════════════════════════════════════════════════
 (function initSectionAuras() {
+  // Aura orbs disabled — dark sections stay flat black with geometric mesh only.
+  return;
   const CFG = {
     'flota': {
-      // Deep indigo + electric blue — dark premium car palette, no warm tones
       a1: { color:'rgba(40,20,200,0.92)',   x:'20%', y:'50%', w:'110%' },
       a2: { color:'rgba(10,100,255,0.82)',  x:'78%', y:'40%', w:'95%'  }
     },
     'testimoniale': {
-      // Purple nebula + electric cyan — trust/glow palette
       a1: { color:'rgba(130,20,255,0.90)',  x:'72%', y:'48%', w:'110%' },
       a2: { color:'rgba(10,140,255,0.80)',  x:'22%', y:'58%', w:'95%'  }
     },
     'contact': {
-      // Teal + magenta — action/CTA palette
       a1: { color:'rgba(0,200,180,0.85)',   x:'38%', y:'50%', w:'110%' },
       a2: { color:'rgba(200,40,255,0.78)',  x:'78%', y:'60%', w:'95%'  }
     }

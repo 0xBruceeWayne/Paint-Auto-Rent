@@ -138,7 +138,7 @@
       { shape:'torus',       size:340, sx:0.00090, sy:0.00060, ox:0.10, oy:0.22 },
       { shape:'diamond',     size:240, sx:0.00050, sy:0.00130, ox:0.14, oy:0.80 },
     ]},
-    { id:'contact', dark:false, shapes:[
+    { id:'contact', dark:true, shapes:[
       { shape:'rings',       size:520, sx:0.00000, sy:0.00095, ox:0.84, oy:0.50 },
       { shape:'icosahedron', size:300, sx:0.00080, sy:0.00070, ox:0.10, oy:0.25 },
       { shape:'cube',        size:220, sx:0.00110, sy:0.00110, ox:0.12, oy:0.80 },
@@ -185,7 +185,11 @@
 
     /* Upgrade 3 — depth-sorted drawShape */
     function drawShape(sh, sc, fov, cx, cy, ax, ay, parallaxX, parallaxY) {
-      const col = dark ? '255,210,0' : '10,10,10';
+      // contact uses a cool steel-blue grey on the navy bg; other dark
+      // sections keep the gold wireframes.
+      const col = cfg.id === 'contact'
+        ? '170,195,235'
+        : (dark ? '255,210,0' : '10,10,10');
       const lwBase = dark ? 1.6 : 1.7;
 
       /* apply parallax offset to centre */

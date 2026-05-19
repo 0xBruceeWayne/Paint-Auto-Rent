@@ -562,6 +562,11 @@ body{
   position:relative;
   overflow:clip;             /* clip both axes — no scroll container, orbs stay inside section */
 }
+/* Contact section: dark navy blue instead of flat black so the brand colour
+   keeps the page on-brand and the geometric wireframes read as cool tones. */
+#contact.sec-dark{
+  background:#0a1530;
+}
 .sec--compact{padding:60px 80px}
 
 .sec-dark .sec-inner{position:relative;z-index:2}
