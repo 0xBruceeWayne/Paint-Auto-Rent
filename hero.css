@@ -319,7 +319,7 @@ body{
   max-width:680px;width:100%;
   /* TRUE liquid glass: translucent, not opaque */
   background:rgba(255,255,255,0.75);
-  backdrop-filter:url(#lg-refract) blur(28px) saturate(220%) brightness(1.06);
+  backdrop-filter:blur(28px) saturate(220%) brightness(1.06);
   -webkit-backdrop-filter:blur(28px) saturate(220%) brightness(1.06);
   border:1px solid rgba(255,255,255,0.45);
   border-radius:2px;
