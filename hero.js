@@ -24,14 +24,13 @@ gsap.defaults({ overwrite: 'auto' });
   if (('ontouchstart' in window) && navigator.maxTouchPoints > 1) return;
 
   const DURATION  = 850;   // ms per snap
-  const LOCKOUT   = 120;   // ms after settle before next wheel
+  const LOCKOUT   = 320;   // ms after settle before next wheel (kills trackpad inertia double-fires)
   const MIN_DELTA = 5;     // wheel deltas below this are ignored (trackpad jitter)
   // easeOutExpo: fast launch, butter-smooth landing
   const ease = (t) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
 
   let animating   = false;
   let lockedUntil = 0;
-  let queuedDir   = 0;
   let rafId       = 0;
 
   const getTargets = () =>
@@ -77,11 +76,6 @@ gsap.defaults({ overwrite: 'auto' });
         window.scrollTo(0, endY);                // hard land on integer px
         animating = false;
         lockedUntil = performance.now() + LOCKOUT;
-        if (queuedDir !== 0) {
-          const dir = queuedDir;
-          queuedDir = 0;
-          setTimeout(() => glide(currentIdx() + dir), LOCKOUT + 10);
-        }
       }
     }
     rafId = requestAnimationFrame(step);
@@ -90,9 +84,11 @@ gsap.defaults({ overwrite: 'auto' });
   window.addEventListener('wheel', (e) => {
     if (Math.abs(e.deltaY) < MIN_DELTA) return;
     e.preventDefault();
+    // Hard-ignore any wheel events while animating OR during lockout window.
+    // Trackpad inertia fires dozens of wheel events per swipe — without this
+    // we'd advance multiple pages per gesture.
+    if (animating || performance.now() < lockedUntil) return;
     const dir = e.deltaY > 0 ? 1 : -1;
-    if (animating) { queuedDir = dir; return; }
-    if (performance.now() < lockedUntil) return;
     glide(currentIdx() + dir);
   }, { passive: false });
 
