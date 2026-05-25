@@ -5,8 +5,17 @@
 // ══════════════════════════════════════════════════════
 import * as THREE from 'three';
 
-const IS_MOBILE = (('ontouchstart' in window) || navigator.maxTouchPoints > 0)
-               || window.innerWidth <= 768;
+const IS_MOBILE = window.__IS_MOBILE
+               || (('ontouchstart' in window) || navigator.maxTouchPoints > 0)
+               || window.innerWidth <= 900;
+
+// ── Hard bail on mobile/low-end: canvas is display:none anyway,
+//    running the render loop just wastes battery and main-thread time.
+if (IS_MOBILE || window.__IS_LOW_END) {
+  const c = document.getElementById('atmo-canvas');
+  if (c) c.remove();
+  throw new Error('[atmosphere] skipped on mobile/low-end');
+}
 const IS_4K = devicePixelRatio >= 2 || window.innerWidth >= 2560;
 const COUNT = IS_MOBILE ? 70 : IS_4K ? 360 : 240;
 

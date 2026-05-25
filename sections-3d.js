@@ -6,6 +6,7 @@
    Upgrade 3 — Depth-sorted edges (back→front)
 */
 (function () {
+  if (window.__IS_MOBILE) return; // 3D wireframe overlays disabled on mobile
 
   /* ─── 3-D math ─── */
   function rotX(pts, a) {

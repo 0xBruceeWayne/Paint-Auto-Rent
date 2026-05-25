@@ -1,5 +1,6 @@
 /* divider.js — 3D perspective racing stripes (red / white / black) */
 (function () {
+  if (window.__IS_MOBILE) return; // slashes hidden via CSS on mobile
   const canvas = document.getElementById('divider-canvas');
   if (!canvas) return;
 

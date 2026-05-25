@@ -4,6 +4,7 @@
 */
 (function () {
   'use strict';
+  if (window.__IS_MOBILE) return; // WebGL2 prismatic burst disabled on mobile
 
   /* ── Config ── */
   const CFG = {

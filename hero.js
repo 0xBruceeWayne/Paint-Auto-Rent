@@ -3,6 +3,17 @@
 // ══════════════════════════════════════════════════════
 gsap.registerPlugin(ScrollTrigger);
 
+// Tighter ScrollTrigger refresh on mobile — avoid expensive layout reads
+// on every orientation/resize event and don't re-measure mid-scroll.
+ScrollTrigger.config({
+  ignoreMobileResize: true,           // skip resize events from URL-bar show/hide
+  autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load',
+});
+
+// gsap default ticker is RAF; force `force3D:true` so transforms hit GPU layer
+gsap.config({ force3D: true });
+gsap.defaults({ overwrite: 'auto' });
+
 // ══════════════════════════════════════════════════════
 //  PAGE SNAP — wheel scrolls to next/prev full section
 //  Pure RAF animation; no CSS smooth-scroll conflicts.
@@ -106,8 +117,9 @@ let _tabVisible = true;
 document.addEventListener('visibilitychange', () => { _tabVisible = !document.hidden; });
 
 // ── Mobile detection ─────────────────────────────────
-const IS_TOUCH = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-const IS_MOBILE = IS_TOUCH || window.innerWidth <= 768;
+const IS_TOUCH   = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+const IS_MOBILE  = window.__IS_MOBILE  || IS_TOUCH || window.innerWidth <= 900;
+const IS_LOW_END = window.__IS_LOW_END || IS_MOBILE;
 
 // ══════════════════════════════════════════════════════
 //  CUSTOM CURSOR — dot + lagging ring, no trail
@@ -140,6 +152,15 @@ if (!IS_MOBILE) {
 //  STREET PARTICLES — red dots flowing along lit streets
 // ══════════════════════════════════════════════════════
 (function initStreetParticles() {
+  // Hard bail on mobile/low-end: the grid scan + 28 RAF-driven pathfinders
+  // are the biggest single mobile cost. The Bucharest map photo alone reads
+  // beautifully without them.
+  if (IS_MOBILE) {
+    const c = document.getElementById('spc');
+    if (c) c.remove();
+    return;
+  }
+
   const canvas = document.getElementById('spc');
   const ctx    = canvas.getContext('2d');
   let W = canvas.width  = innerWidth;
@@ -374,12 +395,25 @@ if (!IS_MOBILE) {
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
+  // ── Pause loop when hero is offscreen — saves a per-frame transform write
+  let heroVisible = true;
+  const heroEl = document.getElementById('hero');
+  if (heroEl && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(es => {
+      es.forEach(e => { heroVisible = e.isIntersecting; });
+    }, { threshold: 0 });
+    io.observe(heroEl);
+  }
+
+  let lastScale = 0, lastOx = 0, lastOy = 0, lastCx = 0, lastCy = 0;
+
   (function zoomLoop() {
     requestAnimationFrame(zoomLoop);
+    if (!heroVisible || !_tabVisible) return;
+
     displayScale += (targetScale - displayScale) * 0.07;
 
     if (!IS_MOBILE) {
-      // 50% slower reaction: halved the velocity blend factor + tighter damping.
       vx += (tpx - cpx) * 0.002;  vy += (tpy - cpy) * 0.002;
       vx *= 0.92;                  vy *= 0.92;
       cpx += vx;                   cpy += vy;
@@ -389,10 +423,19 @@ if (!IS_MOBILE) {
     const tOy = 50 + scrollP * (IS_MOBILE ? 2 : 6);
     curOx += (tOx - curOx) * 0.04;
     curOy += (tOy - curOy) * 0.04;
-    mapEl.style.transformOrigin = `${curOx.toFixed(2)}% ${curOy.toFixed(2)}%`;
 
-    mapEl.style.transform = `scale(${displayScale.toFixed(4)}) translate(${cpx.toFixed(2)}px,${cpy.toFixed(2)}px)`;
-    if (spc) spc.style.transform = `translate(${(-cpx * 2.8).toFixed(2)}px,${(-cpy * 2.8).toFixed(2)}px)`;
+    // Skip DOM writes when nothing meaningful changed (sub-pixel deltas)
+    const dScale = Math.abs(displayScale - lastScale);
+    const dPos   = Math.abs(curOx - lastOx) + Math.abs(curOy - lastOy) +
+                   Math.abs(cpx - lastCx) + Math.abs(cpy - lastCy);
+    if (dScale < 0.0005 && dPos < 0.05) return;
+
+    lastScale = displayScale; lastOx = curOx; lastOy = curOy;
+    lastCx = cpx; lastCy = cpy;
+
+    mapEl.style.transformOrigin = `${curOx.toFixed(2)}% ${curOy.toFixed(2)}%`;
+    mapEl.style.transform = `scale(${displayScale.toFixed(4)}) translate3d(${cpx.toFixed(2)}px,${cpy.toFixed(2)}px,0)`;
+    if (spc) spc.style.transform = `translate3d(${(-cpx * 2.8).toFixed(2)}px,${(-cpy * 2.8).toFixed(2)}px,0)`;
   })();
 })();
 
@@ -1337,35 +1380,11 @@ document.querySelectorAll('.benefit').forEach(b => {
   });
 })();
 
-// ── 4. Mobile touch scroll — velocity momentum ─────
-(function initMobileScroll() {
-  if (!IS_MOBILE) return;
-  let startY = 0, velY = 0, lastY = 0, lastT = 0, rafId = null;
+// ── 4. Mobile touch scroll — DISABLED ───────────────
+// Native CSS scroll-snap (set in @media max-width:900px) + iOS momentum
+// is smoother than the JS scrollBy() loop, which fought the snap mechanism
+// and caused jitter. Native handles it now.
 
-  document.addEventListener('touchstart', e => {
-    startY = lastY = e.touches[0].clientY;
-    lastT = Date.now();
-    velY = 0;
-    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
-  }, { passive: true });
-
-  document.addEventListener('touchmove', e => {
-    const y = e.touches[0].clientY;
-    const dt = Math.max(1, Date.now() - lastT);
-    velY = (lastY - y) / dt * 16; // px per frame at 60fps
-    lastY = y; lastT = Date.now();
-  }, { passive: true });
-
-  document.addEventListener('touchend', () => {
-    function coast() {
-      if (Math.abs(velY) < 0.4) return;
-      window.scrollBy(0, velY);
-      velY *= 0.94; // friction
-      rafId = requestAnimationFrame(coast);
-    }
-    rafId = requestAnimationFrame(coast);
-  }, { passive: true });
-})();
 
 // ══════════════════════════════════════════════════════
 //  SECTION AURAS v2 — scroll-driven glowing orbs

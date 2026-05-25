@@ -2812,6 +2812,60 @@ html{
   .sec-aura{ filter:blur(40px) !important; }
 }
 
+/* ══════════════════════════════════════════════════════
+   PERF — mobile compositing & paint optimisations
+   - content-visibility skips paint/layout of off-screen sections
+   - transform:translateZ(0) promotes sections to their own GPU layer
+   - touch-action:pan-y kills 300ms touch delay + double-tap zoom hit-tests
+   ══════════════════════════════════════════════════════ */
+html.is-mobile,
+html.is-mobile body{
+  /* Native passive scroll path; no script overrides */
+  touch-action:pan-y;
+}
+html.is-mobile .sec,
+html.is-mobile #hero,
+html.is-mobile #footer{
+  /* GPU-promoted; isolates compositing layer */
+  transform:translateZ(0);
+  -webkit-transform:translateZ(0);
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+}
+/* Skip rendering of fully off-screen sections — massive scroll perf win.
+   Keep ~120vh placeholder so layout/scroll positions stay stable. */
+html.is-mobile .sec:not(#hero){
+  content-visibility:auto;
+  contain-intrinsic-size:100vh 120vh;
+}
+/* Animated images / canvas elements stay GPU-layered */
+html.is-mobile #map-global,
+html.is-mobile .fleet-img,
+html.is-mobile .hero-card{
+  transform:translateZ(0);
+  will-change:transform;
+}
+/* Drop blur strength one more notch on low-end devices to keep
+   compositor cost off the critical path while scroll-snapping. */
+html.is-low-end .gnav-pill,
+html.is-low-end .hero-card,
+html.is-low-end .fleet-card,
+html.is-low-end .testi-card,
+html.is-low-end .stat-card{
+  backdrop-filter:blur(12px) saturate(160%) !important;
+  -webkit-backdrop-filter:blur(12px) saturate(160%) !important;
+}
+/* Disable animation while user actively scrolls (browser auto-pauses
+   transitions via this attribute; we just declare we expect that). */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:0.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.001ms !important;
+    scroll-behavior:auto !important;
+  }
+}
+
 /* ── 4K / HiDPI enhancement ──────────────────────── */
 @media(-webkit-min-device-pixel-ratio:2),(min-resolution:2dppx){
   .sec-aura{ filter:blur(130px); }
