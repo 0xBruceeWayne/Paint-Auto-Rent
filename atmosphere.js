@@ -14,13 +14,15 @@ const IS_LOW_END = window.__IS_LOW_END || false;
 const IS_TINY    = window.innerWidth <= 480;
 const IS_4K = !IS_MOBILE && (devicePixelRatio >= 2 || window.innerWidth >= 2560);
 // Tiered count: low-end < tiny < mobile < desktop < 4K
-const COUNT = IS_LOW_END ? 40
-            : IS_TINY    ? 60
-            : IS_MOBILE  ? 90
+// Bumped mobile from 90 → 160 so the aura actually reads as an aura on phones.
+const COUNT = IS_LOW_END ? 60
+            : IS_TINY    ? 110
+            : IS_MOBILE  ? 160
             : IS_4K      ? 360
             : 240;
-// Render every Nth frame on slower devices — halves GPU cost without ruining motion
-const FRAME_SKIP = IS_LOW_END ? 2 : IS_MOBILE ? 1 : 0; // 0=every frame, 1=every other, 2=every 3rd
+// Render every Nth frame on slower devices — halves GPU cost without ruining motion.
+// Mobile now renders every frame (FRAME_SKIP=0); rAF is cheap once particle count is sane.
+const FRAME_SKIP = IS_LOW_END ? 1 : 0; // 0=every frame, 1=every other, 2=every 3rd
 
 const canvas = document.getElementById('atmo-canvas');
 if (!canvas) throw new Error('[atmosphere] canvas#atmo-canvas not found');
@@ -126,15 +128,33 @@ if ('IntersectionObserver' in window) {
   io.observe(canvas);
 }
 
-// Cursor parallax — aura tracks mouse. Smoothed via lerp for cinematic glide.
-let mx = 0, my = 0;          // target (from pointer)
-let cx = 0, cy = 0;          // smoothed (rendered)
-if (!IS_MOBILE) {
-  window.addEventListener('pointermove', e => {
-    mx = (e.clientX / innerWidth  - 0.5) * 2;   // -1 .. 1
-    my = (e.clientY / innerHeight - 0.5) * 2;
+// While the user is actively scrolling on mobile, throttle the aura to give
+// the browser's compositor 100% of the GPU for snap interpolation. Resumes
+// instantly when the user lifts their finger / scroll comes to rest.
+let scrolling = false;
+let scrollTimer = 0;
+if (IS_MOBILE) {
+  window.addEventListener('scroll', () => {
+    scrolling = true;
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => { scrolling = false; }, 90);
   }, { passive: true });
 }
+
+// Cursor parallax — aura tracks pointer (mouse OR touch). Smoothed via lerp.
+let mx = 0, my = 0;          // target (from pointer)
+let cx = 0, cy = 0;          // smoothed (rendered)
+window.addEventListener('pointermove', e => {
+  mx = (e.clientX / innerWidth  - 0.5) * 2;     // -1 .. 1
+  my = (e.clientY / innerHeight - 0.5) * 2;
+}, { passive: true });
+// Touch drag also nudges the aura — gives mobile a "reacts to me" feel
+window.addEventListener('touchmove', e => {
+  if (!e.touches.length) return;
+  const t = e.touches[0];
+  mx = (t.clientX / innerWidth  - 0.5) * 2;
+  my = (t.clientY / innerHeight - 0.5) * 2;
+}, { passive: true });
 
 const clock = new THREE.Clock();
 let frame = 0;
@@ -145,6 +165,9 @@ let frame = 0;
 
   // Frame skip for slow devices — still feels smooth, half the GPU work
   if (FRAME_SKIP && (frame++ % (FRAME_SKIP + 1)) !== 0) return;
+  // While actively scrolling on mobile: render every other frame to free GPU
+  // for the scroll-snap interpolation. Looks identical at velocity.
+  if (scrolling && (frame++ & 1)) return;
 
   const t = clock.getElapsedTime();
   const p = geo.attributes.position.array;

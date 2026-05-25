@@ -1422,8 +1422,10 @@ body{
 ══════════════════════════════════════════════════════ */
 @media(max-width:900px){
 
-  /* ══ PERFORMANCE — keep aura visible, kill only the heaviest ══ */
-  .sec-aura{ display:none !important }
+  /* ══ PERFORMANCE — keep aura visible on mobile ══ */
+  /* Section aura orbs stay — blurred soft bloom is GPU-cheap once layered.
+     filter:blur softened further in the aura-blur block below. */
+  .sec-aura{ filter:blur(80px) !important; opacity:.55 !important; }
   /* atmosphere canvas stays — JS adapts particle count + DPR + frame-skip for mobile */
   .fleet-glass-shimmer,.fleet-glass-rim{ display:none !important }
   .fleet-card,.testi-card{
@@ -1441,20 +1443,25 @@ body{
     -webkit-backdrop-filter:blur(18px) saturate(180%) !important;
   }
 
-  /* ══ SCROLL SNAP — mandatory full-screen pages (touch native) ══ */
+  /* ══ SCROLL SNAP — proximity snap = silky, doesn't fight finger drag ══ */
   html{
-    scroll-snap-type:y mandatory;
+    scroll-snap-type:y proximity;
     overflow-y:scroll;
     height:100%;
     -webkit-overflow-scrolling:touch;
     overscroll-behavior:none;
     scroll-behavior:smooth;
+    /* Hint compositor — keeps scroll on its own GPU layer */
+    transform:translateZ(0);
+    -webkit-transform:translateZ(0);
   }
   body{
     height:100%;
-    scroll-snap-type:y mandatory;
     overscroll-behavior-y:none;
     cursor:auto;
+    /* Native momentum on iOS, compositor-promoted on Android */
+    -webkit-overflow-scrolling:touch;
+    will-change:scroll-position;
   }
   #cur,#cring{ display:none !important }
 
