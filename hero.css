@@ -120,21 +120,9 @@ body{
   box-shadow:0 0 18px rgba(255,255,255,0.95),0 0 36px rgba(255,255,255,0.6);
 }
 
-/* ── GLOBAL MAP — fixed behind entire site, zoom on scroll ── */
-#map-global{
-  position:fixed;inset:0;
-  width:100vw;height:100vh;
-  z-index:-1;
-  background:url('images/hero-bg.jpg') center/cover no-repeat;
-  transform-origin:center center;
-  will-change:transform;
-  pointer-events:none;
-}
-#map-global::after{
-  content:'';position:absolute;inset:0;
-  background:rgba(235,242,255,0.84);
-  pointer-events:none;
-}
+/* ── GLOBAL MAP — disabled: blue atmosphere aura is the background now ── */
+#map-global{ display:none !important; }
+#map-overlay{ display:none !important; }
 
 /* ── HERO SECTION ─────────────────────────────────── */
 #hero{

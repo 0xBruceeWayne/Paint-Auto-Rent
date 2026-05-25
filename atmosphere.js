@@ -126,6 +126,16 @@ if ('IntersectionObserver' in window) {
   io.observe(canvas);
 }
 
+// Cursor parallax — aura tracks mouse. Smoothed via lerp for cinematic glide.
+let mx = 0, my = 0;          // target (from pointer)
+let cx = 0, cy = 0;          // smoothed (rendered)
+if (!IS_MOBILE) {
+  window.addEventListener('pointermove', e => {
+    mx = (e.clientX / innerWidth  - 0.5) * 2;   // -1 .. 1
+    my = (e.clientY / innerHeight - 0.5) * 2;
+  }, { passive: true });
+}
+
 const clock = new THREE.Clock();
 let frame = 0;
 
@@ -150,10 +160,19 @@ let frame = 0;
   }
   geo.attributes.position.needsUpdate = true;
 
-  // Slow camera sway — keep cinematic depth feel
-  camera.position.x = Math.sin(t * 0.07) * 0.7;
-  camera.position.y = Math.cos(t * 0.05) * 0.45;
-  accentLight.intensity = 0.5 + Math.sin(t * 0.38) * 0.22;
+  // Smoothed cursor parallax (lerp 0.045 — slow, cinematic)
+  cx += (mx - cx) * 0.045;
+  cy += (my - cy) * 0.045;
+
+  // Camera = slow sway (cinematic depth) + cursor parallax
+  camera.position.x = Math.sin(t * 0.07) * 0.7 + cx * 3.2;
+  camera.position.y = Math.cos(t * 0.05) * 0.45 - cy * 2.0;
+  camera.lookAt(cx * 1.5, -cy * 1.0, 0);
+
+  // Accent light follows cursor too — aura "leans" toward pointer
+  accentLight.position.x = 4 + cx * 6;
+  accentLight.position.y = 6 - cy * 4;
+  accentLight.intensity  = 0.5 + Math.sin(t * 0.38) * 0.22;
 
   renderer.render(scene, camera);
 })();
