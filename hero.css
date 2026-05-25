@@ -1434,9 +1434,9 @@ body{
 ══════════════════════════════════════════════════════ */
 @media(max-width:900px){
 
-  /* ══ PERFORMANCE — kill every heavy GPU effect ══ */
+  /* ══ PERFORMANCE — keep aura visible, kill only the heaviest ══ */
   .sec-aura{ display:none !important }
-  #atmo-canvas{ display:none !important }        /* kill Three.js atmosphere */
+  /* atmosphere canvas stays — JS adapts particle count + DPR + frame-skip for mobile */
   .fleet-glass-shimmer,.fleet-glass-rim{ display:none !important }
   .fleet-card,.testi-card{
     backdrop-filter:none !important;

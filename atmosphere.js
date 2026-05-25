@@ -5,19 +5,22 @@
 // ══════════════════════════════════════════════════════
 import * as THREE from 'three';
 
+// ── Tiered cost model — keep the aura visible everywhere,
+//    scale particle count + DPR + frame rate to the device.
 const IS_MOBILE = window.__IS_MOBILE
                || (('ontouchstart' in window) || navigator.maxTouchPoints > 0)
                || window.innerWidth <= 900;
-
-// ── Hard bail on mobile/low-end: canvas is display:none anyway,
-//    running the render loop just wastes battery and main-thread time.
-if (IS_MOBILE || window.__IS_LOW_END) {
-  const c = document.getElementById('atmo-canvas');
-  if (c) c.remove();
-  throw new Error('[atmosphere] skipped on mobile/low-end');
-}
-const IS_4K = devicePixelRatio >= 2 || window.innerWidth >= 2560;
-const COUNT = IS_MOBILE ? 70 : IS_4K ? 360 : 240;
+const IS_LOW_END = window.__IS_LOW_END || false;
+const IS_TINY    = window.innerWidth <= 480;
+const IS_4K = !IS_MOBILE && (devicePixelRatio >= 2 || window.innerWidth >= 2560);
+// Tiered count: low-end < tiny < mobile < desktop < 4K
+const COUNT = IS_LOW_END ? 40
+            : IS_TINY    ? 60
+            : IS_MOBILE  ? 90
+            : IS_4K      ? 360
+            : 240;
+// Render every Nth frame on slower devices — halves GPU cost without ruining motion
+const FRAME_SKIP = IS_LOW_END ? 2 : IS_MOBILE ? 1 : 0; // 0=every frame, 1=every other, 2=every 3rd
 
 const canvas = document.getElementById('atmo-canvas');
 if (!canvas) throw new Error('[atmosphere] canvas#atmo-canvas not found');
@@ -35,7 +38,9 @@ const renderer = new THREE.WebGLRenderer({
   antialias: false,
   powerPreference: 'low-power',
 });
-renderer.setPixelRatio(Math.min(devicePixelRatio, IS_MOBILE ? 1 : 2));
+// Cap DPR hard on mobile — biggest single GPU saving without visual loss
+// (additive blue particles on dark bg don't reveal aliasing).
+renderer.setPixelRatio(Math.min(devicePixelRatio, IS_LOW_END ? 0.75 : IS_MOBILE ? 1 : 1.75));
 renderer.setSize(innerWidth, innerHeight);
 renderer.setClearColor(0x000000, 0);
 
@@ -110,22 +115,42 @@ SECTION_IDS.forEach(id => {
 let alive = true;
 document.addEventListener('visibilitychange', () => { alive = !document.hidden; });
 
+// Pause completely when canvas is offscreen (page scrolled past full-page apps,
+// document hidden, etc.). Saves all GPU + JS cost.
+let inView = true;
+if ('IntersectionObserver' in window) {
+  const io = new IntersectionObserver(
+    entries => entries.forEach(e => { inView = e.isIntersecting; }),
+    { threshold: 0 }
+  );
+  io.observe(canvas);
+}
+
 const clock = new THREE.Clock();
+let frame = 0;
 
 (function tick() {
   requestAnimationFrame(tick);
-  if (!alive) return;
+  if (!alive || !inView) return;
+
+  // Frame skip for slow devices — still feels smooth, half the GPU work
+  if (FRAME_SKIP && (frame++ % (FRAME_SKIP + 1)) !== 0) return;
 
   const t = clock.getElapsedTime();
   const p = geo.attributes.position.array;
 
+  // Drift particles vertically + slight horizontal wave
+  const wavePhase = t * 0.22;
+  const waveAmp   = 0.0007;
   for (let i = 0; i < COUNT; i++) {
-    p[i * 3 + 1] += velocities[i] * 0.38;
-    if (p[i * 3 + 1] > 14) p[i * 3 + 1] = -14;
-    p[i * 3]     += Math.sin(t * 0.22 + i * 1.4) * 0.0007;
+    const i3 = i * 3;
+    p[i3 + 1] += velocities[i] * 0.38;
+    if (p[i3 + 1] > 14) p[i3 + 1] = -14;
+    p[i3]     += Math.sin(wavePhase + i * 1.4) * waveAmp;
   }
   geo.attributes.position.needsUpdate = true;
 
+  // Slow camera sway — keep cinematic depth feel
   camera.position.x = Math.sin(t * 0.07) * 0.7;
   camera.position.y = Math.cos(t * 0.05) * 0.45;
   accentLight.intensity = 0.5 + Math.sin(t * 0.38) * 0.22;
@@ -133,9 +158,14 @@ const clock = new THREE.Clock();
   renderer.render(scene, camera);
 })();
 
-// ── Resize ────────────────────────────────────────────
+// ── Resize — debounced so iOS URL-bar show/hide doesn't trigger full reset
+let resizeRaf = 0;
 window.addEventListener('resize', () => {
-  camera.aspect = innerWidth / innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth, innerHeight);
+  if (resizeRaf) cancelAnimationFrame(resizeRaf);
+  resizeRaf = requestAnimationFrame(() => {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+    resizeRaf = 0;
+  });
 }, { passive: true });
