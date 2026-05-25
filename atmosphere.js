@@ -60,10 +60,11 @@ const geo = new THREE.BufferGeometry();
 geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
 const mat = new THREE.PointsMaterial({
-  color: 0x4477ff,
-  size: IS_MOBILE ? 0.12 : 0.09,
+  color: IS_MOBILE ? 0x6699ff : 0x4477ff,
+  // Mobile: 4× bigger + brighter so the aura actually reads at phone-DPR.
+  size: IS_MOBILE ? 0.42 : 0.09,
   transparent: true,
-  opacity: 0.42,
+  opacity: IS_MOBILE ? 0.75 : 0.42,
   sizeAttenuation: true,
   depthWrite: false,
   blending: THREE.AdditiveBlending,
@@ -77,14 +78,17 @@ accentLight.position.set(4, 6, 6);
 scene.add(accentLight);
 
 // ── Per-section atmospheres ───────────────────────────
+// On mobile we override per-section opacity floor — even "light" sections
+// keep enough blue particle presence to read as an aura, not a grey wash.
+const M = IS_MOBILE ? 1 : 0;
 const ATMO = {
-  'hero':             { fog: 0x0b1630, fogD: 0.010, col: 0x4477ff, opacity: 0.44, lCol: 0x2255ee },
-  'de-ce':            { fog: 0x8aaabb, fogD: 0.004, col: 0x99bbff, opacity: 0.17, lCol: 0xaaccff },
-  'flota':            { fog: 0x030c1e, fogD: 0.014, col: 0x1144cc, opacity: 0.55, lCol: 0x0033bb },
-  'cum-functioneaza': { fog: 0x9ab5cc, fogD: 0.005, col: 0xaaccff, opacity: 0.15, lCol: 0xbbddff },
-  'parteneri':        { fog: 0xb0c8d8, fogD: 0.003, col: 0xccddff, opacity: 0.10, lCol: 0xddeeff },
-  'testimoniale':     { fog: 0x040912, fogD: 0.017, col: 0x2244aa, opacity: 0.52, lCol: 0x1133aa },
-  'contact':          { fog: 0x020710, fogD: 0.021, col: 0x1a3a80, opacity: 0.48, lCol: 0x1a6ae8 },
+  'hero':             { fog: 0x0b1630, fogD: 0.010, col: 0x4477ff, opacity: M ? 0.78 : 0.44, lCol: 0x2255ee },
+  'de-ce':            { fog: 0x8aaabb, fogD: 0.004, col: 0x6699ff, opacity: M ? 0.62 : 0.17, lCol: 0xaaccff },
+  'flota':            { fog: 0x030c1e, fogD: 0.014, col: 0x1144cc, opacity: M ? 0.85 : 0.55, lCol: 0x0033bb },
+  'cum-functioneaza': { fog: 0x9ab5cc, fogD: 0.005, col: 0x6699ff, opacity: M ? 0.60 : 0.15, lCol: 0xbbddff },
+  'parteneri':        { fog: 0xb0c8d8, fogD: 0.003, col: 0x77a8ff, opacity: M ? 0.55 : 0.10, lCol: 0xddeeff },
+  'testimoniale':     { fog: 0x040912, fogD: 0.017, col: 0x2244aa, opacity: M ? 0.82 : 0.52, lCol: 0x1133aa },
+  'contact':          { fog: 0x020710, fogD: 0.021, col: 0x1a3a80, opacity: M ? 0.78 : 0.48, lCol: 0x1a6ae8 },
 };
 
 function applyAtmo(id, dur = 1.8) {

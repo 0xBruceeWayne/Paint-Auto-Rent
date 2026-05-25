@@ -1499,9 +1499,30 @@ body{
     min-height:auto;
   }
 
-  /* ── Orb bg ─────────────────────────────────────── */
-  .lg-orb--a{width:120vw;height:60vh}
-  .lg-orb--b{width:100vw;height:50vh}
+  /* ── Aura backdrop — actually blue on mobile, no more "grey" ── */
+  html{ background:#c9d8ff !important; }
+  #lg-bg{
+    background:linear-gradient(160deg,
+      #b9ccff 0%,
+      #cfd9ff 35%,
+      #c4d4ff 65%,
+      #d6cdff 100%) !important;
+  }
+  .lg-orb--a{
+    width:140vw;height:90vh;top:-30%;left:-25%;
+    background:radial-gradient(circle,rgba(60,120,255,0.78) 0%,rgba(60,120,255,0.18) 45%,transparent 70%) !important;
+    filter:blur(60px) !important;
+  }
+  .lg-orb--b{
+    width:130vw;height:80vh;bottom:-25%;right:-20%;
+    background:radial-gradient(circle,rgba(30,90,230,0.62) 0%,rgba(30,90,230,0.15) 45%,transparent 70%) !important;
+    filter:blur(60px) !important;
+  }
+  .lg-orb--c{
+    width:90vw;height:60vh;top:30%;left:20%;
+    background:radial-gradient(circle,rgba(80,160,255,0.55) 0%,rgba(80,160,255,0.14) 45%,transparent 70%) !important;
+    filter:blur(60px) !important;
+  }
 
   /* ── Slash dividers — remove on mobile ──────────── */
   .sec-slash{ display:none }
@@ -1646,34 +1667,42 @@ body{
   }
   .fleet-dot.active{ background:#1a6ae8;transform:scale(1.3) }
 
-  /* ── Steps — horizontal carousel ─────────────── */
-  #cum-functioneaza{ justify-content:center }
-  #cum-functioneaza .sec-inner{ justify-content:center;padding-top:0 }
-  #cum-functioneaza .sec-head{ margin-bottom:18px }
+  /* ── Steps — vertical stack, fills the section height ─────────── */
+  #cum-functioneaza{ justify-content:flex-start }
+  #cum-functioneaza .sec-inner{
+    justify-content:flex-start;
+    padding-top:0;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+  }
+  #cum-functioneaza .sec-head{ margin-bottom:14px;flex-shrink:0 }
   .steps{
-    flex-direction:row;
-    overflow-x:scroll;
-    scroll-snap-type:x mandatory;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:none;
-    gap:14px;
-    margin-bottom:18px;
+    flex:1 1 auto;            /* eat remaining vertical space */
+    flex-direction:column;
+    overflow:visible;
+    scroll-snap-type:none;
+    gap:10px;
+    margin-bottom:14px;
+    padding:0;
     align-items:stretch;
-    padding:4px 10vw 18px;
-    scroll-padding-left:10vw;
+    min-height:0;             /* allow children to shrink/grow */
   }
   .steps::-webkit-scrollbar{ display:none }
   .step-arrow{ display:none }
   #cum-functioneaza .step{
-    flex:0 0 80vw;
-    scroll-snap-align:center;
-    scroll-snap-stop:always;
-    padding:22px 18px;
+    flex:1 1 0;               /* 3 equal-height cards filling the column */
+    min-height:0;
+    padding:18px 18px;
     border-radius:14px;
     max-width:none;
+    scroll-snap-align:none;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
   }
-  #cum-functioneaza .step-title{ font-size:1.15rem;letter-spacing:-.5px }
-  #cum-functioneaza .step-desc{ font-size:.82rem;line-height:1.45 }
+  #cum-functioneaza .step-title{ font-size:1.1rem;letter-spacing:-.4px;margin-bottom:6px }
+  #cum-functioneaza .step-desc{ font-size:.8rem;line-height:1.4 }
   .cta-big-btn{ padding:14px 28px;font-size:.76rem;min-height:48px }
 
   /* ── Calculator ──────────────────────────────────── */
