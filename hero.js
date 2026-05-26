@@ -476,7 +476,13 @@ function initButtons() {
     btn.addEventListener('click', () => {
       btn.blur(); // prevent Safari focus ring
       const id = btn.getAttribute('data-target');
-      const el = id ? document.querySelector(id) : null;
+      if (!id) return;
+      // tel:/mailto:/sms: → trigger native handler (opens dialer on mobile)
+      if (/^(tel:|mailto:|sms:)/i.test(id)) {
+        window.location.href = id;
+        return;
+      }
+      const el = document.querySelector(id);
       if (el) el.scrollIntoView({ behavior: 'smooth' });
     });
 
