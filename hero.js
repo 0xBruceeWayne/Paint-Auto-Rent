@@ -113,9 +113,12 @@ let _tabVisible = true;
 document.addEventListener('visibilitychange', () => { _tabVisible = !document.hidden; });
 
 // ── Mobile detection ─────────────────────────────────
-const IS_TOUCH   = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-const IS_MOBILE  = window.__IS_MOBILE  || IS_TOUCH || window.innerWidth <= 900;
-const IS_LOW_END = window.__IS_LOW_END || IS_MOBILE;
+// Trust the bootstrap flag from index.html (coarse-pointer media query +
+// narrow check). Local 'ontouchstart' fallback was firing TRUE on desktop
+// Chrome/Edge (touch-emulation property), forcing desktops into mobile paths.
+const IS_MOBILE  = !!window.__IS_MOBILE;
+const IS_TOUCH   = IS_MOBILE;
+const IS_LOW_END = !!window.__IS_LOW_END;
 
 // ══════════════════════════════════════════════════════
 //  CUSTOM CURSOR — dot + lagging ring, no trail

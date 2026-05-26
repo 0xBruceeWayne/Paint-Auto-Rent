@@ -7,10 +7,11 @@ import * as THREE from 'three';
 
 // ── Tiered cost model — keep the aura visible everywhere,
 //    scale particle count + DPR + frame rate to the device.
-const IS_MOBILE = window.__IS_MOBILE
-               || (('ontouchstart' in window) || navigator.maxTouchPoints > 0)
-               || window.innerWidth <= 900;
-const IS_LOW_END = window.__IS_LOW_END || false;
+// Trust the bootstrap flag from index.html — local 'ontouchstart' fallback
+// was firing TRUE on desktop Chrome (touch-emulation property), forcing
+// desktops onto the mobile config + integrated GPU.
+const IS_MOBILE = !!window.__IS_MOBILE;
+const IS_LOW_END = !!window.__IS_LOW_END;
 const IS_TINY    = window.innerWidth <= 480;
 const IS_4K = !IS_MOBILE && (devicePixelRatio >= 2 || window.innerWidth >= 2560);
 // Tiered count: low-end < tiny < mobile < desktop < 4K
@@ -38,7 +39,10 @@ const renderer = new THREE.WebGLRenderer({
   canvas,
   alpha: true,
   antialias: false,
-  powerPreference: 'low-power',
+  // Desktop → discrete GPU (high-performance). Mobile → integrated (default).
+  // Hardcoding 'low-power' on hybrid-graphics Macs was triggering GPU switching
+  // and dragging the entire page onto integrated graphics.
+  powerPreference: IS_MOBILE ? 'low-power' : 'high-performance',
 });
 // Cap DPR hard on mobile — biggest single GPU saving without visual loss
 // (additive blue particles on dark bg don't reveal aliasing).
