@@ -4,9 +4,12 @@
 */
 (function () {
   'use strict';
-  // Mobile gets a lighter version (was: hard-disabled). The aura IS the brand —
-  // showing it on phones is non-negotiable, so we trade some quality for cost.
-  const IS_MOBILE = !!window.__IS_MOBILE;
+  const IS_MOBILE  = !!window.__IS_MOBILE;
+  const IS_LOW_END = !!window.__IS_LOW_END;
+  // Low-end desktops (integrated Intel HD/UHD, weak GPUs, prefers-reduced-motion):
+  // skip the heavy fragment shader entirely. The atmosphere.js particles +
+  // CSS gradient still provide the blue mood. Smoothness > visual richness here.
+  if (IS_LOW_END && !IS_MOBILE) return;
 
   /* ── Config ──
      Mobile "4K" tuning: closes the perceived-quality gap to desktop while

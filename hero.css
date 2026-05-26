@@ -2988,3 +2988,38 @@ html.is-low-end .stat-card{
     -webkit-backdrop-filter:blur(56px) saturate(300%) brightness(1.18) !important;
   }
 }
+
+/* ─────────────────────────────────────────────────────
+   LOW-END OVERRIDES — weak GPU / Intel HD / reduced motion
+   Strip expensive paint operations: backdrop-filter blur,
+   wide filter:blur(), heavy gradients, animated shimmer.
+   The page still looks intentional, just flat-glass instead
+   of frosted-glass. Massive paint-time win on integrated GPUs.
+───────────────────────────────────────────────────── */
+html.is-low-end *,
+html.is-low-end *::before,
+html.is-low-end *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+html.is-low-end .pb-orb { display: none !important; }
+html.is-low-end .sec-aura { filter: blur(40px) !important; opacity: .35 !important; }
+html.is-low-end .lg-shimmer,
+html.is-low-end .lg-specular,
+html.is-low-end .lg-rim { display: none !important; }
+/* Fallback solid-ish background for glass surfaces (no blur) */
+html.is-low-end .liquid-card,
+html.is-low-end .glass-card,
+html.is-low-end .gnav-pill,
+html.is-low-end .hbtn {
+  background: rgba(14, 22, 48, 0.72) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+/* Cap animation cost on prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

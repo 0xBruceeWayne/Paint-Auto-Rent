@@ -7,6 +7,7 @@
 */
 (function () {
   if (window.__IS_MOBILE) return; // 3D wireframe overlays disabled on mobile
+  if (window.__IS_LOW_END) return; // ...and on low-end desktops (weak GPU/CPU)
 
   /* ─── 3-D math ─── */
   function rotX(pts, a) {
