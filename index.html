@@ -16,11 +16,15 @@
 <script>
   // ── Global perf detection (runs before any module) ─────────────
   (function(){
-    var touch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+    // Touch-primary device check via media query — the modern reliable signal.
+    // 'ontouchstart' in window is unreliable (true in desktop Chrome/Edge for
+    // touch-emulation support, falsely flagging desktops as mobile).
+    var coarsePointer = window.matchMedia &&
+                        window.matchMedia('(pointer: coarse) and (hover: none)').matches;
     var narrow = window.innerWidth <= 900;
     var lowCores = (navigator.hardwareConcurrency || 8) <= 4;
     var lowMem = (navigator.deviceMemory || 8) <= 4;
-    window.__IS_MOBILE  = touch || narrow;
+    window.__IS_MOBILE  = coarsePointer || narrow;
     window.__IS_LOW_END = window.__IS_MOBILE || lowCores || lowMem;
     if (window.__IS_MOBILE) document.documentElement.classList.add('is-mobile');
     if (window.__IS_LOW_END) document.documentElement.classList.add('is-low-end');
