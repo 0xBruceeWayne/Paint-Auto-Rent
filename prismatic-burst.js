@@ -372,24 +372,36 @@ void main(){
     ).observe(hero);
   }
 
-  /* ── Throttle while scrolling on mobile (free up GPU for snap interpolation) ── */
+  /* ── Pause the heavy shader entirely during scroll on mobile ──
+     At 4K mobile quality (DPR 2.5 × 24 march steps ≈ 10ms GPU/frame),
+     rendering even every-other-frame contends with the compositor and
+     produces the hero→section-2 stutter. Fully halting render gives the
+     compositor 100% of the GPU; the canvas keeps showing the last frame —
+     imperceptible at scroll velocity, full quality the instant scroll ends.
+     'scrollend' (Chrome 114+, Safari 18+) gives the fastest possible resume
+     where supported; the 90ms idle-timeout fallback handles iOS momentum. */
   let scrolling = false, scrollT = 0;
+  function endScroll(){ scrolling = false; }
   if (IS_MOBILE) {
     window.addEventListener('scroll', () => {
       scrolling = true;
       clearTimeout(scrollT);
-      scrollT = setTimeout(() => { scrolling = false; }, 100);
+      scrollT = setTimeout(endScroll, 90);
     }, { passive: true });
+    if ('onscrollend' in window) {
+      window.addEventListener('scrollend', endScroll, { passive: true });
+    }
   }
 
   /* ── Animation loop ── */
-  let last = performance.now(), elapsed = 0, _pLast = 0, _frame = 0;
+  let last = performance.now(), elapsed = 0, _pLast = 0;
 
   function loop(now) {
     requestAnimationFrame(loop);
     if (!inView) return;                  // hero offscreen → don't render
-    // Mobile while-scrolling: render every other frame
-    if (IS_MOBILE && scrolling && (_frame++ & 1)) return;
+    // Mobile during active scroll → full pause (don't render, don't update orbs).
+    // GPU goes entirely to the compositor for buttery scroll-snap interpolation.
+    if (IS_MOBILE && scrolling) return;
     if (now - _pLast < 16.6) return;      // cap at 60fps
     _pLast = now;
     const dt = Math.max(0, Math.min(now - last, 100)) * 0.001;
