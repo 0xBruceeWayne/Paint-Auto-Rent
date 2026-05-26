@@ -1,7 +1,7 @@
 /* steps-3d.js — 3D cursor-interactive solid icons for process steps */
 (function () {
-  if (window.__IS_MOBILE) return; // 3D step icons disabled on mobile
-  if (window.__IS_LOW_END) return; // ...and on low-end desktops
+  // 3D step icons bailed everywhere — CSS step boxes work without them.
+  return;
 
   /* ── 3D math ── */
   function rotX([x,y,z],a){ const c=Math.cos(a),s=Math.sin(a); return [x,y*c-z*s,y*s+z*c]; }

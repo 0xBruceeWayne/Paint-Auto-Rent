@@ -5,11 +5,11 @@
 (function () {
   'use strict';
   const IS_MOBILE  = !!window.__IS_MOBILE;
-  const IS_LOW_END = !!window.__IS_LOW_END;
-  // Low-end desktops (integrated Intel HD/UHD, weak GPUs, prefers-reduced-motion):
-  // skip the heavy fragment shader entirely. The atmosphere.js particles +
-  // CSS gradient still provide the blue mood. Smoothness > visual richness here.
-  if (IS_LOW_END && !IS_MOBILE) return;
+  // Desktops use the always-on CSS aura on #hero (rendered once, zero
+  // per-frame cost). The WebGL ray-march shader runs ONLY on mobile,
+  // where it's the brand-defining aura. This guarantees smooth scroll
+  // on every desktop regardless of GPU capability.
+  if (!IS_MOBILE) return;
 
   /* ── Config ──
      Mobile "4K" tuning: closes the perceived-quality gap to desktop while

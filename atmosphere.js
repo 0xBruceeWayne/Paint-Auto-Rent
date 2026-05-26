@@ -16,14 +16,15 @@ const IS_TINY    = window.innerWidth <= 480;
 const IS_4K = !IS_MOBILE && (devicePixelRatio >= 2 || window.innerWidth >= 2560);
 // Tiered count: low-end < tiny < mobile < desktop < 4K
 // Bumped mobile from 90 → 160 so the aura actually reads as an aura on phones.
+// Desktop cut hard: 100 particles is enough to read as "atmosphere" without
+// blocking the compositor on integrated GPUs. The CSS aura carries the mood.
 const COUNT = IS_LOW_END ? 50
             : IS_TINY    ? 110
             : IS_MOBILE  ? 160
-            : IS_4K      ? 360
-            : 240;
-// Render every Nth frame on slower devices — halves GPU cost without ruining motion.
-// Low-end gets every 3rd frame (~20fps) — particles drift, smoothness wins.
-const FRAME_SKIP = IS_LOW_END ? 2 : 0; // 0=every frame, 1=every other, 2=every 3rd
+            : IS_4K      ? 160
+            : 100;
+// Every-other-frame on desktop too — 30fps drift is still smooth, half the cost.
+const FRAME_SKIP = IS_LOW_END ? 2 : 1;
 
 const canvas = document.getElementById('atmo-canvas');
 if (!canvas) throw new Error('[atmosphere] canvas#atmo-canvas not found');
@@ -46,7 +47,9 @@ const renderer = new THREE.WebGLRenderer({
 });
 // Cap DPR hard on mobile — biggest single GPU saving without visual loss
 // (additive blue particles on dark bg don't reveal aliasing).
-renderer.setPixelRatio(Math.min(devicePixelRatio, IS_LOW_END ? 1 : IS_MOBILE ? 1 : 1.75));
+// Desktop DPR clamp 1.0 — 4× less fragment cost than DPR 2 with no
+// visible loss for additive particles on dark bg.
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1));
 renderer.setSize(innerWidth, innerHeight);
 renderer.setClearColor(0x000000, 0);
 

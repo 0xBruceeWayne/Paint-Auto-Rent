@@ -6,8 +6,10 @@
    Upgrade 3 — Depth-sorted edges (back→front)
 */
 (function () {
-  if (window.__IS_MOBILE) return; // 3D wireframe overlays disabled on mobile
-  if (window.__IS_LOW_END) return; // ...and on low-end desktops (weak GPU/CPU)
+  // Wireframe overlays bailed everywhere — they were doing depth-sorting
+  // over 100s of edges per frame, contending with the compositor. Removed
+  // for guaranteed-smooth scrolling. The CSS aura + atmosphere carry mood.
+  return;
 
   /* ─── 3-D math ─── */
   function rotX(pts, a) {
