@@ -1124,6 +1124,36 @@ body{
 .cmd-map-wrap{
   display:flex;flex-direction:column;gap:12px;
 }
+/* Tappable overlay — desktop hidden (iframe handles interaction),
+   mobile shown full-cover so the whole map opens directions in native Maps. */
+.cmd-map-link{
+  position:absolute; inset:0; z-index:6;
+  display:none;
+  text-decoration:none;
+  -webkit-tap-highlight-color:rgba(26,106,232,.25);
+}
+.cmd-map-cta{
+  position:absolute; right:12px; bottom:12px;
+  display:inline-flex; align-items:center; gap:6px;
+  background:linear-gradient(135deg, rgba(30,110,240,.97) 0%, rgba(10,55,200,.97) 100%);
+  color:#fff;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size:.62rem; font-weight:800; letter-spacing:1.6px; text-transform:uppercase;
+  padding:9px 13px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,.22);
+  box-shadow:
+    0 6px 22px rgba(26,106,232,.45),
+    0 2px 6px rgba(0,0,0,.3),
+    inset 0 1px 0 rgba(255,255,255,.3);
+  pointer-events:none;  /* the parent <a> handles the tap */
+  white-space:nowrap;
+}
+.cmd-map-cta svg{ flex-shrink:0; }
+.cmd-map-link:active .cmd-map-cta{
+  transform:scale(.97);
+  box-shadow:0 3px 12px rgba(26,106,232,.35), inset 0 1px 0 rgba(255,255,255,.25);
+}
 .cmd-map-frame{
   position:relative;
   /* Solid 3D frame — thick border with depth layers */
@@ -1279,7 +1309,7 @@ body{
 .cmd-actions{display:flex;flex-direction:column;gap:16px}
 
 /* ── Button row: WA + Call side by side, equal width ── */
-.cmd-btns-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cmd-btns-row{display:grid;grid-template-columns:1fr;gap:12px}
 
 /* Liquid glass base button */
 .cmd-btn{
@@ -1753,8 +1783,30 @@ body{
   .testi-dot.active{ background:#4477ff;transform:scale(1.3) }
 
   /* ── Contact / Command Center — single-column, focused ── */
+  /* Contact grows past 100svh so tappable map + buttons + address all fit naturally */
+  #contact.sec{
+    height:auto;
+    min-height:100svh;
+    max-height:none;
+    overflow:visible;
+    justify-content:flex-start;
+    padding-top:max(40px,env(safe-area-inset-top));
+    padding-bottom:max(40px,env(safe-area-inset-bottom));
+  }
   .cmd-section{ padding:0 }
-  .cmd-left{ display:none }
+  /* Map panel — SHOWN on mobile, full-width, tappable to open Maps */
+  .cmd-left{
+    display:block;
+    width:100%;
+    perspective:none;
+    order:2;             /* map sits below the title+phone+buttons */
+  }
+  .cmd-map-wrap{ width:100%; }
+  .cmd-map-frame{ height:220px; }
+  /* iframe becomes purely visual on mobile — taps pass to the overlay link */
+  .cmd-map-frame iframe{ pointer-events:none; }
+  .cmd-map-link{ display:block; }
+  .cmd-coords{ font-size:.62rem }
   .cmd-inner{
     grid-template-columns:1fr;
     padding:0 22px;
@@ -1781,7 +1833,7 @@ body{
   .cmd-actions{ width:100%;display:flex;flex-direction:column;gap:12px }
   .cmd-btns-row{
     display:grid;
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:1fr;
     gap:10px;
   }
   .cmd-btn{ padding:14px 12px;font-size:.62rem;min-height:48px;justify-content:center }
