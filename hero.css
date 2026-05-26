@@ -2991,23 +2991,29 @@ html.is-low-end .stat-card{
 
 /* ─────────────────────────────────────────────────────
    LOW-END OVERRIDES — weak GPU / Intel HD / reduced motion
-   Strip expensive paint operations: backdrop-filter blur,
-   wide filter:blur(), heavy gradients, animated shimmer.
-   The page still looks intentional, just flat-glass instead
-   of frosted-glass. Massive paint-time win on integrated GPUs.
-───────────────────────────────────────────────────── */
+
+   Strategy: STRIP per-frame paint costs (backdrop-filter,
+   animated shimmer, RAF-driven orbs) but PRESERVE the blue
+   aura visual via static CSS gradients. Gradients are rasterised
+   once at first paint, then composited as a single layer —
+   zero per-frame GPU cost, works on every device including
+   software renderers (SwiftShader/llvmpipe/Mesa).
+───────────────────────────────────────────────────────── */
+
+/* Kill backdrop-filter globally — biggest paint cost on integrated GPUs */
 html.is-low-end *,
 html.is-low-end *::before,
 html.is-low-end *::after {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
-html.is-low-end .pb-orb { display: none !important; }
-html.is-low-end .sec-aura { filter: blur(40px) !important; opacity: .35 !important; }
+
+/* Hide layered Liquid-Glass shimmer/specular/rim (animated, expensive) */
 html.is-low-end .lg-shimmer,
 html.is-low-end .lg-specular,
 html.is-low-end .lg-rim { display: none !important; }
-/* Fallback solid-ish background for glass surfaces (no blur) */
+
+/* Glass surfaces → flat-tinted fallback */
 html.is-low-end .liquid-card,
 html.is-low-end .glass-card,
 html.is-low-end .gnav-pill,
@@ -3015,7 +3021,49 @@ html.is-low-end .hbtn {
   background: rgba(14, 22, 48, 0.72) !important;
   border-color: rgba(255, 255, 255, 0.12) !important;
 }
-/* Cap animation cost on prefers-reduced-motion */
+
+/* Soften giant filter:blur on section auras (was 140px → expensive) */
+html.is-low-end .sec-aura { filter: blur(60px) !important; opacity: .45 !important; }
+
+/* ── PURE-CSS BLUE AURA — replaces the bailed WebGL shader ──
+   Three layered radial gradients on #hero, painted once at load.
+   No JS, no canvas, no shader. Guaranteed to render on the
+   weakest video systems (software fallback included). */
+html.is-low-end #hero {
+  background:
+    radial-gradient(ellipse 55% 45% at 32% 38%,
+        rgba(100, 180, 255, 0.55) 0%,
+        rgba(77, 184, 255, 0.22) 35%,
+        transparent 62%),
+    radial-gradient(ellipse 65% 55% at 68% 58%,
+        rgba(30, 110, 240, 0.60) 0%,
+        rgba(26, 106, 232, 0.22) 38%,
+        transparent 65%),
+    radial-gradient(ellipse 90% 75% at 50% 50%,
+        rgba(10, 55, 200, 0.42) 0%,
+        rgba(8, 40, 180, 0.12) 50%,
+        transparent 70%),
+    radial-gradient(ellipse 120% 100% at 50% 100%,
+        rgba(2, 8, 22, 0.85) 0%,
+        rgba(4, 14, 36, 0.50) 50%,
+        rgba(6, 18, 48, 0.18) 100%) !important;
+  background-color: #050b1c !important;
+}
+
+/* Apply the same aura to the page background so the mood continues
+   in other sections (atmosphere.js may also bail in extreme cases). */
+html.is-low-end body {
+  background-color: #060e22 !important;
+  background-image:
+    radial-gradient(ellipse 70% 50% at 50% 0%,
+        rgba(30, 110, 240, 0.28) 0%,
+        transparent 60%) !important;
+}
+
+/* Hide stale pb-orb rule (orbs are never created on low-end now) */
+html.is-low-end .pb-orb { display: none !important; }
+
+/* prefers-reduced-motion → kill animation duration */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
