@@ -4,23 +4,30 @@
 */
 (function () {
   'use strict';
-  if (window.__IS_MOBILE) return; // WebGL2 prismatic burst disabled on mobile
+  // Mobile gets a lighter version (was: hard-disabled). The aura IS the brand —
+  // showing it on phones is non-negotiable, so we trade some quality for cost.
+  const IS_MOBILE = !!window.__IS_MOBILE;
 
   /* ── Config ── */
   const CFG = {
     colors:    ['#1a6ae8', '#4db8ff', '#0a4fd4'],
-    intensity:  3.4,
-    speed:      0.18,    // very slow ray animation
+    // Fewer march steps on mobile → boost intensity to compensate accumulated luminance
+    intensity:  IS_MOBILE ? 4.6 : 3.4,
+    speed:      IS_MOBILE ? 0.15 : 0.18,
     animType:   2,       // 0=rotate  1=rotate3d  2=hover
-    distort:    6,
-    dampness:   0.28,    // fast mouse response ~0.3s
+    distort:    IS_MOBILE ? 5 : 6,
+    dampness:   0.28,
     rayCount:   0,
-    noise:      0.8,
+    noise:      IS_MOBILE ? 0.6 : 0.8,
   };
+  // Loop iterations — biggest single GPU lever. Desktop=32 cinematic, mobile=14 fast.
+  const MARCH_STEPS = IS_MOBILE ? 14 : 32;
 
   /* ── Insert canvas into hero ── */
   const hero = document.getElementById('hero');
   if (!hero) return;
+  // Defensive: canvas uses position:absolute, hero must be a containing block.
+  if (getComputedStyle(hero).position === 'static') hero.style.position = 'relative';
 
   const canvas = document.createElement('canvas');
   canvas.id = 'pburst';
@@ -36,8 +43,15 @@
   if (mapGlobal) mapGlobal.style.display = 'none';
 
   /* ── WebGL2 ── */
-  const dpr = Math.max(window.devicePixelRatio || 2, 2);
-  const gl  = canvas.getContext('webgl2', { alpha: false, antialias: true, powerPreference: 'high-performance' });
+  // Mobile: render at 1× CSS pixels (canvas blur hides aliasing). Desktop: min 2× for sharp rays.
+  const dpr = IS_MOBILE
+    ? Math.min(window.devicePixelRatio || 1, 1)
+    : Math.max(window.devicePixelRatio || 2, 2);
+  const gl  = canvas.getContext('webgl2', {
+    alpha: false,
+    antialias: !IS_MOBILE,
+    powerPreference: IS_MOBILE ? 'low-power' : 'high-performance',
+  });
   if (!gl) { console.warn('WebGL2 not supported'); return; }
 
   /* ── Shaders ── */
@@ -150,7 +164,7 @@ void main(){
     hoverMat = rotY(m.x*1.4 + uTime*0.14)*rotX(m.y*1.4 + uTime*0.05);
   }
 
-  for(int i=0;i<32;++i){
+  for(int i=0;i<${MARCH_STEPS};++i){
     vec3 P = marchT*dir;
     P.z -= 2.0;
     float rad = length(P);
@@ -333,12 +347,34 @@ void main(){
     { el:_o3, x:0.5, y:0.5, hw:480, hh:330, spd:0.00054, inv:true  },
   ];
 
+  /* ── Pause when hero is offscreen (scrolled past) — saves all GPU cost ── */
+  let inView = true;
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(
+      entries => entries.forEach(e => { inView = e.isIntersecting; }),
+      { threshold: 0 }
+    ).observe(hero);
+  }
+
+  /* ── Throttle while scrolling on mobile (free up GPU for snap interpolation) ── */
+  let scrolling = false, scrollT = 0;
+  if (IS_MOBILE) {
+    window.addEventListener('scroll', () => {
+      scrolling = true;
+      clearTimeout(scrollT);
+      scrollT = setTimeout(() => { scrolling = false; }, 100);
+    }, { passive: true });
+  }
+
   /* ── Animation loop ── */
-  let last = performance.now(), elapsed = 0, _pLast = 0;
+  let last = performance.now(), elapsed = 0, _pLast = 0, _frame = 0;
 
   function loop(now) {
     requestAnimationFrame(loop);
-    if (now - _pLast < 16.6) return; // cap at 60fps
+    if (!inView) return;                  // hero offscreen → don't render
+    // Mobile while-scrolling: render every other frame
+    if (IS_MOBILE && scrolling && (_frame++ & 1)) return;
+    if (now - _pLast < 16.6) return;      // cap at 60fps
     _pLast = now;
     const dt = Math.max(0, Math.min(now - last, 100)) * 0.001;
     last = now;
