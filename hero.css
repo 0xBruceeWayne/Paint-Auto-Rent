@@ -1443,14 +1443,17 @@ body{
     -webkit-backdrop-filter:blur(18px) saturate(180%) !important;
   }
 
-  /* ══ SCROLL SNAP — proximity snap = silky, doesn't fight finger drag ══ */
+  /* ══ FREE SCROLL — no page-snap on mobile (per user request) ══════
+     Desktop keeps wheel-snap via initSnap() in hero.js.
+     Horizontal carousels (fleet, testimonials) still snap on mobile —
+     that is intended UX and untouched. */
   html{
-    scroll-snap-type:y proximity;
+    scroll-snap-type:none;
     overflow-y:scroll;
     height:100%;
     -webkit-overflow-scrolling:touch;
     overscroll-behavior:none;
-    scroll-behavior:smooth;
+    /* scroll-behavior:smooth removed — interferes with native touch inertia */
     /* Hint compositor — keeps scroll on its own GPU layer */
     transform:translateZ(0);
     -webkit-transform:translateZ(0);
@@ -1465,7 +1468,7 @@ body{
   }
   #cur,#cring{ display:none !important }
 
-  /* Every section snaps & fits screen */
+  /* Sections sized to viewport for visual rhythm, but NO snap — free scroll */
   .sec{
     height:100svh;
     min-height:100svh;
@@ -1475,8 +1478,6 @@ body{
     flex-direction:column;
     justify-content:center;
     padding:max(24px,env(safe-area-inset-top)) 18px max(24px,env(safe-area-inset-bottom));
-    scroll-snap-align:start;
-    scroll-snap-stop:always;
     box-sizing:border-box;
   }
   .sec-inner{
@@ -1489,12 +1490,8 @@ body{
   }
   #hero{
     height:100svh;
-    scroll-snap-align:start;
-    scroll-snap-stop:always;
   }
   #footer{
-    scroll-snap-align:start;
-    scroll-snap-stop:always;
     height:auto;
     min-height:auto;
   }
@@ -1537,7 +1534,6 @@ body{
   .reveal-up{ opacity:1 !important; transform:none !important }
 
   /* ── Hero ────────────────────────────────────────── */
-  #hero{ scroll-snap-align:start }
   .hero-side{ display:none }
   .shell{ gap:0;padding:0 }
   .mid{
