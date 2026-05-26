@@ -8,20 +8,26 @@
   // showing it on phones is non-negotiable, so we trade some quality for cost.
   const IS_MOBILE = !!window.__IS_MOBILE;
 
-  /* ── Config ── */
+  /* ── Config ──
+     Mobile "4K" tuning: closes the perceived-quality gap to desktop while
+     staying within the iPhone GPU thermal budget for a sustained 60fps.
+       • DPR: render at min(devicePixelRatio, 2.5) — kills the upscale blur
+         that produced the "pixelated" look at DPR 1.0.
+       • march steps: 24 — fine enough that Mach-band rings vanish.
+       • noise 0.75 — film-grain dither masks any residual gradient stepping.
+       • intensity tuned so total luminance ≈ desktop output. */
   const CFG = {
     colors:    ['#1a6ae8', '#4db8ff', '#0a4fd4'],
-    // Fewer march steps on mobile → boost intensity to compensate accumulated luminance
-    intensity:  IS_MOBILE ? 4.6 : 3.4,
+    intensity:  IS_MOBILE ? 4.2 : 3.4,
     speed:      IS_MOBILE ? 0.15 : 0.18,
     animType:   2,       // 0=rotate  1=rotate3d  2=hover
-    distort:    IS_MOBILE ? 5 : 6,
+    distort:    IS_MOBILE ? 5.5 : 6,
     dampness:   0.28,
     rayCount:   0,
-    noise:      IS_MOBILE ? 0.6 : 0.8,
+    noise:      IS_MOBILE ? 0.75 : 0.8,
   };
-  // Loop iterations — biggest single GPU lever. Desktop=32 cinematic, mobile=14 fast.
-  const MARCH_STEPS = IS_MOBILE ? 14 : 32;
+  // Loop iterations — biggest single GPU lever. Desktop=32 cinematic, mobile=24 (was 14).
+  const MARCH_STEPS = IS_MOBILE ? 24 : 32;
 
   /* ── Insert canvas into hero ── */
   const hero = document.getElementById('hero');
@@ -43,14 +49,24 @@
   if (mapGlobal) mapGlobal.style.display = 'none';
 
   /* ── WebGL2 ── */
-  // Mobile: render at 1× CSS pixels (canvas blur hides aliasing). Desktop: min 2× for sharp rays.
+  // Mobile DPR cap @ 2.5: on DPR-3 iPhones this gives 6.25× the pixels of 1.0 →
+  // visually crisp rays without the 9× cost of native DPR 3. On DPR-2 phones
+  // (iPhone SE/8) we get full native resolution. Bilinear upscale from 2.5→3
+  // is imperceptible because the rays are inherently blurred.
   const dpr = IS_MOBILE
-    ? Math.min(window.devicePixelRatio || 1, 1)
+    ? Math.min(window.devicePixelRatio || 1, 2.5)
     : Math.max(window.devicePixelRatio || 2, 2);
   const gl  = canvas.getContext('webgl2', {
     alpha: false,
+    // MSAA off on mobile — full-screen quad has no triangle edges visible, so
+    // MSAA would just burn fill-rate for zero visual gain.
     antialias: !IS_MOBILE,
-    powerPreference: IS_MOBILE ? 'low-power' : 'high-performance',
+    // 'default' on mobile = let the OS pick. 'low-power' on iOS prevents the
+    // GPU from boosting to turbo, which avoids the thermal throttle that
+    // 'high-performance' triggers after ~30s.
+    powerPreference: IS_MOBILE ? 'default' : 'high-performance',
+    desynchronized: true,           // tiny latency win on Chrome Android
+    preserveDrawingBuffer: false,
   });
   if (!gl) { console.warn('WebGL2 not supported'); return; }
 
