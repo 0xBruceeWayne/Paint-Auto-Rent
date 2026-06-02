@@ -144,13 +144,12 @@ if ('IntersectionObserver' in window) {
 // instantly when the user lifts their finger / scroll comes to rest.
 let scrolling = false;
 let scrollTimer = 0;
-if (IS_MOBILE) {
-  window.addEventListener('scroll', () => {
-    scrolling = true;
-    clearTimeout(scrollTimer);
-    scrollTimer = setTimeout(() => { scrolling = false; }, 90);
-  }, { passive: true });
-}
+// Throttle on EVERY platform now — desktop wheel-snap needs the GPU too.
+window.addEventListener('scroll', () => {
+  scrolling = true;
+  clearTimeout(scrollTimer);
+  scrollTimer = setTimeout(() => { scrolling = false; }, 90);
+}, { passive: true });
 
 // Cursor parallax — aura tracks pointer (mouse OR touch). Smoothed via lerp.
 let mx = 0, my = 0;          // target (from pointer)
@@ -174,9 +173,14 @@ let frame = 0;
   requestAnimationFrame(tick);
   if (!alive || !inView) return;
 
+  // During a page-snap glide, hand 100% of the GPU to the scroll interpolation.
+  // The aura is position:fixed + a slow drift — freezing it for ~340ms while the
+  // viewport snaps is completely imperceptible, and it kills the snap stutter.
+  if (window.__SNAPPING) return;
+
   // Frame skip for slow devices — still feels smooth, half the GPU work
   if (FRAME_SKIP && (frame++ % (FRAME_SKIP + 1)) !== 0) return;
-  // While actively scrolling on mobile: render every other frame to free GPU
+  // While actively scrolling: render every other frame to free GPU
   // for the scroll-snap interpolation. Looks identical at velocity.
   if (scrolling && (frame++ & 1)) return;
 

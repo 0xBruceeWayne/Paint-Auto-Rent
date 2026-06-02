@@ -23,11 +23,11 @@ gsap.defaults({ overwrite: 'auto' });
   if (window.innerWidth <= 768) return;
   if (('ontouchstart' in window) && navigator.maxTouchPoints > 1) return;
 
-  const DURATION  = 520;   // ms per snap — fast + snappy
-  const LOCKOUT   = 140;   // ms after settle before next wheel (kills trackpad inertia double-fires)
+  const DURATION  = 340;   // ms per snap — fast + snappy, lands almost instantly
+  const LOCKOUT   = 70;    // ms after settle before next wheel (kills trackpad inertia double-fires)
   const MIN_DELTA = 5;     // wheel deltas below this are ignored (trackpad jitter)
   // easeOutExpo: instant launch, butter-smooth landing — feels "fast yet silky"
-  const ease = (t) => t === 1 ? 1 : 1 - Math.pow(2, -11 * t);
+  const ease = (t) => t === 1 ? 1 : 1 - Math.pow(2, -13 * t);
 
   let animating   = false;
   let lockedUntil = 0;
@@ -64,6 +64,7 @@ gsap.defaults({ overwrite: 'auto' });
       return;
     }
     animating = true;
+    window.__SNAPPING = true;   // signals heavy bg loops (atmosphere) to yield the GPU
     cancelAnimationFrame(rafId);
     const t0 = performance.now();
 
@@ -75,6 +76,7 @@ gsap.defaults({ overwrite: 'auto' });
       } else {
         window.scrollTo(0, endY);                // hard land on integer px
         animating = false;
+        window.__SNAPPING = false;
         lockedUntil = performance.now() + LOCKOUT;
       }
     }
@@ -107,6 +109,31 @@ gsap.defaults({ overwrite: 'auto' });
   });
 })();
 
+
+// ══════════════════════════════════════════════════════
+//  SCROLL ISOLATION — suspend backdrop-filters while scrolling
+//  40+ glass surfaces each re-blur the moving background every frame.
+//  That is the #1 cause of scroll stutter. We drop the blur the instant
+//  scrolling starts and restore it the instant it settles (~120ms idle).
+//  Covers the JS snap glide AND any free/native scroll — programmatic
+//  scrollTo fires 'scroll' too, so one listener catches everything.
+// ══════════════════════════════════════════════════════
+(function initScrollIsolation() {
+  const root = document.documentElement;
+  let idleTimer = 0;
+  let on = false;
+  const start = () => {
+    if (!on) { root.classList.add('is-scrolling'); on = true; }
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+      root.classList.remove('is-scrolling');
+      on = false;
+    }, 120);
+  };
+  window.addEventListener('scroll',    start, { passive: true });
+  window.addEventListener('wheel',     start, { passive: true });
+  window.addEventListener('touchmove', start, { passive: true });
+})();
 
 // Pause RAF loops when tab is hidden
 let _tabVisible = true;
