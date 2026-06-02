@@ -128,28 +128,8 @@ body{
 #hero{
   position:relative;width:100vw;height:100vh;
   overflow:hidden;
-  /* Base CSS aura — ALWAYS renders, on every device, GPU or not.
-     Layered radial gradients painted once at first paint, composited
-     as a single GPU layer, zero per-frame cost. The WebGL canvas (if
-     active) layers on top at z-index:1 to enhance, never to replace. */
-  background-color:#050b1c;
-  background-image:
-    radial-gradient(ellipse 55% 45% at 30% 38%,
-        rgba(100, 180, 255, 0.55) 0%,
-        rgba(77, 184, 255, 0.22) 35%,
-        transparent 62%),
-    radial-gradient(ellipse 65% 55% at 70% 58%,
-        rgba(30, 110, 240, 0.60) 0%,
-        rgba(26, 106, 232, 0.22) 38%,
-        transparent 65%),
-    radial-gradient(ellipse 90% 75% at 50% 50%,
-        rgba(10, 55, 200, 0.42) 0%,
-        rgba(8, 40, 180, 0.12) 50%,
-        transparent 70%),
-    radial-gradient(ellipse 120% 100% at 50% 100%,
-        rgba(2, 8, 22, 0.85) 0%,
-        rgba(4, 14, 36, 0.50) 50%,
-        rgba(6, 18, 48, 0.18) 100%);
+  /* Transparent — body's fixed background carries the brand aura. */
+  background:transparent;
 }
 
 /* MAP PHOTO — replaced by #map-global zoom background */
@@ -158,11 +138,13 @@ body{
 /* Radial vignette — darkens edges, keeps center map readable */
 .map-vignette{
   position:absolute;inset:0;z-index:2;
+  /* Lightened dramatically — the dark edges were smothering the body aura.
+     Keeps just enough center focus, lets the blue orbs read through. */
   background:
-    radial-gradient(ellipse 70% 70% at 50% 45%,
+    radial-gradient(ellipse 80% 80% at 50% 50%,
       rgba(0,0,0,0)      0%,
-      rgba(0,5,30,0.22)  55%,
-      rgba(0,3,20,0.70)  100%);
+      rgba(0,5,30,0.06)  60%,
+      rgba(0,3,20,0.18)  100%);
   pointer-events:none;
 }
 
@@ -3028,11 +3010,11 @@ html.is-low-end .stat-card{
 
 /* ── GLOBAL paint-cost trims (apply to ALL devices) ──
    Big backdrop-filter blurs cause the GPU to re-blur the underlying
-   composited buffer on every scroll tick. Capping the radius globally
-   trades a slightly less frosted look for guaranteed-smooth scrolling
-   on every machine. */
+   composited buffer on every scroll tick. Cap to 10px for all surfaces
+   EXCEPT the hero-card — it needs the heavy frosted-glass look to read
+   as a solid white card instead of a translucent wireframe. */
 .liquid-card, .glass-card, .gnav-pill, .hbtn,
-.cmd-card, .step, [class*="card"] {
+.cmd-card, .step, .cmd-card, .partner-card, .testimonial-card, .fleet-card {
   backdrop-filter: blur(10px) saturate(140%) !important;
   -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
 }
@@ -3059,13 +3041,40 @@ html.is-low-end .hbtn {
 }
 html.is-low-end .sec-aura { filter: blur(50px) !important; opacity: .45 !important; }
 
-/* Page background continues the blue mood across non-hero sections */
+/* ── PAGE-WIDE BLUE AURA (always visible, zero per-frame cost) ──
+   Layered radial gradients painted to the body, fixed via attachment so
+   they stay anchored on scroll. This is the brand aura — strong enough
+   to read on every device, including the weakest integrated GPUs. The
+   atmosphere canvas particles drift on top to add subtle life. */
+html { background:#061230; }
 body {
-  background-color: #060e22;
+  background-color: #061230;
   background-image:
-    radial-gradient(ellipse 70% 50% at 50% 0%,
-        rgba(30, 110, 240, 0.18) 0%,
-        transparent 60%);
+    /* Top-left bright sky-blue orb — bold, unmistakable */
+    radial-gradient(ellipse 70% 65% at 18% 28%,
+        rgba(120, 185, 255, 0.95) 0%,
+        rgba(70, 140, 245, 0.55) 30%,
+        rgba(40, 95, 210, 0.20) 55%,
+        transparent 75%),
+    /* Right-center electric blue orb */
+    radial-gradient(ellipse 72% 68% at 82% 58%,
+        rgba(60, 135, 250, 0.95) 0%,
+        rgba(40, 105, 230, 0.55) 32%,
+        rgba(25, 75, 200, 0.22) 58%,
+        transparent 78%),
+    /* Center wash — fills the dead zone */
+    radial-gradient(ellipse 120% 90% at 50% 48%,
+        rgba(45, 110, 225, 0.55) 0%,
+        rgba(25, 70, 180, 0.28) 45%,
+        transparent 75%),
+    /* Bottom soft fade */
+    radial-gradient(ellipse 140% 70% at 50% 115%,
+        rgba(4, 10, 28, 0.70) 0%,
+        rgba(6, 16, 40, 0.25) 55%,
+        transparent 80%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 /* Hide stale pb-orb rule (orbs are never created on low-end now) */

@@ -1480,6 +1480,9 @@ document.querySelectorAll('.benefit').forEach(b => {
 //  Close = curved glass lens. Far = flat glass.
 // ══════════════════════════════════════════════════════
 (function initLensDistortion() {
+  // Lens distortion disabled — the SVG displacement filter was deforming
+  // the hero card edges over time as the cursor moved through the hero.
+  return;
   if (IS_MOBILE) return;
   const card    = document.getElementById('card');
   const dispMap = document.getElementById('lg-lens-disp');
