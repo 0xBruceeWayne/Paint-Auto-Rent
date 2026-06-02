@@ -173,10 +173,11 @@ let frame = 0;
   requestAnimationFrame(tick);
   if (!alive || !inView) return;
 
-  // During a page-snap glide, hand 100% of the GPU to the scroll interpolation.
-  // The aura is position:fixed + a slow drift — freezing it for ~340ms while the
-  // viewport snaps is completely imperceptible, and it kills the snap stutter.
-  if (window.__SNAPPING) return;
+  // While the page is scrolling/snapping, hand 100% of the GPU to the native
+  // scroll-snap. The aura is position:fixed + a slow drift — freezing it for the
+  // brief snap is imperceptible, and it removes the heaviest per-frame cost
+  // (full particle-buffer re-upload + render) exactly when it would stutter.
+  if (window.__SCROLLING) return;
 
   // Frame skip for slow devices — still feels smooth, half the GPU work
   if (FRAME_SKIP && (frame++ % (FRAME_SKIP + 1)) !== 0) return;

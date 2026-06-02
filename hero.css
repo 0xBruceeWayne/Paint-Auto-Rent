@@ -10,7 +10,12 @@ html{
   font-family:var(--font);
   background:#eef2ff;cursor:none;
   overflow-x:hidden;
-  scroll-behavior:smooth;
+  /* Native compositor-driven page snap — one section per screen, lands
+     instantly with native momentum. Replaces the old JS wheel-hijack which
+     felt sticky. scroll-behavior stays auto so the snap fling isn't slowed
+     by a smooth layer; nav-dot clicks pass behavior:'smooth' explicitly. */
+  scroll-snap-type:y mandatory;
+  scroll-behavior:auto;
   -webkit-font-smoothing:antialiased;
 }
 body{
@@ -142,6 +147,8 @@ html.is-scrolling *:not(.gnav-pill)::after{
 #hero{
   position:relative;width:100vw;height:100vh;
   overflow:hidden;
+  scroll-snap-align:start;
+  scroll-snap-stop:always;
   /* Transparent — body's fixed background carries the brand aura. */
   background:transparent;
 }
@@ -570,10 +577,12 @@ html.is-scrolling *:not(.gnav-pill)::after{
   padding:80px 80px;
   min-height:100vh;
   display:flex;align-items:center;
-  /* Skip paint/layout for off-screen sections — biggest scroll-perf win.
-     Reserves layout space via contain-intrinsic-size so anchors still work. */
-  content-visibility:auto;
-  contain-intrinsic-size:auto 100vh;
+  /* Native page-snap target. (content-visibility:auto was REMOVED — it forced
+     a synchronous re-layout of the whole section the instant it scrolled into
+     view, causing a frame-drop at every snap. With 8 full-screen sections,
+     keeping them laid out is far cheaper than re-laying-out on each entry.) */
+  scroll-snap-align:start;
+  scroll-snap-stop:always;
 }
 .sec-white{
   background:rgba(255,255,255,0.92);

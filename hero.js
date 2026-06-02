@@ -19,7 +19,12 @@ gsap.defaults({ overwrite: 'auto' });
 //  Pure RAF animation; no CSS smooth-scroll conflicts.
 // ══════════════════════════════════════════════════════
 (function initSnap() {
-  // Desktop only — mobile uses CSS scroll-snap from media queries
+  // DISABLED — paging is now handled by native CSS scroll-snap (mandatory),
+  // which runs on the compositor and feels instant + smooth. The old JS
+  // wheel-hijack below preventDefault'd the wheel, animated a glide, then
+  // locked out the continued swipe — which is exactly what felt sticky/laggy.
+  return;
+  // eslint-disable-next-line no-unreachable
   if (window.innerWidth <= 768) return;
   if (('ontouchstart' in window) && navigator.maxTouchPoints > 1) return;
 
@@ -123,11 +128,12 @@ gsap.defaults({ overwrite: 'auto' });
   let idleTimer = 0;
   let on = false;
   const start = () => {
-    if (!on) { root.classList.add('is-scrolling'); on = true; }
+    if (!on) { root.classList.add('is-scrolling'); on = true; window.__SCROLLING = true; }
     clearTimeout(idleTimer);
     idleTimer = setTimeout(() => {
       root.classList.remove('is-scrolling');
       on = false;
+      window.__SCROLLING = false;
     }, 120);
   };
   window.addEventListener('scroll',    start, { passive: true });
