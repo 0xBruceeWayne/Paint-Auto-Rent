@@ -23,11 +23,11 @@ gsap.defaults({ overwrite: 'auto' });
   if (window.innerWidth <= 768) return;
   if (('ontouchstart' in window) && navigator.maxTouchPoints > 1) return;
 
-  const DURATION  = 850;   // ms per snap
-  const LOCKOUT   = 320;   // ms after settle before next wheel (kills trackpad inertia double-fires)
+  const DURATION  = 520;   // ms per snap — fast + snappy
+  const LOCKOUT   = 140;   // ms after settle before next wheel (kills trackpad inertia double-fires)
   const MIN_DELTA = 5;     // wheel deltas below this are ignored (trackpad jitter)
-  // easeOutExpo: fast launch, butter-smooth landing
-  const ease = (t) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+  // easeOutExpo: instant launch, butter-smooth landing — feels "fast yet silky"
+  const ease = (t) => t === 1 ? 1 : 1 - Math.pow(2, -11 * t);
 
   let animating   = false;
   let lockedUntil = 0;
